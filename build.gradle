@@ -5,11 +5,14 @@ plugins {
 group 'Krash'
 version 'ALPHA'
 
+apply plugin: 'antlr'
+
 repositories {
     mavenCentral()
 }
 
 dependencies {
+    antlr "org.antlr:antlr4:4.7.2"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
 }
 
