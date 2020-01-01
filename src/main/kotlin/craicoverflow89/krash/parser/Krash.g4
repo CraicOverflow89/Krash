@@ -124,7 +124,7 @@ valueString returns [KrashValueString result]
     ;
 
 valueStringChars
-    :   CHAR+
+    :   (ALPHA | DIGIT | CHAR)+
     ;
 
 // Lexer Rules
