@@ -19,6 +19,11 @@ script returns [KrashScript result]
         {$result = new KrashScript(data);}
     ;
 
+line returns [KrashCommand result]
+    :   command {$result = $command.result;}
+        EOF
+    ;
+
 command returns [KrashCommand result]
     :   (
             commandDeclare {$result = $commandDeclare.result;}
@@ -72,7 +77,7 @@ ref returns [KrashReference result]
     ;
 
 refChars
-    :   (CHAR | UNDER)+
+    :   (ALPHA | DIGIT | UNDER)+
     ;
 
 value returns [KrashValue result]
@@ -109,11 +114,11 @@ valueRef returns [KrashValueReference result]
 valueString returns [KrashValueString result]
     :   {StringBuffer buffer = new StringBuffer();}
         QUOTE
+        c1 = valueStringChars {buffer.append($c1.text);}
         (
-            valueStringChars {buffer.append($valueStringChars.text);}
-        |
-            SPACE {buffer.append(" ");}
-        )+
+            c2 = valueStringChars {buffer.append(" " + $c2.text);}
+            // NOTE: this will not provide correct strings if double spacing or tabs appear
+        )*
         QUOTE
         {$result = new KrashValueString(buffer.toString());}
     ;
@@ -131,12 +136,11 @@ DIGIT: [0-9];
 EQUAL: '=';
 MINUS: '-';
 NLINE: [\n];
-QUOTE: '"';
-SPACE: ' ';
 SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';
 STBR2: ')';
 UNDER: '_';
 WHITESPACE: [ \t\r\n]+ -> skip;
-CHAR: .;
+QUOTE: '"';
+CHAR: ~[ "];

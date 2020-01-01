@@ -1,7 +1,12 @@
 package craicoverflow89.krash
 
+import craicoverflow89.krash.components.KrashCommand
+import craicoverflow89.krash.parser.KrashLexer
+import craicoverflow89.krash.parser.KrashParser
 import java.io.File
 import kotlin.system.exitProcess
+import org.antlr.v4.runtime.ANTLRInputStream
+import org.antlr.v4.runtime.CommonTokenStream
 
 // Define Version
 val KRASH_VERSION = "ALPHA"
@@ -64,12 +69,18 @@ fun loadShell() {
         if(input.isEmpty()) continue
 
         // Invoke Command
-        // NOTE: invoke command based on input content
+        //parseCommand(input)
 
         // TEMP DEBUG
-        println(input)
+        println(parseCommand(input))
     }
 
     // Shell Done
     println("")
+}
+
+fun parseCommand(input: String): KrashCommand {
+    val lexer = KrashLexer(ANTLRInputStream(input))
+    val parser = KrashParser(CommonTokenStream(lexer))
+    return parser.line().result
 }
