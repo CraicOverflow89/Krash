@@ -38,21 +38,17 @@ commandDeclare returns [KrashCommandDeclare result]
     ;
 
 commandInvoke returns [KrashCommandInvoke result]
-    :   {ArrayList<KrashCommandInvokeArgument> argList = new ArrayList();}
+    :   {ArrayList<KrashValue> argList = new ArrayList();}
         commandInvokeMethod
         STBR1
         (
-            a1 = commandInvokeArgument {argList.add($a1.result);}
+            arg1 = value {argList.add($arg1.result);}
             (
-                COMMA a2 = commandInvokeArgument {argList.add($a2.result);}
+                COMMA arg2 = value {argList.add($arg2.result);}
             )*
         )?
         STBR2
         {$result = new KrashCommandInvoke($commandInvokeMethod.result, argList);}
-    ;
-
-commandInvokeArgument returns [KrashCommandInvokeArgument result]
-    :   value {$result = new KrashCommandInvokeArgument($value.result);}
     ;
 
 commandInvokeMethod returns [KrashMethod result]
@@ -60,9 +56,8 @@ commandInvokeMethod returns [KrashMethod result]
             commandInvokeMethodNative {$result = new KrashMethodNative($commandInvokeMethodNative.result);}
         |
             ref {$result = new KrashMethodReference($ref.result);}
+            // NOTE: need to use x.y notation for calling member functions
         )
-        // NOTE: not so much in need of references to UDFs
-        //       need to handle method name as strings when looking-up existing member functions
     ;
 
 commandInvokeMethodNative returns [KrashMethodNativeType result]

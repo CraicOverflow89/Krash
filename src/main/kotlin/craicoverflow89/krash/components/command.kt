@@ -19,16 +19,12 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
 
 }
 
-class KrashCommandInvoke(private val method: KrashMethod, private val argumentList: List<KrashCommandInvokeArgument>): KrashCommand {
+class KrashCommandInvoke(private val method: KrashMethod, private val argumentList: List<KrashValue>): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
         // NOTE: currently passing all arguments by value
-        return method.invoke(runtime, argumentList.map {
-            it.value
-        })
+        return method.invoke(runtime, argumentList)
     }
 
 }
-
-class KrashCommandInvokeArgument(val value: KrashValue)
