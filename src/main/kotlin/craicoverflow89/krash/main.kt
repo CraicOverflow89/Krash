@@ -79,7 +79,7 @@ fun loadShell() {
         print("${cwd.replace("\\", "/")} \$ ")
 
         // Read Line
-        val input = readLine() ?: ""
+        val input = readLine() ?: continue
 
         // Exit Command
         if(input == "exit") break
@@ -88,13 +88,7 @@ fun loadShell() {
         if(input.isEmpty()) continue
 
         // Invoke Command
-        //parseCommand(input)
-
-        // TEMP DEBUG
-        parse(input).let {
-            //println(it)
-            it.invoke(runtime)
-        }
+        parse(input).invoke(runtime)
     }
 
     // Shell Done
