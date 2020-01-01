@@ -13,14 +13,6 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
         // Update Heap
         runtime.heapPut(ref, value)
 
-        // TEMP DEBUG
-        println("")
-        println("KrashCommandDeclare")
-        println(" ref:      ${ref.value}")
-        println(" contains: ${runtime.heapContains(ref)}")
-        println(" get:      ${runtime.heapGet(ref)}")
-        println("")
-
         // Return Null
         return KrashValueNull()
     }

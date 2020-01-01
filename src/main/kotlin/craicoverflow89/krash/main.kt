@@ -40,8 +40,15 @@ fun loadScript(scriptPath: String) {
         exitProcess(-1)
     }
 
-    // Load File
-    // NOTE: iterate lines and invoke commands
+    // Parse File
+    val scriptData = scriptFile.readText().let {
+        val lexer = KrashLexer(ANTLRInputStream(it))
+        val parser = KrashParser(CommonTokenStream(lexer))
+        parser.script().result
+    }
+
+    // Invoke Script
+    scriptData.invoke()
 }
 
 fun loadShell() {
@@ -57,6 +64,13 @@ fun loadShell() {
 
     // Create Runtime
     val runtime = KrashRuntime()
+
+    // Command Parser
+    val parse = fun(input: String): KrashCommand {
+        val lexer = KrashLexer(ANTLRInputStream(input))
+        val parser = KrashParser(CommonTokenStream(lexer))
+        return parser.line().result
+    }
 
     // Shell Loop
     while(true) {
@@ -77,7 +91,7 @@ fun loadShell() {
         //parseCommand(input)
 
         // TEMP DEBUG
-        parseCommand(input).let {
+        parse(input).let {
             //println(it)
             it.invoke(runtime)
         }
@@ -85,10 +99,4 @@ fun loadShell() {
 
     // Shell Done
     println("")
-}
-
-fun parseCommand(input: String): KrashCommand {
-    val lexer = KrashLexer(ANTLRInputStream(input))
-    val parser = KrashParser(CommonTokenStream(lexer))
-    return parser.line().result
 }

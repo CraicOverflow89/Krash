@@ -23,9 +23,15 @@ class KrashRuntime {
     }
 
     fun heapPut(ref: KrashReference, value: KrashValue) {
-        // NOTE: might allow for KrashValueReference to have a byRef / byValue flag
-        //       which will determine if value becomes reference or takes value of that reference
-        heap[ref.value] = value
+
+        // Resolve References
+        if(value is KrashValueReference && !value.byRef) {
+            heap[ref.value] = heapGet(value.ref, true)
+        }
+        // NOTE: might want to prevent circular references from being created with &ref
+
+        // Persist References
+        else heap[ref.value] = value
     }
 
 }
@@ -33,7 +39,15 @@ class KrashRuntime {
 class KrashScript(private val commandList: List<KrashCommand>) {
 
     fun invoke() {
-        //
+
+        // Create Runtime
+        val runtime = KrashRuntime()
+
+        // Invoke Commands
+        commandList.forEach {
+            it.invoke(runtime)
+        }
+
     }
 
 }

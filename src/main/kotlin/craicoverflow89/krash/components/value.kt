@@ -26,7 +26,7 @@ class KrashValueString(val value: String): KrashValue {
 
 }
 
-class KrashValueReference(val ref: KrashReference): KrashValue {
+class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashValue {
 
     override fun toString() = ref.value
 

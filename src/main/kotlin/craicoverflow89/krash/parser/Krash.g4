@@ -124,7 +124,11 @@ valueNull returns [KrashValueNull result]
     ;
 
 valueRef returns [KrashValueReference result]
-    :   ref {$result = new KrashValueReference($ref.result);}
+    :   {boolean byRef = false;}
+        (
+            AMPER {byRef = true;}
+        )?
+        ref {$result = new KrashValueReference($ref.result, byRef);}
     ;
 
 valueString returns [KrashValueString result]
@@ -134,17 +138,19 @@ valueString returns [KrashValueString result]
         (
             c2 = valueStringChars {buffer.append(" " + $c2.text);}
             // NOTE: this will not provide correct strings if double spacing or tabs appear
+            //       not even a single space is appearing atm (just disappearing as whitespace)
         )*
         QUOTE
         {$result = new KrashValueString(buffer.toString());}
     ;
 
 valueStringChars
-    :   (ALPHA | CHAR | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | CHAR | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 // Lexer Rules
 ALPHA: [A-Za-z];
+AMPER: '&';
 COMMA: ',';
 CUBR1: '{';
 CUBR2: '}';
