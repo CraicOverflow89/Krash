@@ -9,4 +9,4 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Issues
 
- - Lexer and parser classes exist in `out` dir but not in `build` when using gradle to create a `jar`
+ - Spaces in string literals are not working

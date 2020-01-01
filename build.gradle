@@ -6,6 +6,7 @@ group 'Krash'
 version 'ALPHA'
 
 apply plugin: 'antlr'
+apply plugin: 'java'
 
 repositories {
     mavenCentral()
@@ -14,14 +15,6 @@ repositories {
 dependencies {
     antlr "org.antlr:antlr4:4.7.2"
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
-}
-
-compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
-}
-
-compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
 }
 
 jar {
