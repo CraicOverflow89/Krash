@@ -1,6 +1,7 @@
 package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashCommand
+import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.parser.KrashLexer
 import craicoverflow89.krash.parser.KrashParser
 import java.io.File
@@ -18,6 +19,7 @@ fun main(args: Array<String>) {
 
     // Script Mode
     else loadScript(args[0])
+    // NOTE: this will completely ignore anything after script path (flags?)
 }
 
 fun loadScript(scriptPath: String) {
@@ -53,6 +55,9 @@ fun loadShell() {
     println("Version $KRASH_VERSION")
     println("")
 
+    // Create Runtime
+    val runtime = KrashRuntime()
+
     // Shell Loop
     while(true) {
 
@@ -72,7 +77,10 @@ fun loadShell() {
         //parseCommand(input)
 
         // TEMP DEBUG
-        println(parseCommand(input))
+        parseCommand(input).let {
+            println(it)
+            println(it.invoke(runtime))
+        }
     }
 
     // Shell Done

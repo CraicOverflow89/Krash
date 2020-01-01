@@ -82,11 +82,23 @@ refChars
 
 value returns [KrashValue result]
     :   (
+            valueBoolean {$result = $valueBoolean.result;}
+        |
             valueInteger {$result = $valueInteger.result;}
+        |
+            valueNull {$result = $valueNull.result;}
         |
             valueRef {$result = $valueRef.result;}
         |
             valueString {$result = $valueString.result;}
+        )
+    ;
+
+valueBoolean returns [KrashValueBoolean result]
+    :   (
+            'false' {$result = new KrashValueBoolean(false);}
+        |
+            'true' {$result = new KrashValueBoolean(true);}
         )
     ;
 
@@ -105,6 +117,10 @@ valueInteger returns [KrashValueInteger result]
 
 valueIntegerDigits
     :   DIGIT+
+    ;
+
+valueNull returns [KrashValueNull result]
+    :   'null' {$result = new KrashValueNull();}
     ;
 
 valueRef returns [KrashValueReference result]
