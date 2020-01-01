@@ -78,8 +78,8 @@ fun loadShell() {
 
         // TEMP DEBUG
         parseCommand(input).let {
-            println(it)
-            println(it.invoke(runtime))
+            //println(it)
+            it.invoke(runtime)
         }
     }
 

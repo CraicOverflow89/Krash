@@ -31,12 +31,12 @@ class KrashCommandInvoke(private val method: KrashMethod, private val argumentLi
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
-        // NOTE: need to execute method and return the result
-
-        // TEMP
-        return KrashValueNull()
+        // NOTE: currently passing all arguments by value
+        return method.invoke(runtime, argumentList.map {
+            it.value
+        })
     }
 
 }
 
-class KrashCommandInvokeArgument(private val value: KrashValue)
+class KrashCommandInvokeArgument(val value: KrashValue)
