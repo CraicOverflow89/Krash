@@ -3,16 +3,19 @@ package craicoverflow89.krash
 import java.io.File
 import kotlin.system.exitProcess
 
+// Define Version
+val KRASH_VERSION = "ALPHA"
+
 fun main(args: Array<String>) {
 
     // Shell Mode
-    if(args.isEmpty()) mainShell()
+    if(args.isEmpty()) loadShell()
 
     // Script Mode
-    else mainScript(args[0])
+    else loadScript(args[0])
 }
 
-fun mainScript(scriptPath: String) {
+fun loadScript(scriptPath: String) {
 
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""
@@ -34,7 +37,7 @@ fun mainScript(scriptPath: String) {
     // NOTE: iterate lines and invoke commands
 }
 
-fun mainShell() {
+fun loadShell() {
 
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""
@@ -42,8 +45,7 @@ fun mainShell() {
     // Shell Info
     println("")
     println("Krash Project")
-    println("Version Alpha")
-    // NOTE: version from val
+    println("Version $KRASH_VERSION")
     println("")
 
     // Shell Loop
