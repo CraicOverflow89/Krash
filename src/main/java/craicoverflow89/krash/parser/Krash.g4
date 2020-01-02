@@ -34,6 +34,7 @@ command returns [KrashCommand result]
 
 commandDeclare returns [KrashCommandDeclare result]
     :   ref EQUAL value
+        // NOTE: could add list[1] and map["key"] update syntax
         {$result = new KrashCommandDeclare($ref.result, $value.result);}
     ;
 

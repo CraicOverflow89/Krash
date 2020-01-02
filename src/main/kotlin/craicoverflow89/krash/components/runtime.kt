@@ -1,8 +1,16 @@
 package craicoverflow89.krash.components
 
-class KrashReference(val value: String) {
+class KrashReference(val value: String)
 
-    // fun lookup() ??
+class KrashReserved {
+
+    companion object {
+
+        private val reservedTerms = listOf("echo", "fun")
+
+        fun contains(value: String) = reservedTerms.contains(value.toLowerCase())
+
+    }
 
 }
 

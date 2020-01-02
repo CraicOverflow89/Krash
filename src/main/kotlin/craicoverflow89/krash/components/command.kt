@@ -10,6 +10,12 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
+        // Reserved Term
+        if(KrashReserved.contains(ref.value)) {
+            throw RuntimeException("Could not create a reference with the reserved term ''")
+            // NOTE: come back to this; use custom exceptions later
+        }
+
         // Update Heap
         runtime.heapPut(ref, value)
 
