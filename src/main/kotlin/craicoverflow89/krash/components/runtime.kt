@@ -14,14 +14,17 @@ class KrashReserved {
 
 }
 
-class KrashRuntime(private var cwd: String) {
+class KrashRuntime(cwd: String) {
+
+    // Define Path
+    private val cwdPath = cwd.replace("\\", "/")
 
     // Define Heap
     val heap = HashMap<String, KrashValue>()
 
-    fun cwd() = cwd
+    fun cwd() = cwdPath
 
-    fun cwdJoin(value: String) = "$cwd/$value"
+    fun cwdJoin(value: String) = "$cwdPath/$value"
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 

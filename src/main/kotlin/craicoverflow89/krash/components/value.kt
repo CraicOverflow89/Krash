@@ -34,19 +34,9 @@ class KrashValueBoolean(val value: Boolean): KrashValueSimple {
 
 }
 
-class KrashValueCallable: KrashValue {
+open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple {
 
-    fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
-
-        // TEMP
-        return KrashValueNull()
-    }
-
-    override fun resolve(runtime: KrashRuntime): KrashValue {
-
-        // TEMP
-        return KrashValueNull()
-    }
+    fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>) = logic(runtime, argumentList)
 
     override fun toString() = "<callable>"
 
@@ -147,7 +137,14 @@ class KrashValueString(val value: String): KrashValueSimple {
 
 class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashValue {
 
-    override fun resolve(runtime: KrashRuntime) = runtime.heapGet(ref)
+    override fun resolve(runtime: KrashRuntime): KrashValue {
+
+        // Native Method
+        if(KrashMethod.nativeContains(ref.value)) return KrashMethod.nativeGet(ref.value)
+
+        // Custom Reference
+        return runtime.heapGet(ref)
+    }
 
     override fun toString() = ref.value
 

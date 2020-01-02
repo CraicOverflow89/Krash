@@ -28,7 +28,7 @@ command returns [KrashCommand result]
     :   (
             commandDeclare {$result = $commandDeclare.result;}
         |
-            commandInvoke {$result = $commandInvoke.result;}
+            commandValue {$result = $commandValue.result;}
         )
     ;
 
@@ -38,35 +38,8 @@ commandDeclare returns [KrashCommandDeclare result]
         {$result = new KrashCommandDeclare($ref.result, $value.result);}
     ;
 
-commandInvoke returns [KrashCommandInvoke result]
-    :   {ArrayList<KrashValue> argList = new ArrayList();}
-        commandInvokeMethod
-        STBR1
-        (
-            arg1 = value {argList.add($arg1.result);}
-            (
-                COMMA arg2 = value {argList.add($arg2.result);}
-            )*
-        )?
-        STBR2
-        {$result = new KrashCommandInvoke($commandInvokeMethod.result, argList);}
-    ;
-
-commandInvokeMethod returns [KrashMethod result]
-    :   (
-            commandInvokeMethodNative {$result = new KrashMethodNative($commandInvokeMethodNative.result);}
-        |
-            value {$result = new KrashMethodValue($value.result);}
-            // NOTE: need to use x.y notation for calling member functions
-        )
-    ;
-
-commandInvokeMethodNative returns [KrashMethodNativeType result]
-    :   (
-            'echo' {$result = KrashMethodNativeType.ECHO;}
-        |
-            'file' {$result = KrashMethodNativeType.FILE;}
-        )
+commandValue returns [KrashCommandValue result]
+    :   value {$result = new KrashCommandValue($value.result);}
     ;
 
 ref returns [KrashReference result]
@@ -124,9 +97,17 @@ valueBoolean returns [KrashValueBoolean result]
         )
     ;
 
+/*
 valueCallable returns [KrashValueCallable result]
     :   'fun'
         {$result = new KrashValueCallable();}
+    ;
+*/
+
+// NOTE: just doing this for now
+valueCallable returns [KrashValue result]
+    :   'fun'
+        {$result = new KrashValueNull();}
     ;
 
 valueIndex returns [KrashValueIndex result]

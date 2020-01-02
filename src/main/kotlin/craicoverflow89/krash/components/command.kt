@@ -34,3 +34,11 @@ class KrashCommandInvoke(private val method: KrashMethod, private val argumentLi
     }
 
 }
+
+class KrashCommandValue(private val value: KrashValue): KrashCommand {
+
+    override fun invoke(runtime: KrashRuntime): KrashValue {
+        return value.resolve(runtime)
+    }
+
+}

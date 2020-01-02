@@ -1,111 +1,80 @@
 package craicoverflow89.krash.components
 
-interface KrashMethod {
+open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueCallable(logic) {
 
-    fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue
+    companion object {
 
-}
+        val nativeMethods = mapOf(
+            Pair("echo", KrashMethodEcho()),
+            Pair("file", KrashMethodFile())
+        )
 
-class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
+        fun nativeContains(name: String) = nativeMethods.containsKey(name)
 
-    override fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+        fun nativeGet(name: String) = nativeMethods[name] ?: throw RuntimeException("Could not find '$name' native method!")
 
-        // TEMP IMPLEMENTATION
-        when(type) {
-
-            // echo(Any*) prints one or more values
-            KrashMethodNativeType.ECHO -> {
-
-                // Resolution Logic
-                fun resolve(value: KrashValue): String = when(value) {
-
-                    // Resolve Array
-                    is KrashValueArray -> value.valueList.joinToString(", ", "[", "]") {
-                        resolve(it)
-                    }
-
-                    // Resolve Index
-                    is KrashValueIndex -> resolve(value.resolve(runtime))
-
-                    // Resolve Map
-                    is KrashValueMap -> value.valueList.joinToString(", ", "[", "]") {
-                        "${it.key}: ${resolve(it.value)}"
-                    }
-
-                    // Resolve Reference
-                    is KrashValueReference -> {
-                        //if(!runtime.heapContains(it.ref))
-                        // NOTE: come back to validation
-                        resolve(runtime.heapGet(value.ref))
-                    }
-
-
-                    // Resolve Primitive
-                    else -> value.toString()
-                }
-
-                // Print Arguments
-                argumentList.forEach {
-                    //println(resolve(it))
-                    println(it.toSimple(runtime))
-                }
-            }
-
-            // file(String?) creates a file object (defaults to cwd)
-            KrashMethodNativeType.FILE -> {
-
-                // Current Directory
-                return KrashValueFile(if(argumentList.isEmpty()) runtime.cwd()
-
-                // Path Supplied
-                else argumentList[0].toSimple(runtime).toString().let {
-
-                    // Relative Path
-                    if(it.startsWith(".")) runtime.cwdJoin(it)
-
-                    // Absolute Path
-                    else it
-                })
-            }
-        }
-
-        // TEMP
-        return KrashValueNull()
     }
 
+    override fun toString() = "<native method>"
+
 }
 
-enum class KrashMethodNativeType {
-    ECHO, FILE
-}
+class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
-class KrashMethodValue(private val value: KrashValue): KrashMethod {
+    // Resolution Logic
+    fun resolve(value: KrashValue): String = when(value) {
 
-    override fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
-
-        // Resolution Logic
-        fun resolve(value: KrashValue): KrashValueCallable {
-
-            // Resolve Index
-            if(value is KrashValueIndex) return resolve(value.resolve(runtime))
-
-            // Resolve Reference
-            if(value is KrashValueReference) return resolve(runtime.heapGet(value.ref))
-
-            // Return Callable
-            if(value is KrashValueCallable) return value
-
-            // Invalid Type
-            throw RuntimeException("Encountered an exception when invoking a value!")
-            // NOTE: come back to this; use custom exceptions later
+        // Resolve Array
+        is KrashValueArray -> value.valueList.joinToString(", ", "[", "]") {
+            resolve(it)
         }
 
-        // Invoke Callable
-        //resolve(value).invoke(runtime, argumentList)
-        // NOTE: invoke the logic, wherever that is actually performed
+        // Resolve Index
+        is KrashValueIndex -> resolve(value.resolve(runtime))
 
-        // TEMP
-        return KrashValueNull()
+        // Resolve Map
+        is KrashValueMap -> value.valueList.joinToString(", ", "[", "]") {
+            "${it.key}: ${resolve(it.value)}"
+        }
+
+        // Resolve Reference
+        is KrashValueReference -> {
+            //if(!runtime.heapContains(it.ref))
+            // NOTE: come back to validation
+            resolve(runtime.heapGet(value.ref))
+        }
+
+
+        // Resolve Primitive
+        else -> value.toString()
     }
 
-}
+    // Print Values
+    argumentList.forEach {
+        println(it.toSimple(runtime))
+    }
+
+    // Done
+    return KrashValueNull()
+})
+
+class KrashMethodFile: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+
+    // Current Directory
+    return KrashValueFile(if(argumentList.isEmpty()) runtime.cwd()
+
+    // Path Supplied
+    else argumentList[0].toSimple(runtime).toString().let {
+
+        // NOTE: throw exception if it contains '\'
+        //       handle instances of '..' for parent directory
+
+        // Absolute Path
+        if(it.startsWith("/") || it.matches("^[A-Za-z]:.*\$".toRegex())) it
+
+        // Relative Path
+        else runtime.cwdJoin(if(it.startsWith(".")) it.split("/").let {
+            it.subList(1, it.size)
+        }.joinToString("/") else it)
+    })
+})
