@@ -204,18 +204,15 @@ valueRef returns [KrashValueReference result]
 valueString returns [KrashValueString result]
     :   {StringBuffer buffer = new StringBuffer();}
         QUOTE
-        c1 = valueStringChars {buffer.append($c1.text);}
         (
-            c2 = valueStringChars {buffer.append(" " + $c2.text);}
-            // NOTE: this will not provide correct strings if double spacing or tabs appear
-            //       not even a single space is appearing atm (just disappearing as whitespace)
+            chars = valueStringChars {buffer.append($chars.text);}
         )*
         QUOTE
         {$result = new KrashValueString(buffer.toString());}
     ;
 
 valueStringChars
-    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 // Lexer Rules
@@ -231,6 +228,7 @@ EQUAL: '=';
 MINUS: '-';
 NLINE: [\n];
 PLUS: '+';
+SPACE: [ ]+;
 SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';
