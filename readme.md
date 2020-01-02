@@ -10,4 +10,4 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Issues
 
- - none
+ - spaces in string literals are causing issues (whitespace)
