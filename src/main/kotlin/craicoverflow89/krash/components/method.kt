@@ -13,13 +13,31 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
         // TEMP IMPLEMENTATION
         when(type) {
             KrashMethodNativeType.ECHO -> {
-                argumentList.forEach {
-                    println(if(it is KrashValueReference) {
+
+                // Resolution Logic
+                fun resolve(value: KrashValue): String = when(value) {
+
+                    // Resolve Array
+                    is KrashValueArray -> value.valueList.map {
+                        resolve(it)
+                    }.joinToString(", ", "[", "]")
+
+
+                    // Resolve Reference
+                    is KrashValueReference -> {
                         //if(!runtime.heapContains(it.ref))
                         // NOTE: come back to validation
-                        runtime.heapGet(it.ref, true).toString()
-                        // NOTE: consider references to other references (should this even exist?)
-                    } else it.toString())
+                        runtime.heapGet(value.ref, true).toString()
+                    }
+
+
+                    // Resolve String
+                    else -> value.toString()
+                }
+
+                // Print Result
+                argumentList.forEach {
+                    println(resolve(it))
                 }
             }
         }

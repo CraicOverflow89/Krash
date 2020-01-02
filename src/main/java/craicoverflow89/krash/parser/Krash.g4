@@ -77,6 +77,8 @@ refChars
 
 value returns [KrashValue result]
     :   (
+            valueArray {$result = $valueArray.result;}
+        |
             valueBoolean {$result = $valueBoolean.result;}
         |
             valueInteger {$result = $valueInteger.result;}
@@ -87,6 +89,20 @@ value returns [KrashValue result]
         |
             valueString {$result = $valueString.result;}
         )
+    ;
+
+valueArray returns [KrashValueArray result]
+    :   {ArrayList<KrashValue> data = new ArrayList();}
+        SQBR1
+        (
+            v1 = value {data.add($v1.result);}
+            (
+                COMMA
+                v2 = value {data.add($v2.result);}
+            )*
+        )?
+        SQBR2
+        {$result = new KrashValueArray(data);}
     ;
 
 valueBoolean returns [KrashValueBoolean result]
@@ -153,6 +169,7 @@ DIGIT: [0-9];
 EQUAL: '=';
 MINUS: '-';
 NLINE: [\n];
+PLUS: '+';
 SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';
