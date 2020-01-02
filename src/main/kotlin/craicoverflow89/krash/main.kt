@@ -65,7 +65,7 @@ fun loadShell() {
     // Create Runtime
     val runtime = KrashRuntime()
 
-    // Command Parser
+    // Parse Command
     val parse = fun(input: String): KrashCommand {
         val lexer = KrashLexer(ANTLRInputStream(input))
         val parser = KrashParser(CommonTokenStream(lexer))
