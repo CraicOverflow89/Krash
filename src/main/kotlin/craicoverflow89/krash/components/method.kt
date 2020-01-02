@@ -58,9 +58,34 @@ enum class KrashMethodNativeType {
     ECHO
 }
 
-class KrashMethodReference(private val ref: KrashReference): KrashMethod {
+class KrashMethodValue(private val value: KrashValue): KrashMethod {
 
     override fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+
+        // TEMP DEBUG
+        println("KrashMethodValue invoke")
+        println("  value: $value")
+
+        // Resolution Logic
+        fun resolve(value: KrashValue): KrashValueCallable {
+
+            // Resolve Reference
+            if(value is KrashValueReference) return resolve(runtime.heapGet(value.ref))
+
+            // Return Callable
+            if(value is KrashValueCallable) return value
+
+            // Invalid Type
+            throw RuntimeException("Encountered an exception when invoking a value!")
+            // NOTE: very temporary; use custom exceptions later
+        }
+
+        // TEMP DEBUG
+        println("  type:  ${(resolve(value).javaClass.name)}")
+
+        // Invoke Callable
+        //resolve(value).invoke(runtime, argumentList)
+        // NOTE: invoke the logic, wherever that is actually performed
 
         // TEMP
         return KrashValueNull()

@@ -55,7 +55,7 @@ commandInvokeMethod returns [KrashMethod result]
     :   (
             commandInvokeMethodNative {$result = new KrashMethodNative($commandInvokeMethodNative.result);}
         |
-            ref {$result = new KrashMethodReference($ref.result);}
+            value {$result = new KrashMethodValue($value.result);}
             // NOTE: need to use x.y notation for calling member functions
         )
     ;
@@ -80,6 +80,8 @@ value returns [KrashValue result]
             valueArray {$result = $valueArray.result;}
         |
             valueBoolean {$result = $valueBoolean.result;}
+        |
+            valueCallable {$result = $valueCallable.result;}
         |
             valueInteger {$result = $valueInteger.result;}
         |
@@ -113,6 +115,11 @@ valueBoolean returns [KrashValueBoolean result]
         |
             'true' {$result = new KrashValueBoolean(true);}
         )
+    ;
+
+valueCallable returns [KrashValueCallable result]
+    :   'fun'
+        {$result = new KrashValueCallable();}
     ;
 
 valueInteger returns [KrashValueInteger result]

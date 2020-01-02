@@ -16,6 +16,12 @@ class KrashValueBoolean(val value: Boolean): KrashValue {
 
 }
 
+class KrashValueCallable: KrashValue {
+
+    override fun toString() = "<callable>"
+
+}
+
 class KrashValueInteger(val value: Integer): KrashValue {
 
     override fun toString() = value.toString()
