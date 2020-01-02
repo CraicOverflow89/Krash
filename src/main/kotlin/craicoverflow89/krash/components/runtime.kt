@@ -13,26 +13,23 @@ class KrashRuntime {
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 
-    fun heapGet(ref: KrashReference): KrashValue {
-        fun resolve(ref: KrashReference): KrashValue {
-            var result = heap[ref.value] ?: KrashValueNull()
-            if(result is KrashValueReference) result = resolve(result.ref)
-            return result
-        }
-        return resolve(ref)
-    }
+    fun heapGet(ref: KrashReference) = heap[ref.value] ?: KrashValueNull()
 
     fun heapPut(ref: KrashReference, value: KrashValue) {
 
-        // Resolve References
-        if(value is KrashValueReference && !value.byRef) {
-            heap[ref.value] = heapGet(value.ref)
-            // NOTE: since removing recurse flag, need to look at new references to arrays with nested byRef and byValue
+        // Keep Reference
+        if(value is KrashValueReference && value.byRef) {
+            heap[ref.value] = value
+            // NOTE: might want to prevent circular references from being created with &ref
         }
-        // NOTE: might want to prevent circular references from being created with &ref
 
-        // Persist References
-        else heap[ref.value] = value
+        // Indexed Reference
+        else if(value is KrashValueIndex && value.ref.byRef) {
+            heap[ref.value] = value
+        }
+
+        // Resolve Values
+        else heap[ref.value] = value.toSimple(this)
     }
 
 }

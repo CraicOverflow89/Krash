@@ -24,6 +24,9 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
                         resolve(it)
                     }
 
+                    // Resolve Index
+                    is KrashValueIndex -> resolve(value.resolve(runtime))
+
                     // Resolve Map
                     is KrashValueMap -> value.valueList.joinToString(", ", "[", "]") {
                         "${it.key}: ${resolve(it.value)}"
@@ -43,7 +46,8 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
 
                 // Print Arguments
                 argumentList.forEach {
-                    println(resolve(it))
+                    //println(resolve(it))
+                    println(it.toSimple(runtime))
                 }
             }
         }
@@ -62,12 +66,11 @@ class KrashMethodValue(private val value: KrashValue): KrashMethod {
 
     override fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
-        // TEMP DEBUG
-        println("KrashMethodValue invoke")
-        println("  value: $value")
-
         // Resolution Logic
         fun resolve(value: KrashValue): KrashValueCallable {
+
+            // Resolve Index
+            if(value is KrashValueIndex) return resolve(value.resolve(runtime))
 
             // Resolve Reference
             if(value is KrashValueReference) return resolve(runtime.heapGet(value.ref))
@@ -77,11 +80,8 @@ class KrashMethodValue(private val value: KrashValue): KrashMethod {
 
             // Invalid Type
             throw RuntimeException("Encountered an exception when invoking a value!")
-            // NOTE: very temporary; use custom exceptions later
+            // NOTE: come back to this; use custom exceptions later
         }
-
-        // TEMP DEBUG
-        println("  type:  ${(resolve(value).javaClass.name)}")
 
         // Invoke Callable
         //resolve(value).invoke(runtime, argumentList)

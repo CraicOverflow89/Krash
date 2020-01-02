@@ -79,6 +79,8 @@ value returns [KrashValue result]
     :   (
             valueArray {$result = $valueArray.result;}
         |
+            valueIndex {$result = $valueIndex.result;}
+        |
             valueBoolean {$result = $valueBoolean.result;}
         |
             valueCallable {$result = $valueCallable.result;}
@@ -120,6 +122,17 @@ valueBoolean returns [KrashValueBoolean result]
 valueCallable returns [KrashValueCallable result]
     :   'fun'
         {$result = new KrashValueCallable();}
+    ;
+
+valueIndex returns [KrashValueIndex result]
+    :   valueRef SQBR1 valueIndexPos SQBR2
+        // NOTE: what about array/map literal with index positions
+        {$result = new KrashValueIndex($valueRef.result, Integer.parseInt($valueIndexPos.text));}
+        // NOTE: need to change parseInt to class when parsing indexes like [0, 2, -1]
+    ;
+
+valueIndexPos
+    :   DIGIT+
     ;
 
 valueInteger returns [KrashValueInteger result]
