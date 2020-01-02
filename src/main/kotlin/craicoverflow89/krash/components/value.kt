@@ -2,11 +2,11 @@ package craicoverflow89.krash.components
 
 interface KrashValue
 
-class KrashValueArray(val valueList: ArrayList<KrashValue>): KrashValue {
+class KrashValueArray(val valueList: List<KrashValue>): KrashValue {
 
-    override fun toString() = valueList.map {
+    override fun toString() = valueList.joinToString(", ", "[", "]") {
         it.toString()
-    }.joinToString(", ", "[", "]")
+    }
 
 }
 
@@ -19,6 +19,20 @@ class KrashValueBoolean(val value: Boolean): KrashValue {
 class KrashValueInteger(val value: Integer): KrashValue {
 
     override fun toString() = value.toString()
+
+}
+
+class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValue {
+
+    override fun toString() = valueList.joinToString(", ", "{", "}") {
+        it.toString()
+    }
+
+}
+
+class KrashValueMapPair(val key: String, val value: KrashValue) {
+
+    override fun toString() = "$key: $value"
 
 }
 

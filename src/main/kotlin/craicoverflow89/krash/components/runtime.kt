@@ -13,10 +13,10 @@ class KrashRuntime {
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 
-    fun heapGet(ref: KrashReference, recurse : Boolean = false): KrashValue {
+    fun heapGet(ref: KrashReference): KrashValue {
         fun resolve(ref: KrashReference): KrashValue {
             var result = heap[ref.value] ?: KrashValueNull()
-            if(result is KrashValueReference && recurse) result = resolve(result.ref)
+            if(result is KrashValueReference) result = resolve(result.ref)
             return result
         }
         return resolve(ref)
@@ -26,7 +26,8 @@ class KrashRuntime {
 
         // Resolve References
         if(value is KrashValueReference && !value.byRef) {
-            heap[ref.value] = heapGet(value.ref, true)
+            heap[ref.value] = heapGet(value.ref)
+            // NOTE: since removing recurse flag, need to look at new references to arrays with nested byRef and byValue
         }
         // NOTE: might want to prevent circular references from being created with &ref
 

@@ -83,6 +83,8 @@ value returns [KrashValue result]
         |
             valueInteger {$result = $valueInteger.result;}
         |
+            valueMap {$result = $valueMap.result;}
+        |
             valueNull {$result = $valueNull.result;}
         |
             valueRef {$result = $valueRef.result;}
@@ -130,6 +132,29 @@ valueIntegerDigits
     :   DIGIT+
     ;
 
+valueMap returns [KrashValueMap result]
+    :   {ArrayList<KrashValueMapPair> data = new ArrayList<KrashValueMapPair>();}
+        CUBR1
+        (
+            v1 = valueMapPair {data.add($v1.result);}
+            (
+                COMMA
+                v2 = valueMapPair {data.add($v2.result);}
+            )*
+        )?
+        CUBR2
+        {$result = new KrashValueMap(data);}
+    ;
+
+valueMapPair returns [KrashValueMapPair result]
+    :   k = valueMapPairKey COLON v = value
+        {$result = new KrashValueMapPair($k.text, $v.result);}
+    ;
+
+valueMapPairKey
+    :   (ALPHA | DIGIT | UNDER)+
+    ;
+
 valueNull returns [KrashValueNull result]
     :   'null' {$result = new KrashValueNull();}
     ;
@@ -156,12 +181,13 @@ valueString returns [KrashValueString result]
     ;
 
 valueStringChars
-    :   (ALPHA | AMPER | CHAR | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 // Lexer Rules
 ALPHA: [A-Za-z];
 AMPER: '&';
+COLON: ':';
 COMMA: ',';
 CUBR1: '{';
 CUBR2: '}';

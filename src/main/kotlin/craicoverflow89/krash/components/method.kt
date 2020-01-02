@@ -12,30 +12,36 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
 
         // TEMP IMPLEMENTATION
         when(type) {
+
+            // echo(Any*) prints one or more values
             KrashMethodNativeType.ECHO -> {
 
                 // Resolution Logic
                 fun resolve(value: KrashValue): String = when(value) {
 
                     // Resolve Array
-                    is KrashValueArray -> value.valueList.map {
+                    is KrashValueArray -> value.valueList.joinToString(", ", "[", "]") {
                         resolve(it)
-                    }.joinToString(", ", "[", "]")
+                    }
 
+                    // Resolve Map
+                    is KrashValueMap -> value.valueList.joinToString(", ", "[", "]") {
+                        "${it.key}: ${resolve(it.value)}"
+                    }
 
                     // Resolve Reference
                     is KrashValueReference -> {
                         //if(!runtime.heapContains(it.ref))
                         // NOTE: come back to validation
-                        runtime.heapGet(value.ref, true).toString()
+                        resolve(runtime.heapGet(value.ref))
                     }
 
 
-                    // Resolve String
+                    // Resolve Primitive
                     else -> value.toString()
                 }
 
-                // Print Result
+                // Print Arguments
                 argumentList.forEach {
                     println(resolve(it))
                 }
