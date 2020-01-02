@@ -44,17 +44,18 @@ class KrashValueCallable: KrashValue {
 
 }
 
-class KrashValueIndex(val ref: KrashValueReference, val pos: Int): KrashValue {
+class KrashValueIndex(val ref: KrashValueReference, val pos: String): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue = runtime.heapGet(ref.ref).let {
         when(it) {
 
-            // Resolve Array
-            is KrashValueArray -> it.valueList[pos]
+            // Array Position
+            is KrashValueArray -> it.valueList[Integer.parseInt(pos)]
+            // NOTE: this is where custom exception handling should be added
+            //       java.lang.NumberFormatException is being thrown here
 
-            // Resolve Map
-            //is KrashValueMap -> value.getData()[pos]
-            // NOTE: maybe use a different class for keys instead (not indexes) ??
+            // Map Key
+            is KrashValueMap -> it.getData(pos)
 
             // Invalid Type
             else -> throw RuntimeException("Cannot access index $pos of this value!")
@@ -82,6 +83,8 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
     }
 
     fun getData() = data
+
+    fun getData(key: String) = data[key] ?: KrashValueNull()
 
     override fun toString() = valueList.joinToString(", ", "{", "}") {
         it.toString()

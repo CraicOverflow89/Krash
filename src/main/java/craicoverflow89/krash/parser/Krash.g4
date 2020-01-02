@@ -127,12 +127,25 @@ valueCallable returns [KrashValueCallable result]
 valueIndex returns [KrashValueIndex result]
     :   valueRef SQBR1 valueIndexPos SQBR2
         // NOTE: what about array/map literal with index positions
-        {$result = new KrashValueIndex($valueRef.result, Integer.parseInt($valueIndexPos.text));}
+        {$result = new KrashValueIndex($valueRef.result, $valueIndexPos.result);}
         // NOTE: need to change parseInt to class when parsing indexes like [0, 2, -1]
     ;
 
-valueIndexPos
+valueIndexPos returns [String result]
+    :   (
+            valueIndexPosDigits {$result = $valueIndexPosDigits.text;}
+        |
+            valueIndexPosKey {$result = $valueIndexPosKey.result;}
+        )
+    ;
+
+valueIndexPosDigits
     :   DIGIT+
+    ;
+
+valueIndexPosKey returns [String result]
+    :   QUOTE valueMapPairKey QUOTE
+        {$result = $valueMapPairKey.text;}
     ;
 
 valueInteger returns [KrashValueInteger result]
@@ -201,12 +214,13 @@ valueString returns [KrashValueString result]
     ;
 
 valueStringChars
-    :   (ALPHA | AMPER | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 // Lexer Rules
 ALPHA: [A-Za-z];
 AMPER: '&';
+APOST: '\'';
 COLON: ':';
 COMMA: ',';
 CUBR1: '{';
