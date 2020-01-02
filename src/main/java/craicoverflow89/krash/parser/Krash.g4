@@ -64,6 +64,8 @@ commandInvokeMethod returns [KrashMethod result]
 commandInvokeMethodNative returns [KrashMethodNativeType result]
     :   (
             'echo' {$result = KrashMethodNativeType.ECHO;}
+        |
+            'file' {$result = KrashMethodNativeType.FILE;}
         )
     ;
 
@@ -87,6 +89,8 @@ value returns [KrashValue result]
             valueCallable {$result = $valueCallable.result;}
         |
             valueInteger {$result = $valueInteger.result;}
+        |
+            valueInvoke {$result = $valueInvoke.result;}
         |
             valueMap {$result = $valueMap.result;}
         |
@@ -164,6 +168,21 @@ valueInteger returns [KrashValueInteger result]
 
 valueIntegerDigits
     :   DIGIT+
+    ;
+
+valueInvoke returns [KrashValueInvoke result]
+    :   {ArrayList<KrashValue> args = new ArrayList<KrashValue>();}
+        valueRef
+        STBR1
+        (
+            a1 = value {args.add($a1.result);}
+            (
+                COMMA
+                a2 = value {args.add($a2.result);}
+            )*
+        )?
+        STBR2
+        {$result = new KrashValueInvoke($valueRef.result, args);}
     ;
 
 valueMap returns [KrashValueMap result]

@@ -48,7 +48,7 @@ fun loadScript(scriptPath: String) {
     }
 
     // Invoke Script
-    scriptData.invoke()
+    scriptData.invoke(cwd)
 }
 
 fun loadShell() {
@@ -63,7 +63,7 @@ fun loadShell() {
     println("")
 
     // Create Runtime
-    val runtime = KrashRuntime()
+    val runtime = KrashRuntime(cwd)
 
     // Parse Command
     val parse = fun(input: String): KrashCommand {

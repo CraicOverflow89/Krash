@@ -6,7 +6,7 @@ class KrashReserved {
 
     companion object {
 
-        private val reservedTerms = listOf("echo", "fun")
+        private val reservedTerms = listOf("echo", "file", "fun")
 
         fun contains(value: String) = reservedTerms.contains(value.toLowerCase())
 
@@ -14,10 +14,14 @@ class KrashReserved {
 
 }
 
-class KrashRuntime {
+class KrashRuntime(private var cwd: String) {
 
     // Define Heap
     val heap = HashMap<String, KrashValue>()
+
+    fun cwd() = cwd
+
+    fun cwdJoin(value: String) = "$cwd/$value"
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 
@@ -44,10 +48,10 @@ class KrashRuntime {
 
 class KrashScript(private val commandList: List<KrashCommand>) {
 
-    fun invoke() {
+    fun invoke(cwd: String) {
 
         // Create Runtime
-        val runtime = KrashRuntime()
+        val runtime = KrashRuntime(cwd)
 
         // Invoke Commands
         commandList.forEach {

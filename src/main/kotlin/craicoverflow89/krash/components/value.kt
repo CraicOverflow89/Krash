@@ -1,5 +1,7 @@
 package craicoverflow89.krash.components
 
+import java.io.File
+
 interface KrashValue {
 
     fun resolve(runtime: KrashRuntime): KrashValue
@@ -34,6 +36,12 @@ class KrashValueBoolean(val value: Boolean): KrashValueSimple {
 
 class KrashValueCallable: KrashValue {
 
+    fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+
+        // TEMP
+        return KrashValueNull()
+    }
+
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
         // TEMP
@@ -41,6 +49,14 @@ class KrashValueCallable: KrashValue {
     }
 
     override fun toString() = "<callable>"
+
+}
+
+class KrashValueFile(private val path: String): KrashValueSimple {
+
+    fun toFile() = File(path)
+
+    override fun toString() = path
 
 }
 
@@ -70,6 +86,25 @@ class KrashValueIndex(val ref: KrashValueReference, val pos: String): KrashValue
 class KrashValueInteger(val value: Int): KrashValueSimple {
 
     override fun toString() = value.toString()
+
+}
+
+class KrashValueInvoke(private val ref: KrashValueReference, private val argumentList: List<KrashValue>): KrashValue {
+
+    override fun resolve(runtime: KrashRuntime): KrashValue = ref.resolve(runtime).let {
+
+        // NOTE: above just checks if ref maps to something in the heap
+        //       but it might be best to first check a different map, that contains BIFs
+
+        // Invoke Callable
+        if(it is KrashValueCallable) it.invoke(runtime, argumentList)
+
+        // Invalid Type
+        else throw RuntimeException("Could not invoke this non-callable value!")
+        // NOTE: come back to this; use custom exceptions later
+    }
+
+    override fun toString() = "<invoke>"
 
 }
 

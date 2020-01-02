@@ -50,6 +50,23 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
                     println(it.toSimple(runtime))
                 }
             }
+
+            // file(String?) creates a file object (defaults to cwd)
+            KrashMethodNativeType.FILE -> {
+
+                // Current Directory
+                return KrashValueFile(if(argumentList.isEmpty()) runtime.cwd()
+
+                // Path Supplied
+                else argumentList[0].toSimple(runtime).toString().let {
+
+                    // Relative Path
+                    if(it.startsWith(".")) runtime.cwdJoin(it)
+
+                    // Absolute Path
+                    else it
+                })
+            }
         }
 
         // TEMP
@@ -59,7 +76,7 @@ class KrashMethodNative(private val type: KrashMethodNativeType): KrashMethod {
 }
 
 enum class KrashMethodNativeType {
-    ECHO
+    ECHO, FILE
 }
 
 class KrashMethodValue(private val value: KrashValue): KrashMethod {
