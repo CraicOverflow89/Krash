@@ -12,14 +12,25 @@ import org.antlr.v4.runtime.CommonTokenStream
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main(args: Array<String>) {
+fun main(args: Array<String>) = when {
 
     // Shell Mode
-    if(args.isEmpty()) loadShell()
+    args.isEmpty() -> loadShell()
+
+    // Flag Mode
+    args[0].startsWith("-") -> loadFlags(args[0].let {
+        it.substring(1, it.length)
+    })
 
     // Script Mode
-    else loadScript(args[0])
+    else -> loadScript(args[0])
     // NOTE: this will completely ignore anything after script path (flags?)
+}
+
+fun loadFlags(flags: String) {
+
+    // Version Info
+    if(listOf("version", "v").contains(flags)) printInfo()
 }
 
 fun loadScript(scriptPath: String) {
@@ -57,10 +68,7 @@ fun loadShell() {
     val cwd = System.getProperty("user.dir") ?: ""
 
     // Shell Info
-    println("")
-    println("Krash Project")
-    println("Version $KRASH_VERSION")
-    println("")
+    printInfo()
 
     // Create Runtime
     val runtime = KrashRuntime(cwd)
@@ -92,5 +100,12 @@ fun loadShell() {
     }
 
     // Shell Done
+    println("")
+}
+
+fun printInfo() {
+    println("")
+    println("Krash Project")
+    println("Version $KRASH_VERSION")
     println("")
 }
