@@ -12,7 +12,7 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
 
         // Reserved Term
         if(KrashReserved.contains(ref.value)) {
-            throw RuntimeException("Could not create a reference with the reserved term ''")
+            throw RuntimeException("Could not create a reference with the reserved term '${ref.value}'")
             // NOTE: come back to this; use custom exceptions later
         }
 
@@ -21,16 +21,6 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
 
         // Return Null
         return KrashValueNull()
-    }
-
-}
-
-class KrashCommandInvoke(private val method: KrashMethod, private val argumentList: List<KrashValue>): KrashCommand {
-
-    override fun invoke(runtime: KrashRuntime): KrashValue {
-
-        // NOTE: currently passing all arguments by value
-        return method.invoke(runtime, argumentList)
     }
 
 }
