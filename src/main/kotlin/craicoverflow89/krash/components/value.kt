@@ -14,13 +14,31 @@ interface KrashValue {
 
 }
 
-interface KrashValueSimple: KrashValue {
+open class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
+
+    fun memberContains(key: String) = memberList.containsKey(key)
+
+    fun memberGet(key: String): KrashValue = memberList[key] ?: throw RuntimeException("No member '$key' exists on value!")
+
+    fun memberPut(key: String, value: KrashValue) {
+        memberList[key] = value
+    }
+
+    fun memberPut(key: String, value: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) {
+        memberList[key] = KrashValueCallable(value)
+    }
 
     override fun resolve(runtime: KrashRuntime) = this
 
 }
 
-class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple {
+class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMapOf(
+    Pair("join", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        KrashValueString(valueList.joinToString(""))
+        // NOTE: need to parse arguments as separator, prefix and postfix
+    }),
+    Pair("size", KrashValueInteger(valueList.size))
+)) {
 
     fun getElement(pos: Int): KrashValue {
 
@@ -41,13 +59,13 @@ class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple {
 
 }
 
-class KrashValueBoolean(val value: Boolean): KrashValueSimple {
+class KrashValueBoolean(val value: Boolean): KrashValueSimple() {
 
     override fun toString() = if(value) "true" else "false"
 
 }
 
-open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple {
+open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple() {
 
     fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>) = logic(runtime, argumentList)
 
@@ -55,9 +73,12 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
 }
 
-class KrashValueFile(private val path: String): KrashValueSimple {
+class KrashValueFile(private val path: String): KrashValueSimple(hashMapOf(
+    Pair("isDirectory", KrashValueBoolean(File(path).isDirectory))
+)) {
 
     fun toFile() = File(path)
+    // NOTE: should create file from path once in init and use for this and isDirectory
 
     override fun toString() = path
 
@@ -126,7 +147,7 @@ interface KrashValueIndexPos {
 
 }
 
-class KrashValueInteger(val value: Int): KrashValueSimple, KrashValueIndexPos {
+class KrashValueInteger(val value: Int): KrashValueSimple(), KrashValueIndexPos {
 
     override fun toString() = value.toString()
 
@@ -148,13 +169,25 @@ class KrashValueInvoke(private val value: KrashValue, private val argumentList: 
 
 }
 
-class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
+class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() {
 
     // Create Data
     private val data = HashMap<String, KrashValue>().apply {
         valueList.forEach {
             put(it.key, it.value)
         }
+    }
+
+    init {
+
+        // Append Members
+        /*memberPut("contains") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+            KrashValueBoolean(data.containsKey(argumentList[0].toSimple(runtime)))
+        }*/
+        // NOTE: need to get the above working
+        memberPut("keys", KrashValueArray(data.map {
+            KrashValueString(it.key)
+        }))
     }
 
     fun getData() = data
@@ -186,53 +219,28 @@ class KrashValueMapPair(val key: String, val value: KrashValue) {
 
 class KrashValueMember(val value: KrashValue, val member: String): KrashValue {
 
-    // NOTE: member should be limited to valid ref-like string of chars
-    //       it makes no sense to have things like "string"."literal"
-    //       however it works best in the parser as it is (so check types here)
-
-    override fun resolve(runtime: KrashRuntime): KrashValue {
-
-        // Resolve Member
-        return value.toSimple(runtime).let {
-            // NOTE: should be able to call getMember on any KrashValueSimple object
-
-            // TEMP
-            when(it) {
-                is KrashValueString -> {
-                    when(member) {
-                        "size" -> return KrashValueInteger(it.value.length)
-                        "toList" -> return KrashValueCallable(fun(_: KrashRuntime, _: List<KrashValue>): KrashValue {
-                            return KrashValueArray(it.value.let{
-                                ArrayList<KrashValueString>().apply {
-                                    var pos = 0
-                                    while(pos < it.length) {
-                                        add(KrashValueString(it.substring(pos, pos + 1)))
-                                        pos ++
-                                    }
-                                }
-                            })
-                        })
-
-                        // TEMP
-                        else -> KrashValueNull()
-                    }
-                }
-
-                // TEMP
-                else -> KrashValueNull()
-            }
-        }
-    }
+    override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).memberGet(member)
 
 }
 
-class KrashValueNull: KrashValueSimple {
+class KrashValueNull: KrashValueSimple() {
 
     override fun toString() = "null"
 
 }
 
-class KrashValueString(val value: String): KrashValueSimple, KrashValueIndexPos {
+class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
+    Pair("size", KrashValueInteger(value.length)),
+    Pair("toList", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        KrashValueArray(ArrayList<KrashValueString>().apply {
+            var pos = 0
+            while(pos < value.length) {
+                add(KrashValueString(value.substring(pos, pos + 1)))
+                pos ++
+            }
+        })
+    })
+)), KrashValueIndexPos {
 
     fun getChar(pos: Int) = KrashValueString(pos.let {
 
