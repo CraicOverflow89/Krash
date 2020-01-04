@@ -22,6 +22,9 @@ interface KrashValueSimple: KrashValue {
 
 class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple {
 
+    fun getElement(pos: Int) = valueList[pos]
+    // NOTE: java.lang.NumberFormatException is being thrown here
+
     override fun toSimple(runtime: KrashRuntime) = KrashValueArray(valueList.map {
         it.toSimple(runtime)
     })
@@ -66,13 +69,11 @@ class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): Kra
         // Resolve Index
         value.toSimple(runtime).let {value -> when(value) {
 
-            // Array Position
+            // Array Element
             is KrashValueArray -> {
 
                 // Integer Position
-                if(index is KrashValueInteger) value.valueList[index.value]
-                // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
-                //       java.lang.NumberFormatException is being thrown here
+                if(index is KrashValueInteger) value.getElement(index.value)
 
                 // Invalid Type
                 else throw RuntimeException("Array indexes must be integers!")
@@ -90,29 +91,11 @@ class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): Kra
                 // NOTE: this is where custom exception handling should be added
             }
 
-            // String Position
+            // String Character
             is KrashValueString -> {
 
                 // Integer Position
-                if(index is KrashValueInteger) value.value.let{value ->
-                    KrashValueString(index.value.let {
-
-                        // Negative Position
-                        if(it < 0) value.length + it
-
-                        // Positive Position
-                        else it
-                    }.let{pos ->
-
-                        // Invalid Position
-                        if(pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
-                        // NOTE: come back to this; use custom exceptions later
-
-                        // Fetch Character
-                        value.substring(pos, pos + 1)
-                    })
-                    // NOTE: should do custom checks for index of char position in bounds
-                }
+                if(index is KrashValueInteger) value.getChar(index.value)
 
                 // Invalid Type
                 else throw RuntimeException("Character indexes must be integers!")
@@ -174,6 +157,7 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
     fun getData() = data
 
     fun getData(key: String) = data[key] ?: KrashValueNull()
+    // NOTE: null safety is great but there should be a custom runtime exception being thrown here
 
     override fun toSimple(runtime: KrashRuntime) = KrashValueMap(data.map {
         KrashValueMapPair(it.key, it.value.toSimple(runtime))
@@ -198,6 +182,24 @@ class KrashValueNull: KrashValueSimple {
 }
 
 class KrashValueString(val value: String): KrashValueSimple, KrashValueIndexPos {
+
+    fun getChar(pos: Int) = KrashValueString(pos.let {
+
+        // Negative Position
+        if(it < 0) value.length + it
+
+        // Positive Position
+        else it
+    }.let{pos ->
+
+        // Invalid Position
+        if(pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
+        // NOTE: come back to this; use custom exceptions later
+
+        // Fetch Character
+        value.substring(pos, pos + 1)
+        // NOTE: need to consider complex positions like [1, 3] (char 1 to 3)
+    })
 
     override fun toString() = value
 
