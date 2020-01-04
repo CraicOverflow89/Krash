@@ -18,8 +18,6 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
     }
 
-    override fun toString() = "<native method>"
-
 }
 
 class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {

@@ -29,7 +29,7 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
 class KrashCommandValue(private val value: KrashValue): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
-        return value.resolve(runtime)
+        return value.toSimple(runtime)
     }
 
 }

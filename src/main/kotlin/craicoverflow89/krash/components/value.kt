@@ -134,12 +134,9 @@ class KrashValueInteger(val value: Int): KrashValueSimple, KrashValueIndexPos {
 
 }
 
-class KrashValueInvoke(private val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
+class KrashValueInvoke(val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).let {
-
-        // NOTE: above just checks if ref maps to something in the heap
-        //       but it might be best to first check a different map, that contains BIFs
 
         // Invoke Callable
         if(it is KrashValueCallable) it.invoke(runtime, argumentList)
@@ -199,13 +196,6 @@ class KrashValueMember(val value: KrashValue, val member: KrashValue): KrashValu
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
-        // NOTE: need to lookup members (properties, methods, globals) for this value
-        //       properties could be things like length (int) for string
-        //       members could be things like join (string) for array
-        //       globals could be things like type (?) that exist on supertype of value
-        // NOTE: should have a new interface like KrashValueMemberType
-        //       but it's just ref, indexes and invocations really
-
         // Resolution Logic
         fun resolve(member: String): KrashValue {
 
@@ -232,18 +222,45 @@ class KrashValueMember(val value: KrashValue, val member: KrashValue): KrashValu
                             else -> KrashValueNull()
                         }
                     }
+
+                    // TEMP
                     else -> KrashValueNull()
                 }
             }
         }
 
-        // Resolve Member
-        return when(member) {
-            is KrashValueIndex -> member.withValue(resolve("member.value"))
-            is KrashValueInvoke -> member.withValue(resolve("member.value"))
+        // Wrap Logic
+        fun wrapMember(member: KrashValue) = when(member) {
+
+            // NOTE: this is all grand until we have nested index / invoke elements (eg: "James".toList()[0] or whatever)
+            //       need to keep invoking withValue for each index / invoke
+
+            // Indexed Member
+            is KrashValueIndex -> {
+                if(member.value is KrashValueReference) member.withValue(resolve(member.value.ref.value))
+                // NOTE: if member.value is index or invoke then wrap it again
+                //else wrapMember(member.value)
+                else throw RuntimeException("recursion issue")
+                // TEMP
+            }
+
+            // Invoke Member
+            is KrashValueInvoke -> {
+                if(member.value is KrashValueReference) member.withValue(resolve(member.value.ref.value))
+                //else wrapMember(member.value)
+                else throw RuntimeException("recursion issue")
+                // TEMP
+            }
+
+            // Standard Member
             is KrashValueReference -> resolve(member.ref.value)
+
+            // Invalid Type
             else -> throw RuntimeException("Invalid member!")
         }
+
+        // Resolve Member
+        return wrapMember(member)
     }
 
 }
