@@ -74,7 +74,8 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 }
 
 class KrashValueFile(private val path: String): KrashValueSimple(hashMapOf(
-    Pair("isDirectory", KrashValueBoolean(File(path).isDirectory))
+    Pair("isDirectory", KrashValueBoolean(File(path).isDirectory)),
+    Pair("path", KrashValueString(path))
 )) {
 
     fun toFile() = File(path)
