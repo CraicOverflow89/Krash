@@ -54,26 +54,40 @@ class KrashValueFile(private val path: String): KrashValueSimple {
 
 }
 
-class KrashValueIndex(val ref: KrashValueReference, val pos: String): KrashValue {
+class KrashValueIndex(val ref: KrashValueReference, val indexList: List<String>): KrashValue {
 
-    override fun resolve(runtime: KrashRuntime): KrashValue = runtime.heapGet(ref.ref).let {
-        when(it) {
+    override fun resolve(runtime: KrashRuntime): KrashValue {
+
+        // Resolution Logic
+        fun resolve(value: KrashValue, index: String): KrashValue = when(value) {
 
             // Array Position
-            is KrashValueArray -> it.valueList[Integer.parseInt(pos)]
+            is KrashValueArray -> value.valueList[Integer.parseInt(index)]
+            // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
             // NOTE: this is where custom exception handling should be added
             //       java.lang.NumberFormatException is being thrown here
 
             // Map Key
-            is KrashValueMap -> it.getData(pos)
+            is KrashValueMap -> value.getData(index)
 
             // Invalid Type
-            else -> throw RuntimeException("Cannot access index $pos of this value!")
+            else -> throw RuntimeException("Cannot access index $index of this value!")
             // NOTE: come back to this; use custom exceptions later
         }
+
+        // Resolve Indexes
+        var result: KrashValue = runtime.heapGet(ref.ref)
+        var indexPos = 0
+        while(indexPos < indexList.size) {
+            result = resolve(result, indexList[indexPos])
+            indexPos ++
+        }
+        return result
     }
 
-    override fun toString() = "$ref[$pos]"
+    override fun toString() = "$ref${indexList.joinToString("") {
+        "[$it]"
+    }}"
 
 }
 

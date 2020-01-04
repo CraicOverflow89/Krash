@@ -111,9 +111,18 @@ valueCallable returns [KrashValue result]
     ;
 
 valueIndex returns [KrashValueIndex result]
-    :   valueRef SQBR1 valueIndexPos SQBR2
+    :   {ArrayList<String> index = new ArrayList<String>();}
+        valueRef
+        SQBR1
+        i1 = valueIndexPos {index.add($i1.result);}
+        SQBR2
+        (
+            SQBR1
+            i2 = valueIndexPos {index.add($i2.result);}
+            SQBR2
+        )*
         // NOTE: what about array/map literal with index positions
-        {$result = new KrashValueIndex($valueRef.result, $valueIndexPos.result);}
+        {$result = new KrashValueIndex($valueRef.result, index);}
         // NOTE: need to change parseInt to class when parsing indexes like [0, 2, -1]
     ;
 
