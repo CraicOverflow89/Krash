@@ -116,6 +116,8 @@ class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): Kra
 
     override fun toString() = "$value[$index]"
 
+    fun withValue(value: KrashValue) = KrashValueIndex(value, index)
+
 }
 
 interface KrashValueIndexPos {
@@ -148,6 +150,8 @@ class KrashValueInvoke(private val value: KrashValue, private val argumentList: 
     }
 
     override fun toString() = "<invoke>"
+
+    fun withValue(value: KrashValue) = KrashValueInvoke(value, argumentList)
 
 }
 
@@ -184,6 +188,63 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
 class KrashValueMapPair(val key: String, val value: KrashValue) {
 
     override fun toString() = "$key: $value"
+
+}
+
+class KrashValueMember(val value: KrashValue, val member: KrashValue): KrashValue {
+
+    // NOTE: member should be limited to valid ref-like string of chars
+    //       it makes no sense to have things like "string"."literal"
+    //       however it works best in the parser as it is (so check types here)
+
+    override fun resolve(runtime: KrashRuntime): KrashValue {
+
+        // NOTE: need to lookup members (properties, methods, globals) for this value
+        //       properties could be things like length (int) for string
+        //       members could be things like join (string) for array
+        //       globals could be things like type (?) that exist on supertype of value
+        // NOTE: should have a new interface like KrashValueMemberType
+        //       but it's just ref, indexes and invocations really
+
+        // Resolution Logic
+        fun resolve(member: String): KrashValue {
+
+            // TEMP
+            return value.toSimple(runtime).let {
+                // NOTE: should be able to call getMember on any KrashValueSimple object
+                when(it) {
+                    is KrashValueString -> {
+                        when(member) {
+                            "size" -> return KrashValueInteger(it.value.length)
+                            "toList" -> return KrashValueCallable(fun(_: KrashRuntime, _: List<KrashValue>): KrashValue {
+                                return KrashValueArray(it.value.let{
+                                    ArrayList<KrashValueString>().apply {
+                                        var pos = 0
+                                        while(pos < it.length) {
+                                            add(KrashValueString(it.substring(pos, pos + 1)))
+                                            pos ++
+                                        }
+                                    }
+                                })
+                            })
+
+                            // TEMP
+                            else -> KrashValueNull()
+                        }
+                    }
+                    else -> KrashValueNull()
+                }
+            }
+        }
+
+        // Resolve Member
+        return when(member) {
+            is KrashValueIndex -> member.withValue(resolve("member.value"))
+            is KrashValueInvoke -> member.withValue(resolve("member.value"))
+            is KrashValueReference -> resolve(member.ref.value)
+            else -> throw RuntimeException("Invalid member!")
+        }
+    }
 
 }
 

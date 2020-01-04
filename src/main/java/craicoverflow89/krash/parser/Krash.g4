@@ -73,6 +73,8 @@ value returns [KrashValue result]
             valueIndex {$result = new KrashValueIndex($result, $valueIndex.result);}
         |
             valueInvoke {$result = new KrashValueInvoke($result, $valueInvoke.result);}
+        |
+            valueMember {$result = new KrashValueMember($result, $valueMember.result);}
         )*
     ;
 
@@ -178,6 +180,11 @@ valueMapPairKey
     :   (ALPHA | DIGIT | UNDER)+
     ;
 
+valueMember returns [KrashValue result]
+    :   FULLS value
+        {$result = $value.result;}
+    ;
+
 valueNull returns [KrashValueNull result]
     :   'null' {$result = new KrashValueNull();}
     ;
@@ -201,7 +208,7 @@ valueString returns [KrashValueString result]
     ;
 
 valueStringChars
-    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | MINUS | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | FULLS | MINUS | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 // Lexer Rules
@@ -214,6 +221,7 @@ CUBR1: '{';
 CUBR2: '}';
 DIGIT: [0-9];
 EQUAL: '=';
+FULLS: '.';
 MINUS: '-';
 NLINE: [\n];
 PLUS: '+';
