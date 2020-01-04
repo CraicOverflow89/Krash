@@ -14,4 +14,3 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
  - spaces in string literals are causing issues (whitespace)
  - trying to use `true` as reference throws parser exception instead of being handled
- - broken ref to things like `&list[1]` (value is being copied)

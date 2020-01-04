@@ -12,12 +12,6 @@ interface KrashValue {
         return result
     }
 
-    fun toSimpleRef(runtime: KrashRuntime): KrashValue {
-        var result: KrashValue = resolve(runtime)
-        while(result !is KrashValueSimple && result !is KrashValueReference) result = result.toSimpleRef(runtime)
-        return result
-    }
-
 }
 
 interface KrashValueSimple: KrashValue {
@@ -60,62 +54,49 @@ class KrashValueFile(private val path: String): KrashValueSimple {
 
 }
 
-class KrashValueIndex(val value: KrashValue, val indexList: List<KrashValueIndexPos>): KrashValue {
+class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): KrashValue {
 
-    override fun resolve(runtime: KrashRuntime): KrashValue {
+    override fun resolve(runtime: KrashRuntime): KrashValue = index.let{
 
-        // Resolution Logic
-        fun resolve(value: KrashValue, index: KrashValueIndexPos): KrashValue {
+        // Resolve Reference
+        if(index is KrashValueReference) index.toSimpleIndex(runtime)
+        else index
+    }.let {index ->
 
-            // Resolve Reference
-            if(index is KrashValueReference) return resolve(value, index.toSimpleIndex(runtime))
+        // Resolve Index
+        value.toSimple(runtime).let {value -> when(value) {
 
-            // Resolve Value
-            return when(value) {
+            // Array Position
+            is KrashValueArray -> {
 
-                // Array Position
-                is KrashValueArray -> {
-
-                    // Integer Position
-                    if(index is KrashValueInteger) value.valueList[index.value]
-                    // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
-                    //       java.lang.NumberFormatException is being thrown here
-
-                    // Invalid Type
-                    else throw RuntimeException("Array indexes must be integers!")
-                    // NOTE: this is where custom exception handling should be added
-                }
-
-                // Map Key
-                is KrashValueMap -> {
-
-                    // String Key
-                    if(index is KrashValueString) value.getData(index.value)
-
-                    // Invalid Type
-                    else throw RuntimeException("Map indexes must be strings!")
-                    // NOTE: this is where custom exception handling should be added
-                }
+                // Integer Position
+                if(index is KrashValueInteger) value.valueList[index.value]
+                // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
+                //       java.lang.NumberFormatException is being thrown here
 
                 // Invalid Type
-                else -> throw RuntimeException("Cannot access index $index of this value!")
-                // NOTE: come back to this; use custom exceptions later
+                else throw RuntimeException("Array indexes must be integers!")
+                // NOTE: this is where custom exception handling should be added
             }
-        }
 
-        // Resolve Indexes
-        var result: KrashValue = value.toSimpleRef(runtime)
-        var indexPos = 0
-        while(indexPos < indexList.size) {
-            result = resolve(result, indexList[indexPos])
-            indexPos ++
-        }
-        return result
+            // Map Key
+            is KrashValueMap -> {
+
+                // String Key
+                if(index is KrashValueString) value.getData(index.value)
+
+                // Invalid Type
+                else throw RuntimeException("Map indexes must be strings!")
+                // NOTE: this is where custom exception handling should be added
+            }
+
+            // Invalid Type
+            else -> throw RuntimeException("Cannot access index $index of this value!")
+            // NOTE: come back to this; use custom exceptions later
+        }}
     }
 
-    override fun toString() = "$value${indexList.joinToString("") {
-        "[$it]"
-    }}"
+    override fun toString() = "$value[$index]"
 
 }
 

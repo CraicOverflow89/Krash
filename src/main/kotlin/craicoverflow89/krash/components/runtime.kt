@@ -49,17 +49,17 @@ class KrashRuntime(cwd: String) {
 
     fun heapPut(ref: KrashReference, value: KrashValue) {
 
-        // Keep Reference
-        if(value is KrashValueReference && value.byRef) {
+        // Persist Reference
+        if(
+            // Standard Reference
+            (value is KrashValueReference && value.byRef)
+        ||
+            // Indexed Reference
+            (value is KrashValueIndex && value.value is KrashValueReference && value.value.byRef)
+        ) {
             heap[ref.value] = value
             // NOTE: might want to prevent circular references from being created with &ref
         }
-
-        // Indexed Reference
-        /*else if(value is KrashValueIndex && value.ref.byRef) {
-            heap[ref.value] = value
-        }*/
-        // NOTE: broken ref to things like &list[1]
 
         // Resolve Values
         else heap[ref.value] = value.toSimple(this)

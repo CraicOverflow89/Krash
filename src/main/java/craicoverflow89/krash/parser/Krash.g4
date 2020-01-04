@@ -111,28 +111,17 @@ valueCallable returns [KrashValue result]
         {$result = new KrashValueNull();}
     ;
 
-valueIndex returns [ArrayList<KrashValueIndexPos> result]
-    :   {ArrayList<KrashValueIndexPos> index = new ArrayList<KrashValueIndexPos>();}
-        SQBR1
-        i1 = valueIndexPos {index.add($i1.result);}
-        SQBR2
+valueIndex returns [KrashValueIndexPos result]
+    :   SQBR1
         (
-            SQBR1
-            i2 = valueIndexPos {index.add($i2.result);}
-            SQBR2
-        )*
-        {$result = index;}
-        // NOTE: could add array indexes like in Python [0, 2, -1]
-    ;
-
-valueIndexPos returns [KrashValueIndexPos result]
-    :   (
             valueInteger {$result = $valueInteger.result;}
+            // NOTE: could add array indexes like in Python [0, 2, -1]
         |
             valueRef {$result = $valueRef.result;}
         |
             valueString {$result = $valueString.result;}
         )
+        SQBR2
     ;
 
 valueInteger returns [KrashValueInteger result]
