@@ -90,6 +90,35 @@ class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): Kra
                 // NOTE: this is where custom exception handling should be added
             }
 
+            // String Position
+            is KrashValueString -> {
+
+                // Integer Position
+                if(index is KrashValueInteger) value.value.let{value ->
+                    KrashValueString(index.value.let {
+
+                        // Negative Position
+                        if(it < 0) value.length + it
+
+                        // Positive Position
+                        else it
+                    }.let{pos ->
+
+                        // Invalid Position
+                        if(pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
+                        // NOTE: come back to this; use custom exceptions later
+
+                        // Fetch Character
+                        value.substring(pos, pos + 1)
+                    })
+                    // NOTE: should do custom checks for index of char position in bounds
+                }
+
+                // Invalid Type
+                else throw RuntimeException("Character indexes must be integers!")
+                // NOTE: come back to this; use custom exceptions later
+            }
+
             // Invalid Type
             else -> throw RuntimeException("Cannot access index $index of this value!")
             // NOTE: come back to this; use custom exceptions later
