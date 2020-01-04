@@ -22,8 +22,14 @@ interface KrashValueSimple: KrashValue {
 
 class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple {
 
-    fun getElement(pos: Int) = valueList[pos]
-    // NOTE: java.lang.NumberFormatException is being thrown here
+    fun getElement(pos: Int): KrashValue {
+
+        // Return Element
+        return if(pos < valueList.size) valueList[pos]
+
+        // Invalid Index
+        else throw RuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
+    }
 
     override fun toSimple(runtime: KrashRuntime) = KrashValueArray(valueList.map {
         it.toSimple(runtime)
@@ -156,8 +162,14 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
 
     fun getData() = data
 
-    fun getData(key: String) = data[key] ?: KrashValueNull()
-    // NOTE: null safety is great but there should be a custom runtime exception being thrown here
+    fun getData(key: String): KrashValue {
+
+        // Return Element
+        return if(data.containsKey(key)) data[key]!!
+
+        // Invalid Index
+        else throw RuntimeException("Invalid key '$key' for map!")
+    }
 
     override fun toSimple(runtime: KrashRuntime) = KrashValueMap(data.map {
         KrashValueMapPair(it.key, it.value.toSimple(runtime))
