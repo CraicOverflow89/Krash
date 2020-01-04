@@ -55,8 +55,6 @@ value returns [KrashValue result]
     :   (
             valueArray {$result = $valueArray.result;}
         |
-            valueIndex {$result = $valueIndex.result;}
-        |
             valueBoolean {$result = $valueBoolean.result;}
         |
             valueCallable {$result = $valueCallable.result;}
@@ -72,6 +70,8 @@ value returns [KrashValue result]
             valueString {$result = $valueString.result;}
         )
         (
+            valueIndex {$result = new KrashValueIndex($result, $valueIndex.result);}
+        |
             valueInvoke {$result = new KrashValueInvoke($result, $valueInvoke.result);}
         )*
     ;
@@ -111,9 +111,8 @@ valueCallable returns [KrashValue result]
         {$result = new KrashValueNull();}
     ;
 
-valueIndex returns [KrashValueIndex result]
+valueIndex returns [ArrayList<KrashValueIndexPos> result]
     :   {ArrayList<KrashValueIndexPos> index = new ArrayList<KrashValueIndexPos>();}
-        valueRef
         SQBR1
         i1 = valueIndexPos {index.add($i1.result);}
         SQBR2
@@ -122,8 +121,7 @@ valueIndex returns [KrashValueIndex result]
             i2 = valueIndexPos {index.add($i2.result);}
             SQBR2
         )*
-        // NOTE: what about array/map literal with index positions
-        {$result = new KrashValueIndex($valueRef.result, index);}
+        {$result = index;}
         // NOTE: could add array indexes like in Python [0, 2, -1]
     ;
 

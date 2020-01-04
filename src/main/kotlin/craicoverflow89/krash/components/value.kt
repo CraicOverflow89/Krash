@@ -12,6 +12,12 @@ interface KrashValue {
         return result
     }
 
+    fun toSimpleRef(runtime: KrashRuntime): KrashValue {
+        var result: KrashValue = resolve(runtime)
+        while(result !is KrashValueSimple && result !is KrashValueReference) result = result.toSimpleRef(runtime)
+        return result
+    }
+
 }
 
 interface KrashValueSimple: KrashValue {
@@ -54,7 +60,7 @@ class KrashValueFile(private val path: String): KrashValueSimple {
 
 }
 
-class KrashValueIndex(val ref: KrashValueReference, val indexList: List<KrashValueIndexPos>): KrashValue {
+class KrashValueIndex(val value: KrashValue, val indexList: List<KrashValueIndexPos>): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
@@ -98,7 +104,7 @@ class KrashValueIndex(val ref: KrashValueReference, val indexList: List<KrashVal
         }
 
         // Resolve Indexes
-        var result: KrashValue = runtime.heapGet(ref.ref)
+        var result: KrashValue = value.toSimpleRef(runtime)
         var indexPos = 0
         while(indexPos < indexList.size) {
             result = resolve(result, indexList[indexPos])
@@ -107,7 +113,7 @@ class KrashValueIndex(val ref: KrashValueReference, val indexList: List<KrashVal
         return result
     }
 
-    override fun toString() = "$ref${indexList.joinToString("") {
+    override fun toString() = "$value${indexList.joinToString("") {
         "[$it]"
     }}"
 

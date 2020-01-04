@@ -56,9 +56,10 @@ class KrashRuntime(cwd: String) {
         }
 
         // Indexed Reference
-        else if(value is KrashValueIndex && value.ref.byRef) {
+        /*else if(value is KrashValueIndex && value.ref.byRef) {
             heap[ref.value] = value
-        }
+        }*/
+        // NOTE: broken ref to things like &list[1]
 
         // Resolve Values
         else heap[ref.value] = value.toSimple(this)
