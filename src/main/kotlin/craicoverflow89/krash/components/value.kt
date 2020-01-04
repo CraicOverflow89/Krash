@@ -54,25 +54,47 @@ class KrashValueFile(private val path: String): KrashValueSimple {
 
 }
 
-class KrashValueIndex(val ref: KrashValueReference, val indexList: List<String>): KrashValue {
+class KrashValueIndex(val ref: KrashValueReference, val indexList: List<KrashValueIndexPos>): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
         // Resolution Logic
-        fun resolve(value: KrashValue, index: String): KrashValue = when(value) {
+        fun resolve(value: KrashValue, index: KrashValueIndexPos): KrashValue {
 
-            // Array Position
-            is KrashValueArray -> value.valueList[Integer.parseInt(index)]
-            // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
-            // NOTE: this is where custom exception handling should be added
-            //       java.lang.NumberFormatException is being thrown here
+            // Resolve Reference
+            if(index is KrashValueReference) return resolve(value, index.toSimpleIndex(runtime))
 
-            // Map Key
-            is KrashValueMap -> value.getData(index)
+            // Resolve Value
+            return when(value) {
 
-            // Invalid Type
-            else -> throw RuntimeException("Cannot access index $index of this value!")
-            // NOTE: come back to this; use custom exceptions later
+                // Array Position
+                is KrashValueArray -> {
+
+                    // Integer Position
+                    if(index is KrashValueInteger) value.valueList[index.value]
+                    // NOTE: maybe KrashValueArray should have a method for getElement() (returns KrashValueNull if none found?)
+                    //       java.lang.NumberFormatException is being thrown here
+
+                    // Invalid Type
+                    else throw RuntimeException("Array indexes must be integers!")
+                    // NOTE: this is where custom exception handling should be added
+                }
+
+                // Map Key
+                is KrashValueMap -> {
+
+                    // String Key
+                    if(index is KrashValueString) value.getData(index.value)
+
+                    // Invalid Type
+                    else throw RuntimeException("Map indexes must be strings!")
+                    // NOTE: this is where custom exception handling should be added
+                }
+
+                // Invalid Type
+                else -> throw RuntimeException("Cannot access index $index of this value!")
+                // NOTE: come back to this; use custom exceptions later
+            }
         }
 
         // Resolve Indexes
@@ -91,7 +113,15 @@ class KrashValueIndex(val ref: KrashValueReference, val indexList: List<String>)
 
 }
 
-class KrashValueInteger(val value: Int): KrashValueSimple {
+interface KrashValueIndexPos {
+
+    fun toSimpleIndex(runtime: KrashRuntime): KrashValueIndexPos {
+        return this
+    }
+
+}
+
+class KrashValueInteger(val value: Int): KrashValueSimple, KrashValueIndexPos {
 
     override fun toString() = value.toString()
 
@@ -151,13 +181,13 @@ class KrashValueNull: KrashValueSimple {
 
 }
 
-class KrashValueString(val value: String): KrashValueSimple {
+class KrashValueString(val value: String): KrashValueSimple, KrashValueIndexPos {
 
     override fun toString() = value
 
 }
 
-class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashValue {
+class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashValue, KrashValueIndexPos {
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
@@ -166,6 +196,16 @@ class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashVal
 
         // Custom Reference
         return runtime.heapGet(ref)
+    }
+
+    override fun toSimpleIndex(runtime: KrashRuntime) = this.toSimple(runtime).let {
+
+        // Invalid Type
+        if(it !is KrashValueIndexPos) throw RuntimeException("Value is not a valid index!")
+        // NOTE: come back to this; use custom exceptions later
+
+        // Return Index
+        it as KrashValueIndexPos
     }
 
     override fun toString() = ref.value

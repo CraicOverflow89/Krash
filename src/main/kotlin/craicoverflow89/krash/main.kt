@@ -85,12 +85,14 @@ fun loadShell() {
 
         // Print Line
         print("${cwd.replace("\\", "/")} \$ ")
+        // NOTE: need to get cwd from runtime when cd is added
 
         // Read Line
         val input = readLine() ?: continue
 
         // Exit Command
         if(input == "exit") break
+        // NOTE: should probably invoke runtime.exit(0) here now
 
         // Empty Command
         if(input.isEmpty()) continue

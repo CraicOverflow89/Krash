@@ -111,7 +111,7 @@ valueCallable returns [KrashValue result]
     ;
 
 valueIndex returns [KrashValueIndex result]
-    :   {ArrayList<String> index = new ArrayList<String>();}
+    :   {ArrayList<KrashValueIndexPos> index = new ArrayList<KrashValueIndexPos>();}
         valueRef
         SQBR1
         i1 = valueIndexPos {index.add($i1.result);}
@@ -123,24 +123,17 @@ valueIndex returns [KrashValueIndex result]
         )*
         // NOTE: what about array/map literal with index positions
         {$result = new KrashValueIndex($valueRef.result, index);}
-        // NOTE: need to change parseInt to class when parsing indexes like [0, 2, -1]
+        // NOTE: could add array indexes like in Python [0, 2, -1]
     ;
 
-valueIndexPos returns [String result]
+valueIndexPos returns [KrashValueIndexPos result]
     :   (
-            valueIndexPosDigits {$result = $valueIndexPosDigits.text;}
+            valueInteger {$result = $valueInteger.result;}
         |
-            valueIndexPosKey {$result = $valueIndexPosKey.result;}
+            valueRef {$result = $valueRef.result;}
+        |
+            valueString {$result = $valueString.result;}
         )
-    ;
-
-valueIndexPosDigits
-    :   DIGIT+
-    ;
-
-valueIndexPosKey returns [String result]
-    :   QUOTE valueMapPairKey QUOTE
-        {$result = $valueMapPairKey.text;}
     ;
 
 valueInteger returns [KrashValueInteger result]
