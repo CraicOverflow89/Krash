@@ -11,6 +11,5 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Issues
 
- - no exception thrown but no action taken when using int as ref
  - spaces in string literals are causing issues (whitespace)
  - trying to use `true` as reference throws parser exception instead of being handled

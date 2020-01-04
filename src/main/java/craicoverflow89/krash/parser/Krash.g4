@@ -48,7 +48,7 @@ ref returns [KrashReference result]
     ;
 
 refChars
-    :   (ALPHA | DIGIT | UNDER)+
+    :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
     ;
 
 value returns [KrashValue result]
