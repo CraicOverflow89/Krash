@@ -4,7 +4,7 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
     companion object {
 
-        val nativeMethods = mapOf(
+        private val nativeMethods = mapOf(
             Pair("echo", KrashMethodEcho()),
             Pair("exit", KrashMethodExit()),
             Pair("file", KrashMethodFile())
@@ -13,6 +13,8 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
         fun nativeContains(name: String) = nativeMethods.containsKey(name)
 
         fun nativeGet(name: String) = nativeMethods[name] ?: throw RuntimeException("Could not find '$name' native method!")
+
+        fun nativeReserved() = nativeMethods.keys
 
     }
 

@@ -8,8 +8,18 @@ class KrashReserved {
 
     companion object {
 
-        private val reservedTerms = listOf("echo", "exit", "file", "fun")
-        // NOTE: should use keys from KrashMethod.nativeMethods
+        private val reservedTerms = ArrayList<String>().apply {
+
+            // Keywords
+            addAll(listOf("fun"))
+            // NOTE: this is where if/else/while could be added
+
+            // Literals
+            addAll(listOf("false", "true"))
+
+            // Methods
+            addAll(KrashMethod.nativeReserved())
+        }
 
         fun contains(value: String) = reservedTerms.contains(value.toLowerCase())
 

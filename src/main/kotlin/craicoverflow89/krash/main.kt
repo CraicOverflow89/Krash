@@ -98,7 +98,12 @@ fun loadShell() {
         if(input.isEmpty()) continue
 
         // Invoke Command
-        parse(input).invoke(runtime)
+        try {parse(input).invoke(runtime)}
+
+        // Error Handling
+        catch(ex: RuntimeException) {
+            println("ERROR: ${ex.message}")
+        }
     }
 
     // Shell Done

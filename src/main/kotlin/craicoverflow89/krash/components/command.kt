@@ -15,6 +15,7 @@ class KrashCommandDeclare(private val ref: KrashReference, private val value: Kr
             throw RuntimeException("Could not create a reference with the reserved term '${ref.value}'")
             // NOTE: come back to this; use custom exceptions later
         }
+        // NOTE: maybe there should be a KrashReference.isValid / validate method instead of writing logic here
 
         // Update Heap
         runtime.heapPut(ref, value)
