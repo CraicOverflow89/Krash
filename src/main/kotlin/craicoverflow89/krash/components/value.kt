@@ -22,6 +22,10 @@ interface KrashValueSimple: KrashValue {
 
 class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple {
 
+    override fun toSimple(runtime: KrashRuntime) = KrashValueArray(valueList.map {
+        it.toSimple(runtime)
+    })
+
     override fun toString() = valueList.joinToString(", ", "[", "]") {
         it.toString()
     }
@@ -110,6 +114,10 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple {
     fun getData() = data
 
     fun getData(key: String) = data[key] ?: KrashValueNull()
+
+    override fun toSimple(runtime: KrashRuntime) = KrashValueMap(data.map {
+        KrashValueMapPair(it.key, it.value.toSimple(runtime))
+    })
 
     override fun toString() = valueList.joinToString(", ", "{", "}") {
         it.toString()

@@ -1,12 +1,15 @@
 package craicoverflow89.krash.components
 
+import kotlin.system.exitProcess
+
 class KrashReference(val value: String)
 
 class KrashReserved {
 
     companion object {
 
-        private val reservedTerms = listOf("echo", "file", "fun")
+        private val reservedTerms = listOf("echo", "exit", "file", "fun")
+        // NOTE: should use keys from KrashMethod.nativeMethods
 
         fun contains(value: String) = reservedTerms.contains(value.toLowerCase())
 
@@ -25,6 +28,10 @@ class KrashRuntime(cwd: String) {
     fun cwd() = cwdPath
 
     fun cwdJoin(value: String) = "$cwdPath/$value"
+
+    fun exit(code: Int) {
+        exitProcess(code)
+    }
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 

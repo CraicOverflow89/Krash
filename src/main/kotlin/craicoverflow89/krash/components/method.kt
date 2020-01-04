@@ -6,6 +6,7 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
         val nativeMethods = mapOf(
             Pair("echo", KrashMethodEcho()),
+            Pair("exit", KrashMethodExit()),
             Pair("file", KrashMethodFile())
         )
 
@@ -21,34 +22,6 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
 class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
-    // Resolution Logic
-    fun resolve(value: KrashValue): String = when(value) {
-
-        // Resolve Array
-        is KrashValueArray -> value.valueList.joinToString(", ", "[", "]") {
-            resolve(it)
-        }
-
-        // Resolve Index
-        is KrashValueIndex -> resolve(value.resolve(runtime))
-
-        // Resolve Map
-        is KrashValueMap -> value.valueList.joinToString(", ", "[", "]") {
-            "${it.key}: ${resolve(it.value)}"
-        }
-
-        // Resolve Reference
-        is KrashValueReference -> {
-            //if(!runtime.heapContains(it.ref))
-            // NOTE: come back to validation
-            resolve(runtime.heapGet(value.ref))
-        }
-
-
-        // Resolve Primitive
-        else -> value.toString()
-    }
-
     // Print Values
     argumentList.forEach {
         println(it.toSimple(runtime))
@@ -56,6 +29,23 @@ class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
 
     // Done
     return KrashValueNull()
+})
+
+class KrashMethodExit: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+
+    // Runtime Exit
+    runtime.exit(argumentList.let {
+
+        // Custom Code
+        if(argumentList.isNotEmpty()) Integer.parseInt(argumentList[0].toSimple(runtime).toString())
+
+        // Default Code
+        else 0
+    })
+
+    // Done
+    return KrashValueNull()
+
 })
 
 class KrashMethodFile: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
