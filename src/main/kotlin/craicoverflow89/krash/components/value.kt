@@ -116,8 +116,6 @@ class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): Kra
 
     override fun toString() = "$value[$index]"
 
-    fun withValue(value: KrashValue) = KrashValueIndex(value, index)
-
 }
 
 interface KrashValueIndexPos {
@@ -134,7 +132,7 @@ class KrashValueInteger(val value: Int): KrashValueSimple, KrashValueIndexPos {
 
 }
 
-class KrashValueInvoke(val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
+class KrashValueInvoke(private val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).let {
 
@@ -147,8 +145,6 @@ class KrashValueInvoke(val value: KrashValue, private val argumentList: List<Kra
     }
 
     override fun toString() = "<invoke>"
-
-    fun withValue(value: KrashValue) = KrashValueInvoke(value, argumentList)
 
 }
 
@@ -188,7 +184,7 @@ class KrashValueMapPair(val key: String, val value: KrashValue) {
 
 }
 
-class KrashValueMember(val value: KrashValue, val member: KrashValue): KrashValue {
+class KrashValueMember(val value: KrashValue, val member: String): KrashValue {
 
     // NOTE: member should be limited to valid ref-like string of chars
     //       it makes no sense to have things like "string"."literal"
@@ -196,71 +192,36 @@ class KrashValueMember(val value: KrashValue, val member: KrashValue): KrashValu
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
-        // Resolution Logic
-        fun resolve(member: String): KrashValue {
+        // Resolve Member
+        return value.toSimple(runtime).let {
+            // NOTE: should be able to call getMember on any KrashValueSimple object
 
             // TEMP
-            return value.toSimple(runtime).let {
-                // NOTE: should be able to call getMember on any KrashValueSimple object
-                when(it) {
-                    is KrashValueString -> {
-                        when(member) {
-                            "size" -> return KrashValueInteger(it.value.length)
-                            "toList" -> return KrashValueCallable(fun(_: KrashRuntime, _: List<KrashValue>): KrashValue {
-                                return KrashValueArray(it.value.let{
-                                    ArrayList<KrashValueString>().apply {
-                                        var pos = 0
-                                        while(pos < it.length) {
-                                            add(KrashValueString(it.substring(pos, pos + 1)))
-                                            pos ++
-                                        }
+            when(it) {
+                is KrashValueString -> {
+                    when(member) {
+                        "size" -> return KrashValueInteger(it.value.length)
+                        "toList" -> return KrashValueCallable(fun(_: KrashRuntime, _: List<KrashValue>): KrashValue {
+                            return KrashValueArray(it.value.let{
+                                ArrayList<KrashValueString>().apply {
+                                    var pos = 0
+                                    while(pos < it.length) {
+                                        add(KrashValueString(it.substring(pos, pos + 1)))
+                                        pos ++
                                     }
-                                })
+                                }
                             })
+                        })
 
-                            // TEMP
-                            else -> KrashValueNull()
-                        }
+                        // TEMP
+                        else -> KrashValueNull()
                     }
-
-                    // TEMP
-                    else -> KrashValueNull()
                 }
+
+                // TEMP
+                else -> KrashValueNull()
             }
         }
-
-        // Wrap Logic
-        fun wrapMember(member: KrashValue) = when(member) {
-
-            // NOTE: this is all grand until we have nested index / invoke elements (eg: "James".toList()[0] or whatever)
-            //       need to keep invoking withValue for each index / invoke
-
-            // Indexed Member
-            is KrashValueIndex -> {
-                if(member.value is KrashValueReference) member.withValue(resolve(member.value.ref.value))
-                // NOTE: if member.value is index or invoke then wrap it again
-                //else wrapMember(member.value)
-                else throw RuntimeException("recursion issue")
-                // TEMP
-            }
-
-            // Invoke Member
-            is KrashValueInvoke -> {
-                if(member.value is KrashValueReference) member.withValue(resolve(member.value.ref.value))
-                //else wrapMember(member.value)
-                else throw RuntimeException("recursion issue")
-                // TEMP
-            }
-
-            // Standard Member
-            is KrashValueReference -> resolve(member.ref.value)
-
-            // Invalid Type
-            else -> throw RuntimeException("Invalid member!")
-        }
-
-        // Resolve Member
-        return wrapMember(member)
     }
 
 }

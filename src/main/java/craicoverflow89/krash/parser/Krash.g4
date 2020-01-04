@@ -180,9 +180,13 @@ valueMapPairKey
     :   (ALPHA | DIGIT | UNDER)+
     ;
 
-valueMember returns [KrashValue result]
-    :   FULLS value
-        {$result = $value.result;}
+valueMember returns [String result]
+    :   FULLS valueMemberChars
+        {$result = $valueMemberChars.text;}
+    ;
+
+valueMemberChars
+    :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
     ;
 
 valueNull returns [KrashValueNull result]
