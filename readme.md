@@ -8,6 +8,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - prevent reserved words being used for map keys?
  - commands for file/directory moving/copying (recursion flag)
  - look at removing `KrashReference` completely in favour of `KrashValueReference`
+ - separate literals and expressions in parser
 
 ### Issues
 

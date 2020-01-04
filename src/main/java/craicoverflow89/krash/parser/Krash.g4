@@ -63,8 +63,6 @@ value returns [KrashValue result]
         |
             valueInteger {$result = $valueInteger.result;}
         |
-            valueInvoke {$result = $valueInvoke.result;}
-        |
             valueMap {$result = $valueMap.result;}
         |
             valueNull {$result = $valueNull.result;}
@@ -73,6 +71,9 @@ value returns [KrashValue result]
         |
             valueString {$result = $valueString.result;}
         )
+        (
+            valueInvoke {$result = new KrashValueInvoke($result, $valueInvoke.result);}
+        )*
     ;
 
 valueArray returns [KrashValueArray result]
@@ -153,9 +154,8 @@ valueIntegerDigits
     :   DIGIT+
     ;
 
-valueInvoke returns [KrashValueInvoke result]
+valueInvoke returns [ArrayList<KrashValue> result]
     :   {ArrayList<KrashValue> args = new ArrayList<KrashValue>();}
-        valueRef
         STBR1
         (
             a1 = value {args.add($a1.result);}
@@ -165,7 +165,7 @@ valueInvoke returns [KrashValueInvoke result]
             )*
         )?
         STBR2
-        {$result = new KrashValueInvoke($valueRef.result, args);}
+        {$result = args;}
     ;
 
 valueMap returns [KrashValueMap result]

@@ -127,9 +127,9 @@ class KrashValueInteger(val value: Int): KrashValueSimple, KrashValueIndexPos {
 
 }
 
-class KrashValueInvoke(private val ref: KrashValueReference, private val argumentList: List<KrashValue>): KrashValue {
+class KrashValueInvoke(private val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
 
-    override fun resolve(runtime: KrashRuntime): KrashValue = ref.resolve(runtime).let {
+    override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).let {
 
         // NOTE: above just checks if ref maps to something in the heap
         //       but it might be best to first check a different map, that contains BIFs

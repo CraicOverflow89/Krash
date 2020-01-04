@@ -15,7 +15,7 @@ class KrashReserved {
             // NOTE: this is where if/else/while could be added
 
             // Literals
-            addAll(listOf("false", "true"))
+            addAll(listOf("false", "null", "true"))
 
             // Methods
             addAll(KrashMethod.nativeReserved())
