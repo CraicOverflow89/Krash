@@ -79,72 +79,7 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
 }
 
-class KrashValueIndex(val value: KrashValue, private val index: KrashValueIndexPos):
-    KrashValue {
-
-    override fun resolve(runtime: KrashRuntime): KrashValue = index.let{
-
-        // Resolve Reference
-        if(index is KrashValueReference) index.toSimpleIndex(runtime)
-        else index
-    }.let {index ->
-
-        // Resolve Index
-        value.toSimple(runtime).let {value -> when(value) {
-
-            // Array Element
-            is KrashValueArray -> {
-
-                // Integer Position
-                if(index is KrashValueInteger) value.getElement(index.value)
-
-                // Invalid Type
-                else throw RuntimeException("Array indexes must be integers!")
-                // NOTE: this is where custom exception handling should be added
-            }
-
-            // Map Key
-            is KrashValueMap -> {
-
-                // String Key
-                if(index is KrashValueString) value.getData(index.value)
-
-                // Invalid Type
-                else throw RuntimeException("Map indexes must be strings!")
-                // NOTE: this is where custom exception handling should be added
-            }
-
-            // String Character
-            is KrashValueString -> {
-
-                // Integer Position
-                if(index is KrashValueInteger) value.getChar(index.value)
-
-                // Invalid Type
-                else throw RuntimeException("Character indexes must be integers!")
-                // NOTE: come back to this; use custom exceptions later
-            }
-
-            // Invalid Type
-            else -> throw RuntimeException("Cannot access index $index of this value!")
-            // NOTE: come back to this; use custom exceptions later
-        }}
-    }
-
-    override fun toString() = "$value[$index]"
-
-}
-
-interface KrashValueIndexPos {
-
-    fun toSimpleIndex(runtime: KrashRuntime): KrashValueIndexPos {
-        return this
-    }
-
-}
-
-class KrashValueInteger(val value: Int): KrashValueSimple(),
-    KrashValueIndexPos {
+class KrashValueInteger(val value: Int): KrashValueSimple() {
 
     override fun toString() = value.toString()
 
@@ -252,7 +187,7 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
                 }
             })
         })
-)), KrashValueIndexPos {
+)) {
 
     fun getChar(pos: Int) = KrashValueString(pos.let {
 
@@ -276,7 +211,7 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
 
 }
 
-class KrashValueReference(val value: String, val byRef: Boolean): KrashValue, KrashValueIndexPos {
+class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
@@ -288,16 +223,6 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue, Kr
 
         // Custom Reference
         return runtime.heapGet(value)
-    }
-
-    override fun toSimpleIndex(runtime: KrashRuntime) = this.toSimple(runtime).let {
-
-        // Invalid Type
-        if(it !is KrashValueIndexPos) throw RuntimeException("Value is not a valid index!")
-        // NOTE: come back to this; use custom exceptions later
-
-        // Return Index
-        it as KrashValueIndexPos
     }
 
     override fun toString() = value

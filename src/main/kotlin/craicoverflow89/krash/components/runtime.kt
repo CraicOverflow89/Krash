@@ -2,7 +2,6 @@ package craicoverflow89.krash.components
 
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueClass
-import craicoverflow89.krash.components.objects.KrashValueIndex
 import craicoverflow89.krash.components.objects.KrashValueNull
 import craicoverflow89.krash.components.objects.KrashValueReference
 import kotlin.system.exitProcess
@@ -61,9 +60,11 @@ class KrashRuntime(cwd: String) {
         if(
             // Standard Reference
             (value is KrashValueReference && value.byRef)
-        ||
+        /*||
             // Indexed Reference
             (value is KrashValueIndex && value.value is KrashValueReference && value.value.byRef)
+            // NOTE: need to sort this with expressions
+        */
         ) {
             heap[ref] = value
             // NOTE: might want to prevent circular references from being created with &ref

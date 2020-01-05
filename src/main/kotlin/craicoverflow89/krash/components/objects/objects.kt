@@ -68,14 +68,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
 
     }
 
-    fun create(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValueObject {
-
-        // NOTE: validate argumentList against expect constructor args
-
-        // TEMP
-        return KrashValueObject(this, init(runtime, argumentList))
-        // NOTE: come back to this
-    }
+    fun create(runtime: KrashRuntime, argumentList: List<KrashValue>) = KrashValueObject(this, init(runtime, argumentList))
 
     override fun toString() = "<class ${name}>"
 

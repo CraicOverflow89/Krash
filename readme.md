@@ -23,14 +23,13 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - ensure that `null` is not being returned when errors should be thrown
  - replace loose calls to `println` with a runtime method
  - all `KrashValue` classes should have private values and methods to get them
- - remove all old classes that have are being handled by expressions now
- - look into removing `KrashValueIndexPos`
  - string buffer object
  - other stuff
    - vsc language pack
 
 ### Issues
 
+ - references don't persist with `name = &data["name"]` since moving to experssions
  - spaces in string literals are causing issues (whitespace)
  - trying to use `true` as reference throws parser exception instead of being handled
  - the map `contains` member function needs finishing
