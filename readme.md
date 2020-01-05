@@ -16,6 +16,8 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - ensure that `null` is not being returned when errors should be thrown
  - replace loose calls to `println` with a runtime method
  - all `KrashValue` classes should have private values and methods to get them
+ - remove all old classes that have are being handled by expressions now
+ - look into removing `KrashValueIndexPos`
 
 ### Issues
 

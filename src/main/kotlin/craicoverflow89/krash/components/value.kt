@@ -14,24 +14,6 @@ interface KrashValue {
 
 }
 
-abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
-
-    fun memberContains(key: String) = memberList.containsKey(key)
-
-    fun memberGet(key: String): KrashValue = memberList[key] ?: throw RuntimeException("No member '$key' exists on value!")
-
-    fun memberPut(key: String, value: KrashValue) {
-        memberList[key] = value
-    }
-
-    fun memberPut(key: String, value: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) {
-        memberList[key] = KrashValueCallable(value)
-    }
-
-    override fun resolve(runtime: KrashRuntime) = this
-
-}
-
 class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMapOf(
     Pair("join", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
         KrashValueString(valueList.joinToString(""))
@@ -185,22 +167,6 @@ class KrashValueInteger(val value: Int): KrashValueSimple(), KrashValueIndexPos 
 
 }
 
-class KrashValueInvoke(private val value: KrashValue, private val argumentList: List<KrashValue>): KrashValue {
-
-    override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).let {
-
-        // Invoke Callable
-        if(it is KrashValueCallable) it.invoke(runtime, argumentList)
-
-        // Invalid Type
-        else throw RuntimeException("Could not invoke this non-callable value!")
-        // NOTE: come back to this; use custom exceptions later
-    }
-
-    override fun toString() = "<invoke>"
-
-}
-
 class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() {
 
     // Create Data
@@ -249,15 +215,27 @@ class KrashValueMapPair(val key: String, val value: KrashValue) {
 
 }
 
-class KrashValueMember(val value: KrashValue, val member: String): KrashValue {
-
-    override fun resolve(runtime: KrashRuntime): KrashValue = value.toSimple(runtime).memberGet(member)
-
-}
-
 class KrashValueNull: KrashValueSimple() {
 
     override fun toString() = "null"
+
+}
+
+abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
+
+    fun memberContains(key: String) = memberList.containsKey(key)
+
+    fun memberGet(key: String): KrashValue = memberList[key] ?: throw RuntimeException("No member '$key' exists on value!")
+
+    fun memberPut(key: String, value: KrashValue) {
+        memberList[key] = value
+    }
+
+    fun memberPut(key: String, value: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) {
+        memberList[key] = KrashValueCallable(value)
+    }
+
+    override fun resolve(runtime: KrashRuntime) = this
 
 }
 

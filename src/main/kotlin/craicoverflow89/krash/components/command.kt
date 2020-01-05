@@ -1,12 +1,14 @@
 package craicoverflow89.krash.components
 
+import craicoverflow89.krash.components.expressions.KrashExpression
+
 interface KrashCommand {
 
     fun invoke(runtime: KrashRuntime): KrashValue
 
 }
 
-class KrashCommandDeclare(private val ref: String, private val value: KrashValue): KrashCommand {
+class KrashCommandDeclare(private val ref: String, private val value: KrashExpression): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
@@ -18,7 +20,7 @@ class KrashCommandDeclare(private val ref: String, private val value: KrashValue
         // NOTE: maybe there should be a KrashReference.isValid / validate method instead of writing logic here
 
         // Update Heap
-        runtime.heapPut(ref, value)
+        runtime.heapPut(ref, value.toValue(runtime))
 
         // Return Null
         return KrashValueNull()
@@ -26,10 +28,8 @@ class KrashCommandDeclare(private val ref: String, private val value: KrashValue
 
 }
 
-class KrashCommandValue(private val value: KrashValue): KrashCommand {
+class KrashCommandExpression(private val value: KrashExpression): KrashCommand {
 
-    override fun invoke(runtime: KrashRuntime): KrashValue {
-        return value.toSimple(runtime)
-    }
+    override fun invoke(runtime: KrashRuntime): KrashValue = value.toValue(runtime)
 
 }
