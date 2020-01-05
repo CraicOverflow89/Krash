@@ -32,6 +32,24 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     Pair("path", KrashValueString(path)),
                     Pair("toString", KrashValueString(path))
                 )
+            }),
+
+            // Pair Object
+            Pair("pair", KrashValueClass("pair") {_: KrashRuntime, argumentList: List<KrashValue> ->
+
+                // Validate Arguments
+                if(argumentList.size != 2) throw RuntimeException("Must supply two arguments for pair!")
+
+                // Define Values
+                val first = argumentList[0]
+                val second = argumentList[1]
+
+                // Return Members
+                hashMapOf(
+                    Pair("first", first),
+                    Pair("second", second),
+                    Pair("toString", KrashValueString("<$first, $second>"))
+                )
             })
         )
 
