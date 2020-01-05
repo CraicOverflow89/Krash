@@ -1,14 +1,14 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.KrashValue
-import craicoverflow89.krash.components.KrashValueArray
-import craicoverflow89.krash.components.KrashValueCallable
-import craicoverflow89.krash.components.KrashValueInteger
-import craicoverflow89.krash.components.KrashValueMap
-import craicoverflow89.krash.components.KrashValueReference
-import craicoverflow89.krash.components.KrashValueSimple
-import craicoverflow89.krash.components.KrashValueString
+import craicoverflow89.krash.components.objects.KrashValueArray
+import craicoverflow89.krash.components.objects.KrashValueCallable
+import craicoverflow89.krash.components.objects.KrashValueClass
+import craicoverflow89.krash.components.objects.KrashValueInteger
+import craicoverflow89.krash.components.objects.KrashValueMap
+import craicoverflow89.krash.components.objects.KrashValueReference
+import craicoverflow89.krash.components.objects.KrashValueSimple
+import craicoverflow89.krash.components.objects.KrashValueString
 // NOTE: should be able to eliminate the concept of KrashValueSimple altogether
 //       when all resolution stuff is handled in expressions
 
@@ -69,15 +69,22 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
 class KrashExpressionInvoke(private val value: KrashExpression, private val argumentList: List<KrashExpression>): KrashExpression() {
 
     override fun toValue(runtime: KrashRuntime) = value.toValue(runtime).let {
+        when(it) {
 
-        // Invoke Callable
-        if(it is KrashValueCallable) it.invoke(runtime, argumentList.map {
-            it.toValue(runtime)
-        }).toSimple(runtime)
+            // Invoke Callable
+            is KrashValueCallable -> it.invoke(runtime, argumentList.map {
+                it.toValue(runtime)
+            }).toSimple(runtime)
 
-        // Invalid Type
-        else throw RuntimeException("Could not invoke this non-callable value!")
-        // NOTE: come back to this; use custom exceptions later
+            // Invoke Constructor
+            is KrashValueClass -> it.create(runtime, argumentList.map {
+                it.toValue(runtime)
+            })
+
+            // Invalid Type
+            else -> throw RuntimeException("Could not invoke this non-callable value!")
+            // NOTE: come back to this; use custom exceptions later
+        }
     }
 
 }
@@ -100,7 +107,10 @@ class KrashExpressionMember(private val value: KrashExpression, private val memb
 
 class KrashExpressionReference(private val value: String, private val byRef: Boolean): KrashExpression() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueReference(value, byRef).toSimple(runtime)
+    override fun toValue(runtime: KrashRuntime) = KrashValueReference(
+        value,
+        byRef
+    ).toSimple(runtime)
     // NOTE: this really isn't suitable (will need byRef at times)
 
 }

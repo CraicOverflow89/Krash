@@ -1,6 +1,7 @@
-package craicoverflow89.krash.components
+package craicoverflow89.krash.components.objects
 
-import java.io.File
+import craicoverflow89.krash.components.KrashMethod
+import craicoverflow89.krash.components.KrashRuntime
 
 interface KrashValue {
 
@@ -15,17 +16,18 @@ interface KrashValue {
 }
 
 class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMapOf(
-    Pair("join", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
-        KrashValueString(valueList.joinToString(""))
-        // NOTE: need to parse arguments as separator, prefix and postfix
-    }),
+    Pair("join",
+        KrashValueCallable { runtime: KrashRuntime, argumentList: List<KrashValue> ->
+            KrashValueString(valueList.joinToString(""))
+            // NOTE: need to parse arguments as separator, prefix and postfix
+        }),
     Pair("size", KrashValueInteger(valueList.size))
 )) {
 
     init {
 
         // Append Members
-        memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("each") { runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
@@ -52,9 +54,10 @@ class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMap
         else throw RuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
-    override fun toSimple(runtime: KrashRuntime) = KrashValueArray(valueList.map {
-        it.toSimple(runtime)
-    })
+    override fun toSimple(runtime: KrashRuntime) =
+        KrashValueArray(valueList.map {
+            it.toSimple(runtime)
+        })
 
     override fun toString() = valueList.joinToString(", ", "[", "]") {
         it.toString()
@@ -76,29 +79,8 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
 }
 
-class KrashValueFile(private val path: String): KrashValueSimple(hashMapOf(
-    Pair("path", KrashValueString(path))
-)) {
-
-    // Define File
-    private val file = File(path)
-
-    init {
-
-        // Append Members
-        memberPut("isDirectory", KrashValueBoolean(file.isDirectory))
-        memberPut("files", KrashValueArray(file.list().map {
-            KrashValueString(it)
-        }))
-    }
-
-    fun toFile() = file
-
-    override fun toString() = path
-
-}
-
-class KrashValueIndex(val value: KrashValue, private val index: KrashValueIndexPos): KrashValue {
+class KrashValueIndex(val value: KrashValue, private val index: KrashValueIndexPos):
+    KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue = index.let{
 
@@ -161,7 +143,8 @@ interface KrashValueIndexPos {
 
 }
 
-class KrashValueInteger(val value: Int): KrashValueSimple(), KrashValueIndexPos {
+class KrashValueInteger(val value: Int): KrashValueSimple(),
+    KrashValueIndexPos {
 
     override fun toString() = value.toString()
 
@@ -199,9 +182,10 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() 
         else throw RuntimeException("Invalid key '$key' for map!")
     }
 
-    override fun toSimple(runtime: KrashRuntime) = KrashValueMap(data.map {
-        KrashValueMapPair(it.key, it.value.toSimple(runtime))
-    })
+    override fun toSimple(runtime: KrashRuntime) =
+        KrashValueMap(data.map {
+            KrashValueMapPair(it.key, it.value.toSimple(runtime))
+        })
 
     override fun toString() = valueList.joinToString(", ", "{", "}") {
         it.toString()
@@ -218,6 +202,23 @@ class KrashValueMapPair(val key: String, val value: KrashValue) {
 class KrashValueNull: KrashValueSimple() {
 
     override fun toString() = "null"
+
+}
+
+class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<String, KrashValue>): KrashValueSimple(memberList) {
+
+    override fun toString(): String {
+
+        // Invoke Member
+        if(memberContains("toString")) memberGet("toString").let {
+
+            // Custom String
+            if(it is KrashValueString) return@toString it.value
+        }
+
+        // Default Value
+        return "<object ${obj.name}>"
+    }
 
 }
 
@@ -241,28 +242,29 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 
 class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
     Pair("size", KrashValueInteger(value.length)),
-    Pair("toList", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
-        KrashValueArray(ArrayList<KrashValueString>().apply {
-            var pos = 0
-            while(pos < value.length) {
-                add(KrashValueString(value.substring(pos, pos + 1)))
-                pos ++
-            }
+    Pair("toList",
+        KrashValueCallable { runtime: KrashRuntime, argumentList: List<KrashValue> ->
+            KrashValueArray(ArrayList<KrashValueString>().apply {
+                var pos = 0
+                while (pos < value.length) {
+                    add(KrashValueString(value.substring(pos, pos + 1)))
+                    pos++
+                }
+            })
         })
-    })
 )), KrashValueIndexPos {
 
     fun getChar(pos: Int) = KrashValueString(pos.let {
 
         // Negative Position
-        if(it < 0) value.length + it
+        if (it < 0) value.length + it
 
         // Positive Position
         else it
-    }.let{pos ->
+    }.let { pos ->
 
         // Invalid Position
-        if(pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
+        if (pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
         // NOTE: come back to this; use custom exceptions later
 
         // Fetch Character
@@ -280,6 +282,9 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue, Kr
 
         // Native Method
         if(KrashMethod.nativeContains(value)) return KrashMethod.nativeGet(value)
+
+        // Native Object
+        if(KrashValueClass.nativeContains(value)) return KrashValueClass.nativeGet(value)
 
         // Custom Reference
         return runtime.heapGet(value)

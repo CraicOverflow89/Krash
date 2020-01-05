@@ -1,5 +1,10 @@
 package craicoverflow89.krash.components
 
+import craicoverflow89.krash.components.objects.KrashValue
+import craicoverflow89.krash.components.objects.KrashValueClass
+import craicoverflow89.krash.components.objects.KrashValueIndex
+import craicoverflow89.krash.components.objects.KrashValueNull
+import craicoverflow89.krash.components.objects.KrashValueReference
 import kotlin.system.exitProcess
 
 class KrashReference(val value: String)
@@ -10,15 +15,18 @@ class KrashReserved {
 
         private val reservedTerms = ArrayList<String>().apply {
 
-            // Keywords
+            // Structural Keyword
             addAll(listOf("fun"))
             // NOTE: this is where if/else/while could be added
 
-            // Literals
+            // Literal Keywords
             addAll(listOf("false", "null", "true"))
 
-            // Methods
+            // Native Methods
             addAll(KrashMethod.nativeReserved())
+
+            // Native Classes
+            addAll(KrashValueClass.nativeReserved())
         }
 
         fun contains(value: String) = reservedTerms.contains(value.toLowerCase())

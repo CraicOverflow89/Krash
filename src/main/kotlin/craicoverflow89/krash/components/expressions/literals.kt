@@ -1,15 +1,15 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.KrashValue
-import craicoverflow89.krash.components.KrashValueArray
-import craicoverflow89.krash.components.KrashValueBoolean
-import craicoverflow89.krash.components.KrashValueCallable
-import craicoverflow89.krash.components.KrashValueInteger
-import craicoverflow89.krash.components.KrashValueMap
-import craicoverflow89.krash.components.KrashValueMapPair
-import craicoverflow89.krash.components.KrashValueNull
-import craicoverflow89.krash.components.KrashValueString
+import craicoverflow89.krash.components.objects.KrashValue
+import craicoverflow89.krash.components.objects.KrashValueArray
+import craicoverflow89.krash.components.objects.KrashValueBoolean
+import craicoverflow89.krash.components.objects.KrashValueCallable
+import craicoverflow89.krash.components.objects.KrashValueInteger
+import craicoverflow89.krash.components.objects.KrashValueMap
+import craicoverflow89.krash.components.objects.KrashValueMapPair
+import craicoverflow89.krash.components.objects.KrashValueNull
+import craicoverflow89.krash.components.objects.KrashValueString
 
 abstract class KrashExpressionLiteral: KrashExpression()
 
@@ -62,7 +62,8 @@ class KrashExpressionLiteralMap(private val value: List<KrashExpressionLiteralMa
 
 class KrashExpressionLiteralMapPair(private val key: String, private val value: KrashExpression) {
 
-    fun toValue(runtime: KrashRuntime) = KrashValueMapPair(key, value.toValue(runtime))
+    fun toValue(runtime: KrashRuntime) =
+        KrashValueMapPair(key, value.toValue(runtime))
 
 }
 
