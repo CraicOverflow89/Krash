@@ -7,6 +7,8 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
  - ability to create callables
  - global values (like `cwd`) that cannot be overwritten and always exist
+ - pair data type
+ - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
  - prevent reserved words being used for map keys?
  - commands for file/directory moving/copying (recursion flag)
  - look at removing `KrashReference` completely in favour of `KrashValueReference`

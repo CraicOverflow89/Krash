@@ -14,7 +14,7 @@ interface KrashValue {
 
 }
 
-open class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
+abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
 
     fun memberContains(key: String) = memberList.containsKey(key)
 

@@ -42,6 +42,45 @@ commandValue returns [KrashCommandValue result]
     :   value {$result = new KrashCommandValue($value.result);}
     ;
 
+// NEW START
+
+expression returns [KrashExpression result]
+    :   (
+            expressionLit {$result = $expressionLit.result;}
+        |
+            expressionRef {$result = $expressionRef.result;}
+        )
+    ;
+
+expressionLit returns [KrashExpression result]
+    :   expressionLitString {$result = $expressionLitString.result;}
+    ;
+
+expressionLitString returns [KrashExpressionLiteralString result]
+    :   {StringBuffer buffer = new StringBuffer();}
+        QUOTE
+        (
+            chars = valueStringChars {buffer.append($chars.text);}
+        )*
+        QUOTE
+        {$result = new KrashExpressionLiteralString(buffer.toString());}
+    ;
+
+expressionRef returns [KrashExpressionReference result]
+    :   {boolean byRef = false;}
+        (
+            AMPER {byRef = true;}
+        )?
+        expressionRefChars
+        {$result = new KrashExpressionReference($expressionRefChars.text, byRef);}
+    ;
+
+expressionRefChars
+    :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
+    ;
+
+// NEW END
+
 ref returns [KrashReference result]
     :   refChars {$result = new KrashReference($refChars.text);}
         // NOTE: where to implement x.y notation (properties and methods) ??
