@@ -296,15 +296,15 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
 
 }
 
-class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashValue, KrashValueIndexPos {
+class KrashValueReference(val value: String, val byRef: Boolean): KrashValue, KrashValueIndexPos {
 
     override fun resolve(runtime: KrashRuntime): KrashValue {
 
         // Native Method
-        if(KrashMethod.nativeContains(ref.value)) return KrashMethod.nativeGet(ref.value)
+        if(KrashMethod.nativeContains(value)) return KrashMethod.nativeGet(value)
 
         // Custom Reference
-        return runtime.heapGet(ref)
+        return runtime.heapGet(value)
     }
 
     override fun toSimpleIndex(runtime: KrashRuntime) = this.toSimple(runtime).let {
@@ -317,6 +317,6 @@ class KrashValueReference(val ref: KrashReference, val byRef: Boolean): KrashVal
         it as KrashValueIndexPos
     }
 
-    override fun toString() = ref.value
+    override fun toString() = value
 
 }

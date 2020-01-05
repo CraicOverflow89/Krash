@@ -45,9 +45,9 @@ class KrashRuntime(cwd: String) {
 
     fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
 
-    fun heapGet(ref: KrashReference) = heap[ref.value] ?: KrashValueNull()
+    fun heapGet(ref: String) = heap[ref] ?: KrashValueNull()
 
-    fun heapPut(ref: KrashReference, value: KrashValue) {
+    fun heapPut(ref: String, value: KrashValue) {
 
         // Persist Reference
         if(
@@ -57,12 +57,12 @@ class KrashRuntime(cwd: String) {
             // Indexed Reference
             (value is KrashValueIndex && value.value is KrashValueReference && value.value.byRef)
         ) {
-            heap[ref.value] = value
+            heap[ref] = value
             // NOTE: might want to prevent circular references from being created with &ref
         }
 
         // Resolve Values
-        else heap[ref.value] = value.toSimple(this)
+        else heap[ref] = value.toSimple(this)
     }
 
 }

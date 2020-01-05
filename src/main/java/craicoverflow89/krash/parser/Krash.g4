@@ -2,6 +2,7 @@ grammar Krash;
 
 @header {
     import craicoverflow89.krash.components.*;
+    import craicoverflow89.krash.components.expressions.*;
     import java.lang.StringBuffer;
     import java.util.ArrayList;
 }
@@ -33,9 +34,11 @@ command returns [KrashCommand result]
     ;
 
 commandDeclare returns [KrashCommandDeclare result]
-    :   ref EQUAL value
+    :   //ref EQUAL value
+        expressionRefChars EQUAL value
         // NOTE: could add list[1] and map["key"] update syntax
-        {$result = new KrashCommandDeclare($ref.result, $value.result);}
+        //{$result = new KrashCommandDeclare($ref.result, $value.result);}
+        {$result = new KrashCommandDeclare($expressionRefChars.text, $value.result);}
     ;
 
 commandValue returns [KrashCommandValue result]
@@ -52,18 +55,108 @@ expression returns [KrashExpression result]
         )
     ;
 
-expressionLit returns [KrashExpression result]
-    :   expressionLitString {$result = $expressionLitString.result;}
+expressionLit returns [KrashExpressionLiteral result]
+    :   (
+            expressionLitArray {$result = $expressionLitArray.result;}
+        |
+            expressionLitBoolean {$result = $expressionLitBoolean.result;}
+        |
+            expressionLitCallable {$result = $expressionLitCallable.result;}
+        |
+            expressionLitInt {$result = $expressionLitInt.result;}
+        |
+            expressionLitMap {$result = $expressionLitMap.result;}
+        |
+            expressionLitNull {$result = $expressionLitNull.result;}
+        |
+            expressionLitString {$result = $expressionLitString.result;}
+        )
+    ;
+
+expressionLitArray returns [KrashExpressionLiteralArray result]
+    :   {ArrayList<KrashExpression> data = new ArrayList();}
+        SQBR1
+        (
+            e1 = expression {data.add($e1.result);}
+            (
+                COMMA
+                e2 = expression {data.add($e2.result);}
+            )*
+        )?
+        SQBR2
+        {$result = new KrashExpressionLiteralArray(data);}
+    ;
+
+expressionLitBoolean returns [KrashExpressionLiteralBoolean result]
+    :   (
+            'false' {$result = new KrashExpressionLiteralBoolean(false);}
+        |
+            'true' {$result = new KrashExpressionLiteralBoolean(true);}
+        )
+    ;
+
+expressionLitCallable returns [KrashExpressionLiteralCallable result]
+    :   'fun'
+        {$result = new KrashExpressionLiteralCallable(new ArrayList<KrashExpression>());}
+        // NOTE: come back to this
+    ;
+
+expressionLitInt returns [KrashExpressionLiteralInteger result]
+    :   {boolean minus = false;}
+        (
+            MINUS {minus = true;}
+        )?
+        expressionLitIntDigits
+        {
+            int value = Integer.parseInt($expressionLitIntDigits.text);
+            if(minus) value = -value;
+            $result = new KrashExpressionLiteralInteger(value);
+        }
+    ;
+
+expressionLitIntDigits
+    :   DIGIT+
+    ;
+
+expressionLitMap returns [KrashExpressionLiteralMap result]
+    :   {ArrayList<KrashExpressionLiteralMapPair> data = new ArrayList<KrashExpressionLiteralMapPair>();}
+        CUBR1
+        (
+            p1 = expressionLitMapPair {data.add($p1.result);}
+            (
+                COMMA
+                p2 = expressionLitMapPair {data.add($p2.result);}
+            )*
+        )?
+        CUBR2
+        {$result = new KrashExpressionLiteralMap(data);}
+    ;
+
+expressionLitMapPair returns [KrashExpressionLiteralMapPair result]
+    :   k = expressionLitMapPairKey COLON v = expression
+        {$result = new KrashExpressionLiteralMapPair($k.text, $v.result);}
+    ;
+
+expressionLitMapPairKey
+    :   (ALPHA | DIGIT | UNDER)+
+    ;
+
+expressionLitNull returns [KrashExpressionLiteralNull result]
+    :   'null' {$result = new KrashExpressionLiteralNull();}
     ;
 
 expressionLitString returns [KrashExpressionLiteralString result]
     :   {StringBuffer buffer = new StringBuffer();}
         QUOTE
         (
-            chars = valueStringChars {buffer.append($chars.text);}
+            chars = expressionLitStringChars {buffer.append($chars.text);}
         )*
         QUOTE
         {$result = new KrashExpressionLiteralString(buffer.toString());}
+    ;
+
+expressionLitStringChars
+    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | FULLS | MINUS | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 expressionRef returns [KrashExpressionReference result]
@@ -237,7 +330,8 @@ valueRef returns [KrashValueReference result]
         (
             AMPER {byRef = true;}
         )?
-        ref {$result = new KrashValueReference($ref.result, byRef);}
+        //ref {$result = new KrashValueReference($ref.result, byRef);}
+        expressionRefChars {$result = new KrashValueReference($expressionRefChars.text, byRef);}
     ;
 
 valueString returns [KrashValueString result]
