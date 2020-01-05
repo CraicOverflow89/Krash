@@ -40,6 +40,27 @@ class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMap
     Pair("size", KrashValueInteger(valueList.size))
 )) {
 
+    init {
+
+        // Append Members
+        memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw RuntimeException("Logic must be callable!")
+                it
+            }
+
+            // Invoke Logic
+            valueList.forEach {
+                logic.invoke(runtime, listOf(it))
+            }
+
+            // Return Array
+            this
+        }
+    }
+
     fun getElement(pos: Int): KrashValue {
 
         // Return Element
@@ -74,18 +95,28 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 }
 
 class KrashValueFile(private val path: String): KrashValueSimple(hashMapOf(
-    Pair("isDirectory", KrashValueBoolean(File(path).isDirectory)),
     Pair("path", KrashValueString(path))
 )) {
 
-    fun toFile() = File(path)
-    // NOTE: should create file from path once in init and use for this and isDirectory
+    // Define File
+    private val file = File(path)
+
+    init {
+
+        // Append Members
+        memberPut("isDirectory", KrashValueBoolean(file.isDirectory))
+        memberPut("files", KrashValueArray(file.list().map {
+            KrashValueString(it)
+        }))
+    }
+
+    fun toFile() = file
 
     override fun toString() = path
 
 }
 
-class KrashValueIndex(val value: KrashValue, val index: KrashValueIndexPos): KrashValue {
+class KrashValueIndex(val value: KrashValue, private val index: KrashValueIndexPos): KrashValue {
 
     override fun resolve(runtime: KrashRuntime): KrashValue = index.let{
 
