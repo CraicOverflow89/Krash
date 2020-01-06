@@ -15,19 +15,22 @@ interface KrashValue {
 
 }
 
-class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMapOf(
-    Pair("join",
-        KrashValueCallable { runtime: KrashRuntime, argumentList: List<KrashValue> ->
-            KrashValueString(valueList.joinToString(""))
-            // NOTE: need to parse arguments as separator, prefix and postfix
-        }),
+class KrashValueArray(val valueList: ArrayList<KrashValue>): KrashValueSimple(hashMapOf(
+    Pair("add", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+        valueList.add(argumentList[0])
+        KrashValueNull()
+    }),
+    Pair("join", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+        KrashValueString(valueList.joinToString(""))
+        // NOTE: need to parse arguments as separator, prefix and postfix
+    }),
     Pair("size", KrashValueInteger(valueList.size))
 )) {
 
     init {
 
         // Append Members
-        memberPut("each") { runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
@@ -54,10 +57,13 @@ class KrashValueArray(val valueList: List<KrashValue>): KrashValueSimple(hashMap
         else throw RuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
-    override fun toSimple(runtime: KrashRuntime) =
-        KrashValueArray(valueList.map {
-            it.toSimple(runtime)
+    override fun toSimple(runtime: KrashRuntime): KrashValueArray {
+        return KrashValueArray(ArrayList<KrashValue>().apply {
+            valueList.forEach {
+                add(it.toSimple(runtime))
+            }
         })
+    }
 
     override fun toString() = valueList.joinToString(", ", "[", "]") {
         it.toString()
@@ -101,8 +107,10 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() 
             KrashValueBoolean(data.containsKey(argumentList[0].toSimple(runtime)))
         }*/
         // NOTE: need to get the above working
-        memberPut("keys", KrashValueArray(data.map {
-            KrashValueString(it.key)
+        memberPut("keys", KrashValueArray(ArrayList<KrashValue>().apply {
+            data.forEach {
+                add(KrashValueString(it.key))
+            }
         }))
     }
 
@@ -178,8 +186,8 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
     Pair("size", KrashValueInteger(value.length)),
     Pair("toList",
-        KrashValueCallable { runtime: KrashRuntime, argumentList: List<KrashValue> ->
-            KrashValueArray(ArrayList<KrashValueString>().apply {
+        KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+            KrashValueArray(ArrayList<KrashValue>().apply {
                 var pos = 0
                 while (pos < value.length) {
                     add(KrashValueString(value.substring(pos, pos + 1)))

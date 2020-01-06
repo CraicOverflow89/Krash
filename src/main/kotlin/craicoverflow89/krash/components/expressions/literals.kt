@@ -7,8 +7,10 @@ abstract class KrashExpressionLiteral: KrashExpression()
 
 class KrashExpressionLiteralArray(private val value: List<KrashExpression>): KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueArray(value.map {
-        it.toValue(runtime)
+    override fun toValue(runtime: KrashRuntime) = KrashValueArray(ArrayList<KrashValue>().apply {
+        value.forEach {
+            add(it.toValue(runtime))
+        }
     })
 
 }
