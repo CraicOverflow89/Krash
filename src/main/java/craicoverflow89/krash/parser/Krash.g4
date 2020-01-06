@@ -141,15 +141,21 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
             )*
         )?
         STBR2
-        CUBR1
         (
-            {boolean isReturn = false;}
+            CUBR1
             (
-                'return' {isReturn = true;}
-            )?
-            exp = expression {body.add(new KrashExpressionLiteralCallableExpression($exp.result, isReturn));}
-        )*
-        CUBR2
+                {boolean isReturn = false;}
+                (
+                    'return' {isReturn = true;}
+                )?
+                exp1 = expression
+                {body.add(new KrashExpressionLiteralCallableExpression($exp1.result, isReturn));}
+            )*
+            CUBR2
+        |
+            EQUAL exp2 = expression
+            {body.add(new KrashExpressionLiteralCallableExpression($exp2.result, true));}
+        )
         {$result = new KrashExpressionLiteralCallable(args, body);}
     ;
 
