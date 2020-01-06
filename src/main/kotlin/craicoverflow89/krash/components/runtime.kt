@@ -50,13 +50,19 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
 
 abstract class KrashOutput {
 
-    abstract fun invoke(text: String)
+    abstract fun err(text: String)
+
+    abstract fun out(text: String)
 
 }
 
 class KrashOutputShell: KrashOutput() {
 
-    override fun invoke(text: String) {
+    override fun err(text: String) {
+        System.err.println(text)
+    }
+
+    override fun out(text: String) {
         println(text)
     }
 
@@ -105,7 +111,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             cwdPath = path.replace("\\", "/")
         }
 
-        fun println(value: Any) = output.invoke(value.toString())
+        fun error(value: Any) = output.err(value.toString())
+
+        fun println(value: Any) = output.out(value.toString())
 
         fun outputSet(value: KrashOutput) {
             output = value
