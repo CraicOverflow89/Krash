@@ -19,7 +19,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     if(it.isNotEmpty()) (it[0] as KrashValueString).value
 
                     // Default Path
-                    else runtime.cwd()
+                    else KrashRuntime.cwd()
                 }
                 val file = File(path)
 

@@ -26,7 +26,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
  - other stuff
    - vsc language pack
- - update runtime/heap stuff (don't need separate cwd for function scope)
 
 ### Issues
 
