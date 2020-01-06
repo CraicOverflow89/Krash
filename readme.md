@@ -5,6 +5,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Tasks
 
+ - integer division currently results in rounded integer (need to add other numeric types)
  - custom parser error handling (without default printing to console)
  - ending input with `{` in shell must start a buffer of lines to parse later
  - should allow setting map/array values with `map[key] = value` and `array[pos] = value` syntax

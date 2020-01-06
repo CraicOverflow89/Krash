@@ -64,6 +64,14 @@ expression returns [KrashExpression result]
             expressionInvoke {$result = new KrashExpressionInvoke($result, $expressionInvoke.result);}
         |
             expressionMember {$result = new KrashExpressionMember($result, $expressionMember.result);}
+        |
+            expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
+        |
+            expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
+        |
+            expressionOpMultiply {$result = new KrashExpressionOperatorMultiplication($result, $expressionOpMultiply.result);}
+        |
+            expressionOpSubtract {$result = new KrashExpressionOperatorSubtraction($result, $expressionOpSubtract.result);}
         )*
     ;
 
@@ -242,6 +250,26 @@ expressionMember returns [String result]
 
 expressionMemberChars
     :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
+    ;
+
+expressionOpAdd returns [KrashExpression result]
+    :   PLUS expression
+        {$result = $expression.result;}
+    ;
+
+expressionOpDivide returns [KrashExpression result]
+    :   SLASH expression
+        {$result = $expression.result;}
+    ;
+
+expressionOpMultiply returns [KrashExpression result]
+    :   ASTER expression
+        {$result = $expression.result;}
+    ;
+
+expressionOpSubtract returns [KrashExpression result]
+    :   MINUS expression
+        {$result = $expression.result;}
     ;
 
 expressionRef returns [KrashExpressionReference result]
