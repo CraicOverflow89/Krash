@@ -35,6 +35,9 @@ class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpress
                 callableRuntime.heapPut(arg.name, if(pos < argumentList.size) argumentList[pos] else arg.defaultValue(runtime))
             }
 
+            // Implicit It
+            if(argumentList.size == 1) callableRuntime.heapPut("it", argumentList[0])
+
             // Default Result
             var returnValue: KrashValue = KrashValueNull()
 
