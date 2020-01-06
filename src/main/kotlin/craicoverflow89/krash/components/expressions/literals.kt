@@ -19,7 +19,7 @@ class KrashExpressionLiteralBoolean(private val value: Boolean): KrashExpression
 
 }
 
-class KrashExpressionLiteralCallable(private val argumentList: List<String>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueCallable {
 
@@ -31,8 +31,8 @@ class KrashExpressionLiteralCallable(private val argumentList: List<String>, pri
         return KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Inject Arguments
-            callableArgs.forEachIndexed {pos, name ->
-                callableRuntime.heapPut(name, if(pos < argumentList.size) argumentList[pos] else KrashValueNull())
+            callableArgs.forEachIndexed {pos, arg ->
+                callableRuntime.heapPut(arg.name, if(pos < argumentList.size) argumentList[pos] else arg.defaultValue(runtime))
             }
 
             // Default Result
@@ -63,6 +63,12 @@ class KrashExpressionLiteralCallable(private val argumentList: List<String>, pri
 
 }
 
+class KrashExpressionLiteralCallableArgument(val name: String, private val defaultValue: KrashExpression? = null) {
+
+    fun defaultValue(runtime: KrashRuntime) = defaultValue?.toValue(runtime) ?: KrashValueNull()
+
+}
+
 class KrashExpressionLiteralCallableExpression(private val expression: KrashExpression, val isReturn: Boolean): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime) = expression.toValue(runtime)
@@ -90,7 +96,7 @@ class KrashExpressionLiteralMapPair(private val key: String, private val value: 
 
 }
 
-class KrashExpressionLiteralNull(): KrashExpressionLiteral() {
+class KrashExpressionLiteralNull: KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime) = KrashValueNull()
 

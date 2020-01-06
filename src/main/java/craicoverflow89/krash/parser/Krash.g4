@@ -128,16 +128,16 @@ expressionLitBoolean returns [KrashExpressionLiteralBoolean result]
 
 expressionLitCallable returns [KrashExpressionLiteralCallable result]
     :   {
-            ArrayList<String> args = new ArrayList();
+            ArrayList<KrashExpressionLiteralCallableArgument> args = new ArrayList();
             ArrayList<KrashExpressionLiteralCallableExpression> body = new ArrayList();
         }
         'fun'
         STBR1
         (
-            arg1 = expressionRefChars {args.add($arg1.text);}
+            arg1 = expressionLitCallableArg {args.add($arg1.result);}
             (
                 COMMA
-                arg2 = expressionRefChars {args.add($arg2.text);}
+                arg2 = expressionLitCallableArg {args.add($arg2.result);}
             )*
         )?
         STBR2
@@ -157,6 +157,16 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
             {body.add(new KrashExpressionLiteralCallableExpression($exp2.result, true));}
         )
         {$result = new KrashExpressionLiteralCallable(args, body);}
+    ;
+
+expressionLitCallableArg returns [KrashExpressionLiteralCallableArgument result]
+    :   {KrashExpression defaultValue = null;}
+        expressionRefChars
+        (
+            EQUAL expression
+            {defaultValue = $expression.result;}
+        )?
+        {$result = new KrashExpressionLiteralCallableArgument($expressionRefChars.text, defaultValue);}
     ;
 
 expressionLitInt returns [KrashExpressionLiteralInteger result]
