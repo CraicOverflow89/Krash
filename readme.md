@@ -12,7 +12,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
    - cwd (file)
    - home (file)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
- - prevent reserved words being used for map keys?
  - commands for file/directory moving/copying (recursion flag)
    - create
    - copy

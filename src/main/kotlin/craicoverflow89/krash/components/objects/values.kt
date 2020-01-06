@@ -1,6 +1,7 @@
 package craicoverflow89.krash.components.objects
 
 import craicoverflow89.krash.components.KrashMethod
+import craicoverflow89.krash.components.KrashReserved
 import craicoverflow89.krash.components.KrashRuntime
 
 interface KrashValue {
@@ -96,6 +97,12 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() 
     // Create Data
     private val data = HashMap<String, KrashValue>().apply {
         valueList.forEach {
+
+            // Reserved Term
+            if(KrashReserved.contains(it.key)) throw RuntimeException("Cannot use reserved term '${it.key}' for map key!")
+            // NOTE: come back to this
+
+            // Append Pair
             put(it.key, it.value)
         }
     }
