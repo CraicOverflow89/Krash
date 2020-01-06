@@ -25,14 +25,15 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - all `KrashValue` classes should have private values and methods to get them
  - string buffer object
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
+ - allow `@` and `*` chars in comments and provide meta data access
  - other stuff
    - vsc language pack
 
 ### Issues
 
+ - spaces in string literals are causing issues (whitespace)
  - loading script does not allow for absolute paths
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef
- - spaces in string literals are causing issues (whitespace)
  - trying to use `true` as reference throws parser exception instead of being handled
  - the map `contains` member function needs finishing
