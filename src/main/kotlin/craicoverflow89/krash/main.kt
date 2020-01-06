@@ -87,13 +87,46 @@ fun loadShell() {
         print("${KrashRuntime.cwd()} \$ ")
 
         // Read Line
-        val input = readLine() ?: continue
+        var input = readLine() ?: continue
 
         // Exit Command
         if(input == "exit") break
 
         // Empty Command
         if(input.isEmpty()) continue
+
+        // Open Block
+        if(input.endsWith("{")) {
+
+            // Indent Spacing
+            val indentSpace = " ".repeat(KrashRuntime.cwd().length)
+
+            // Create Buffer
+            val buffer = arrayListOf(input)
+
+            // Block Loop
+            while(true) {
+
+                // Print Line
+                print("$indentSpace \$ ")
+
+                // Read Line
+                val input = readLine() ?: continue
+
+                // Empty Command
+                if(input.isEmpty()) continue
+
+                // Append Command
+                buffer.add(input)
+
+                // Close Block
+                if(input.startsWith("}")) break
+                // NOTE: need to make this far more intelligent
+            }
+
+            // Update Input
+            input = buffer.joinToString("\n")
+        }
 
         // Invoke Command
         try {parse(input).invoke(runtime)}
