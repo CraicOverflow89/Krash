@@ -24,6 +24,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - replace loose calls to `println` with a runtime method
  - all `KrashValue` classes should have private values and methods to get them
  - string buffer object
+ - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
  - other stuff
    - vsc language pack
 

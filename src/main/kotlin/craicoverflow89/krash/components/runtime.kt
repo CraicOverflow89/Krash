@@ -15,8 +15,7 @@ class KrashReserved {
         private val reservedTerms = ArrayList<String>().apply {
 
             // Structural Keyword
-            addAll(listOf("fun"))
-            // NOTE: this is where if/else/while could be added
+            addAll(listOf("fun", "return"))
 
             // Literal Keywords
             addAll(listOf("false", "null", "true"))
@@ -34,13 +33,15 @@ class KrashReserved {
 
 }
 
-class KrashRuntime(cwd: String) {
+class KrashRuntime(cwd: String, private val parent: KrashRuntime? = null) {
 
     // Define Path
     private val cwdPath = cwd.replace("\\", "/")
 
     // Define Heap
     val heap = HashMap<String, KrashValue>()
+
+    fun child() = KrashRuntime(cwdPath, this)
 
     fun cwd() = cwdPath
 
@@ -50,9 +51,20 @@ class KrashRuntime(cwd: String) {
         exitProcess(code)
     }
 
-    fun heapContains(ref: KrashReference) = heap.containsKey(ref.value)
+    fun heapContains(ref: KrashReference): Boolean {
 
-    fun heapGet(ref: String) = heap[ref] ?: KrashValueNull()
+        // Key Exists
+        if(heap.containsKey(ref.value)) return true
+
+        // Parent Heap
+        return parent?.heapContains(ref) ?: false
+    }
+
+    fun heapGet(ref: String): KrashValue {
+
+        // Fetch Value
+        return heap[ref] ?: parent?.heapGet(ref) ?: throw RuntimeException("Reference '$ref' does not exist!")
+    }
 
     fun heapPut(ref: String, value: KrashValue) {
 

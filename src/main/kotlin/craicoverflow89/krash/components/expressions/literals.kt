@@ -27,17 +27,23 @@ class KrashExpressionLiteralBoolean(private val value: Boolean): KrashExpression
 
 }
 
-class KrashExpressionLiteralCallable(private val expressionList: List<KrashExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralCallable(private val argumentList: List<String>, private val expressionList: List<KrashExpression>): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueCallable {
 
         // Create Heap
-        //
-
-        // NOTE: need to validate expressionList and iterate contents
+        // NOTE: need a separate heap from which to get/set variables
+        //       can also access parent heap(s)
+        val callableRuntime = runtime.child()
 
         // Create Callable
-        return KrashValueCallable { runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        return KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // TEMP
+            expressionList.forEach {
+                it.toValue(callableRuntime)
+            }
+            // NOTE: need to consider return keyword
 
             // TEMP
             KrashValueNull()

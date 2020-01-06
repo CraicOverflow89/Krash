@@ -28,6 +28,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     Pair("isDirectory", KrashValueBoolean(file.isDirectory)),
                     Pair("files", KrashValueArray(file.list().map {
                         KrashValueString(it)
+                        // NOTE: would be more useful to have these as file objects
                     })),
                     Pair("path", KrashValueString(path)),
                     Pair("toString", KrashValueString(path))
