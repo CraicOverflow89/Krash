@@ -24,12 +24,16 @@ class KrashExpressionLiteralCallable(private val argumentList: List<String>, pri
     override fun toValue(runtime: KrashRuntime): KrashValueCallable {
 
         // Create Heap
-        // NOTE: need a separate heap from which to get/set variables
-        //       can also access parent heap(s)
         val callableRuntime = runtime.child()
+        val callableArgs = argumentList
 
         // Create Callable
-        return KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+        return KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Inject Arguments
+            callableArgs.forEachIndexed {pos, name ->
+                callableRuntime.heapPut(name, if(pos < argumentList.size) argumentList[pos] else KrashValueNull())
+            }
 
             // Default Result
             var returnValue: KrashValue = KrashValueNull()

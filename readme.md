@@ -30,6 +30,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 ### Issues
 
  - references don't persist with `name = &data["name"]` since moving to experssions
+ - need to configure callable arguments to work with byRef
  - spaces in string literals are causing issues (whitespace)
  - trying to use `true` as reference throws parser exception instead of being handled
  - the map `contains` member function needs finishing
