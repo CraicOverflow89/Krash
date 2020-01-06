@@ -10,6 +10,12 @@ interface KrashCommand {
 
 }
 
+class KrashCommandComment(private val value: String): KrashCommand {
+
+    override fun invoke(runtime: KrashRuntime) = KrashValueNull()
+
+}
+
 class KrashCommandDeclare(private val ref: String, private val value: KrashExpression): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue {

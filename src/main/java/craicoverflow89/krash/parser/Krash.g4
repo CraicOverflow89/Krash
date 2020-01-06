@@ -11,11 +11,8 @@ grammar Krash;
 script returns [KrashScript result]
     :   {ArrayList<KrashCommand> data = new ArrayList();}
         (
-            c1 = command {data.add($c1.result);}
-            (
-                NLINE c2 = command {data.add($c2.result);}
-            )*
-        )?
+            command {data.add($command.result);}
+        )*
         EOF
         {$result = new KrashScript(data);}
     ;
@@ -27,10 +24,21 @@ line returns [KrashCommand result]
 
 command returns [KrashCommand result]
     :   (
+            commandComment {$result = $commandComment.result;}
+        |
             commandDeclare {$result = $commandDeclare.result;}
         |
             commandExpression {$result = $commandExpression.result;}
         )
+    ;
+
+commandComment returns [KrashCommandComment result]
+    :   SLASH ASTER commandCommentChars ASTER SLASH
+        {$result = new KrashCommandComment($commandCommentChars.text);}
+    ;
+
+commandCommentChars
+    :   (ALPHA | COLON | DIGIT | SPACE)+
     ;
 
 commandDeclare returns [KrashCommandDeclare result]
@@ -224,7 +232,7 @@ expressionLitString returns [KrashExpressionLiteralString result]
     ;
 
 expressionLitStringChars
-    :   (ALPHA | AMPER | APOST | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | FULLS | MINUS | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   (ALPHA | AMPER | APOST | ASTER | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | FULLS | MINUS | SLASH | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
     ;
 
 expressionMember returns [String result]
@@ -253,6 +261,7 @@ expressionRefChars
 ALPHA: [A-Za-z];
 AMPER: '&';
 APOST: '\'';
+ASTER: '*';
 COLON: ':';
 COMMA: ',';
 CUBR1: '{';
@@ -261,8 +270,8 @@ DIGIT: [0-9];
 EQUAL: '=';
 FULLS: '.';
 MINUS: '-';
-NLINE: [\n];
 PLUS: '+';
+SLASH: '/';
 SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';

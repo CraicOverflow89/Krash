@@ -5,6 +5,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Tasks
 
+ - custom parser error handling (without default printing to console)
  - global constants that cannot be overwritten and always exist
    - cwd (file)
    - home (file)
@@ -29,6 +30,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Issues
 
+ - loading script does not allow for absolute paths
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef
  - spaces in string literals are causing issues (whitespace)
