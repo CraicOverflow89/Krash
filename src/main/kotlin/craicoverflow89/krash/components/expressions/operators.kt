@@ -1,9 +1,12 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.objects.KrashValueDouble
 import craicoverflow89.krash.components.objects.KrashValueInteger
 import craicoverflow89.krash.components.objects.KrashValueSimple
+import craicoverflow89.krash.components.objects.KrashValueSimpleNumeric
 import craicoverflow89.krash.components.objects.KrashValueString
+import kotlin.math.floor
 
 abstract class KrashExpressionOperator(private val first: KrashExpression, private val second: KrashExpression): KrashExpression() {
 
@@ -17,24 +20,24 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
-        // Integer Addition
-        is KrashValueInteger -> {
+        // Numeric Addition
+        is KrashValueSimpleNumeric -> when(second) {
 
             // Perform Addition
-            if(second is KrashValueInteger) KrashValueInteger(first.value + second.value)
+            is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() + second.toDouble())
 
             // Invalid Type
-            else throw RuntimeException("Invalid type to perform addition!")
+            else -> throw RuntimeException("Invalid type to perform addition!")
         }
 
         // String Concatenation
-        is KrashValueString -> {
+        is KrashValueString -> when(second) {
 
             // Perform Concatenation
-            if(second is KrashValueString) KrashValueString(first.value + second.value)
+            is KrashValueString -> KrashValueString(first.value + second.value)
 
             // Invalid Type
-            else throw RuntimeException("Invalid type to perform concatenation!")
+            else -> throw RuntimeException("Invalid type to perform addition!")
         }
 
         // Invalid Type
@@ -47,21 +50,21 @@ class KrashExpressionOperatorDivision(first: KrashExpression, second: KrashExpre
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
-        // Integer Division
-        is KrashValueInteger -> {
+        // Numeric Division
+        is KrashValueSimpleNumeric -> when(second) {
 
             // Perform Division
-            if(second is KrashValueInteger) {
+            is KrashValueSimpleNumeric -> {
 
                 // Zero Safety
-                if(second.value == 0) throw RuntimeException("Cannot perform division by zero!")
+                if(second.toDouble() == 0.0) throw RuntimeException("Cannot perform division by zero!")
 
                 // Perform Division
-                KrashValueInteger(first.value / second.value)
+                KrashValueSimpleNumeric.create(first.toDouble() / second.toDouble())
             }
 
             // Invalid Type
-            else throw RuntimeException("Invalid type to perform division!")
+            else -> throw RuntimeException("Invalid type to perform division!")
         }
 
         // Invalid Type
@@ -74,14 +77,14 @@ class KrashExpressionOperatorMultiplication(first: KrashExpression, second: Kras
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
-        // Integer Multiplication
-        is KrashValueInteger -> {
+        // Numeric Multiplication
+        is KrashValueSimpleNumeric -> when(second) {
 
             // Perform Multiplication
-            if(second is KrashValueInteger) KrashValueInteger(first.value * second.value)
+            is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() * second.toDouble())
 
             // Invalid Type
-            else throw RuntimeException("Invalid type to perform multiplication!")
+            else -> throw RuntimeException("Invalid type to perform multiplication!")
         }
 
         // Invalid Type
@@ -94,14 +97,14 @@ class KrashExpressionOperatorSubtraction(first: KrashExpression, second: KrashEx
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
-        // Integer Subtraction
-        is KrashValueInteger -> {
+        // Numeric Subtraction
+        is KrashValueSimpleNumeric -> when(second) {
 
             // Perform Subtraction
-            if(second is KrashValueInteger) KrashValueInteger(first.value - second.value)
+            is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() - second.toDouble())
 
             // Invalid Type
-            else throw RuntimeException("Invalid type to perform subtraction!")
+            else -> throw RuntimeException("Invalid type to perform subtraction!")
         }
 
         // Invalid Type

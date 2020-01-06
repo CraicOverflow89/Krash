@@ -110,6 +110,8 @@ expressionLit returns [KrashExpressionLiteral result]
         |
             expressionLitCallable {$result = $expressionLitCallable.result;}
         |
+            expressionLitDouble {$result = $expressionLitDouble.result;}
+        |
             expressionLitInt {$result = $expressionLitInt.result;}
         |
             expressionLitMap {$result = $expressionLitMap.result;}
@@ -183,6 +185,23 @@ expressionLitCallableArg returns [KrashExpressionLiteralCallableArgument result]
             {defaultValue = $expression.result;}
         )?
         {$result = new KrashExpressionLiteralCallableArgument($expressionRefChars.text, defaultValue);}
+    ;
+
+expressionLitDouble returns [KrashExpressionLiteralDouble result]
+    :   {boolean minus = false;}
+        (
+            MINUS {minus = true;}
+        )?
+        expressionLitDoubleDigits
+        {
+            double value = Double.parseDouble($expressionLitDoubleDigits.text);
+            if(minus) value = -value;
+            $result = new KrashExpressionLiteralDouble(value);
+        }
+    ;
+
+expressionLitDoubleDigits
+    :   DIGIT+ FULLS DIGIT+
     ;
 
 expressionLitInt returns [KrashExpressionLiteralInteger result]

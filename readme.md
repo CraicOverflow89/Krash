@@ -6,7 +6,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 ### Tasks
 
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
- - integer division currently results in rounded integer (need to add other numeric types)
  - custom parser error handling (without default printing to console)
  - should allow setting map/array values with `map[key] = value` and `array[pos] = value` syntax
  - global constants that cannot be overwritten and always exist

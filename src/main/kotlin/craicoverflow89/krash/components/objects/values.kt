@@ -3,6 +3,7 @@ package craicoverflow89.krash.components.objects
 import craicoverflow89.krash.components.KrashMethod
 import craicoverflow89.krash.components.KrashReserved
 import craicoverflow89.krash.components.KrashRuntime
+import kotlin.math.floor
 
 interface KrashValue {
 
@@ -16,7 +17,7 @@ interface KrashValue {
 
 }
 
-class KrashValueArray(val valueList: ArrayList<KrashValue>): KrashValueSimple(hashMapOf(
+class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueSimple(hashMapOf(
     Pair("add", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
         valueList.add(argumentList[0])
         KrashValueNull()
@@ -72,7 +73,7 @@ class KrashValueArray(val valueList: ArrayList<KrashValue>): KrashValueSimple(ha
 
 }
 
-class KrashValueBoolean(val value: Boolean): KrashValueSimple() {
+class KrashValueBoolean(private val value: Boolean): KrashValueSimple() {
 
     override fun toString() = if(value) "true" else "false"
 
@@ -86,13 +87,23 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
 }
 
-class KrashValueInteger(val value: Int): KrashValueSimple() {
+class KrashValueDouble(private val value: Double): KrashValueSimpleNumeric() {
+
+    override fun toDouble() = value
 
     override fun toString() = value.toString()
 
 }
 
-class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() {
+class KrashValueInteger(val value: Int): KrashValueSimpleNumeric() {
+
+    override fun toDouble() = value.toDouble()
+
+    override fun toString() = value.toString()
+
+}
+
+class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
 
     // Create Data
     private val data = HashMap<String, KrashValue>().apply {
@@ -152,9 +163,11 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() 
             KrashValueMapPair(it.key, it.value.toSimple(runtime))
         })
 
-    override fun toString() = valueList.joinToString(", ", "{", "}") {
-        it.toString()
-    }
+    override fun toString() = ArrayList<String>().apply {
+        data.forEach {
+            add("${it.key}: ${it.value}")
+        }
+    }.joinToString(",", "{", "}")
 
 }
 
@@ -202,6 +215,25 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
     }
 
     override fun resolve(runtime: KrashRuntime) = this
+
+}
+
+abstract class KrashValueSimpleNumeric: KrashValueSimple() {
+
+    companion object {
+
+        fun create(value: Double): KrashValueSimpleNumeric {
+
+            // Create Integer
+            if(value == floor(value) && !value.isInfinite()) return KrashValueInteger(value.toInt())
+
+            // Create Double
+            return KrashValueDouble(value)
+        }
+
+    }
+
+    abstract fun toDouble(): Double
 
 }
 

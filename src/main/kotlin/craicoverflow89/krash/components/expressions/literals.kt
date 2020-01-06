@@ -80,6 +80,12 @@ class KrashExpressionLiteralCallableExpression(private val expression: KrashExpr
 
 }
 
+class KrashExpressionLiteralDouble(private val value: Double): KrashExpressionLiteral() {
+
+    override fun toValue(runtime: KrashRuntime) = KrashValueDouble(value)
+
+}
+
 class KrashExpressionLiteralInteger(private val value: Int): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime) = KrashValueInteger(value)
