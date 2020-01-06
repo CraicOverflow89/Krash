@@ -3,16 +3,16 @@ package craicoverflow89.krash.components.expressions
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValueInteger
 
-abstract class KrashExpressionMaths: KrashExpression()
+abstract class KrashExpressionOperator: KrashExpression()
 
-class KrashExpressionMathsAddition(private val first: Int, private val second: Int): KrashExpressionMaths() {
+class KrashExpressionOperatorAddition(private val first: Int, private val second: Int): KrashExpressionOperator() {
 
     override fun toValue(runtime: KrashRuntime) =
         KrashValueInteger(first + second)
 
 }
 
-class KrashExpressionMathsDivision(private val first: Int, private val second: Int): KrashExpressionMaths() {
+class KrashExpressionOperatorDivision(private val first: Int, private val second: Int): KrashExpressionOperator() {
 
     override fun toValue(runtime: KrashRuntime) =
         KrashValueInteger(first / second)
@@ -20,14 +20,14 @@ class KrashExpressionMathsDivision(private val first: Int, private val second: I
 
 }
 
-class KrashExpressionMathsMultiplication(private val first: Int, private val second: Int): KrashExpressionMaths() {
+class KrashExpressionOperatorMultiplication(private val first: Int, private val second: Int): KrashExpressionOperator() {
 
     override fun toValue(runtime: KrashRuntime) =
         KrashValueInteger(first * second)
 
 }
 
-class KrashExpressionMathsSubtraction(private val first: Int, private val second: Int): KrashExpressionMaths() {
+class KrashExpressionOperatorSubtraction(private val first: Int, private val second: Int): KrashExpressionOperator() {
 
     override fun toValue(runtime: KrashRuntime) =
         KrashValueInteger(first - second)
