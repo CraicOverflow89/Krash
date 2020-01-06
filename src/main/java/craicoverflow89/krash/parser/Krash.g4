@@ -129,7 +129,7 @@ expressionLitBoolean returns [KrashExpressionLiteralBoolean result]
 expressionLitCallable returns [KrashExpressionLiteralCallable result]
     :   {
             ArrayList<String> args = new ArrayList();
-            ArrayList<KrashExpression> body = new ArrayList();
+            ArrayList<KrashExpressionLiteralCallableExpression> body = new ArrayList();
         }
         'fun'
         STBR1
@@ -143,7 +143,11 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
         STBR2
         CUBR1
         (
-            exp = expression {body.add($exp.result);}
+            {boolean isReturn = false;}
+            (
+                'return' {isReturn = true;}
+            )?
+            exp = expression {body.add(new KrashExpressionLiteralCallableExpression($exp.result, isReturn));}
         )*
         CUBR2
         {$result = new KrashExpressionLiteralCallable(args, body);}

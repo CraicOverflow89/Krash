@@ -1,15 +1,7 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.objects.KrashValue
-import craicoverflow89.krash.components.objects.KrashValueArray
-import craicoverflow89.krash.components.objects.KrashValueBoolean
-import craicoverflow89.krash.components.objects.KrashValueCallable
-import craicoverflow89.krash.components.objects.KrashValueInteger
-import craicoverflow89.krash.components.objects.KrashValueMap
-import craicoverflow89.krash.components.objects.KrashValueMapPair
-import craicoverflow89.krash.components.objects.KrashValueNull
-import craicoverflow89.krash.components.objects.KrashValueString
+import craicoverflow89.krash.components.objects.*
 
 abstract class KrashExpressionLiteral: KrashExpression()
 
@@ -27,7 +19,7 @@ class KrashExpressionLiteralBoolean(private val value: Boolean): KrashExpression
 
 }
 
-class KrashExpressionLiteralCallable(private val argumentList: List<String>, private val expressionList: List<KrashExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralCallable(private val argumentList: List<String>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueCallable {
 
@@ -39,16 +31,37 @@ class KrashExpressionLiteralCallable(private val argumentList: List<String>, pri
         // Create Callable
         return KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
-            // TEMP
-            expressionList.forEach {
-                it.toValue(callableRuntime)
-            }
-            // NOTE: need to consider return keyword
+            // Default Result
+            var returnValue: KrashValue = KrashValueNull()
 
-            // TEMP
-            KrashValueNull()
+            // Iterate Expressions
+            var result: KrashValue
+            var pos = 0
+            while(pos < expressionList.size) {
+
+                // Invoke Expression
+                result = expressionList[pos].toValue(callableRuntime)
+
+                // Return Result
+                if(expressionList[pos].isReturn) {
+                    returnValue = result
+                    break
+                }
+
+                // Next Expression
+                pos ++
+            }
+
+            // Return Result
+            returnValue
         }
     }
+
+}
+
+class KrashExpressionLiteralCallableExpression(private val expression: KrashExpression, val isReturn: Boolean): KrashExpressionLiteral() {
+
+    override fun toValue(runtime: KrashRuntime) = expression.toValue(runtime)
 
 }
 
