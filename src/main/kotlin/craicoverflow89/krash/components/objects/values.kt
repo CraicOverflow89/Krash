@@ -103,6 +103,21 @@ class KrashValueMap(val valueList: List<KrashValueMapPair>): KrashValueSimple() 
     init {
 
         // Append Members
+        memberPut("add") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Resolve Key
+            val key = argumentList[0].toSimple(runtime)
+
+            // Append Pair
+            if(key is KrashValueString) data[key.value] = argumentList[1]
+
+            // Invalid Type
+            else throw RuntimeException("Invalid type for map key!")
+            // NOTE: come back to this
+
+            // Done
+            KrashValueNull()
+        }
         /*memberPut("contains") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
             KrashValueBoolean(data.containsKey(argumentList[0].toSimple(runtime)))
         }*/

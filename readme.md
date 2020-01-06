@@ -6,6 +6,8 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 ### Tasks
 
  - custom parser error handling (without default printing to console)
+ - ending input with `{` in shell must start a buffer of lines to parse later
+ - should allow setting map/array values with `map[key] = value` and `array[pos] = value` syntax
  - global constants that cannot be overwritten and always exist
    - cwd (file)
    - home (file)
