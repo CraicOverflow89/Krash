@@ -27,7 +27,7 @@ class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
 
     // Print Values
     argumentList.forEach {
-        println(it.toSimple(runtime))
+        KrashRuntime.println(it.toSimple(runtime))
     }
 
     // Done

@@ -41,13 +41,13 @@ fun loadScript(scriptPath: String) {
 
     // Missing File
     if(!scriptFile.exists()) {
-        println("Could not find script!")
+        KrashRuntime.println("Could not find script!")
         exitProcess(-1)
     }
 
     // Invalid File
     if(scriptFile.extension != "krash") {
-        println("Must be a krash script!")
+        KrashRuntime.println("Must be a krash script!")
         exitProcess(-1)
     }
 
@@ -133,17 +133,17 @@ fun loadShell() {
 
         // Error Handling
         catch(ex: RuntimeException) {
-            println("ERROR: ${ex.message}")
+            KrashRuntime.println("ERROR: ${ex.message}")
         }
     }
 
     // Shell Done
-    println("")
+    KrashRuntime.println("")
 }
 
 fun printInfo() {
-    println("")
-    println("Krash Project")
-    println("Version $KRASH_VERSION")
-    println("")
+    KrashRuntime.println("")
+    KrashRuntime.println("Krash Project")
+    KrashRuntime.println("Version $KRASH_VERSION")
+    KrashRuntime.println("")
 }

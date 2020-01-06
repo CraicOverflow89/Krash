@@ -48,6 +48,20 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
 
 }
 
+abstract class KrashOutput {
+
+    abstract fun invoke(text: String)
+
+}
+
+class KrashOutputShell: KrashOutput() {
+
+    override fun invoke(text: String) {
+        println(text)
+    }
+
+}
+
 class KrashReference(val value: String)
 
 class KrashReserved {
@@ -79,8 +93,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
     companion object {
 
-        // Define Path
+        // Define Properties
         private var cwdPath = ""
+        private var output: KrashOutput = KrashOutputShell()
 
         fun cwd() = cwdPath
 
@@ -88,6 +103,12 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
         fun cwdSet(path: String) {
             cwdPath = path.replace("\\", "/")
+        }
+
+        fun println(value: Any) = output.invoke(value.toString())
+
+        fun outputSet(value: KrashOutput) {
+            output = value
         }
 
     }
@@ -131,7 +152,7 @@ class KrashScript(private val commandList: List<KrashCommand>) {
 
             // Error Handling
             catch(ex: RuntimeException) {
-                println("ERROR (line ${line + 1}): ${ex.message}")
+                KrashRuntime.println("ERROR (line ${line + 1}): ${ex.message}")
             }
         }
 
