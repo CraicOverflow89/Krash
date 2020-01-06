@@ -39,3 +39,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled
  - the map `contains` member function needs finishing
+
+### See Also
+
+ - [Krash Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-Krash-Language)
