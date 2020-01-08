@@ -109,6 +109,14 @@ expressionData returns [KrashExpression result]
         |
             expressionMember {$result = new KrashExpressionMember($result, $expressionMember.result);}
         |
+            expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
+        |
+            expressionCoGreater {$result = new KrashExpressionConditionGreater($result, $expressionCoGreater.result);}
+        |
+            expressionCoInequal {$result = new KrashExpressionConditionInequality($result, $expressionCoInequal.result);}
+        |
+            expressionCoLesser {$result = new KrashExpressionConditionLesser($result, $expressionCoLesser.result);}
+        |
             expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
         |
             expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
@@ -117,6 +125,26 @@ expressionData returns [KrashExpression result]
         |
             expressionOpSubtract {$result = new KrashExpressionOperatorSubtraction($result, $expressionOpSubtract.result);}
         )*
+    ;
+
+expressionCoEqual returns [KrashExpression result]
+    :   EQUAL EQUAL expression
+        {$result = $expression.result;}
+    ;
+
+expressionCoGreater returns [KrashExpression result]
+    :   '>' expression
+        {$result = $expression.result;}
+    ;
+
+expressionCoInequal returns [KrashExpression result]
+    :   BANG EQUAL expression
+        {$result = $expression.result;}
+    ;
+
+expressionCoLesser returns [KrashExpression result]
+    :   '<' expression
+        {$result = $expression.result;}
     ;
 
 expressionGlobal returns [KrashExpressionGlobal result]

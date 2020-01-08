@@ -84,14 +84,14 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
             val result = ArrayList<KrashValue>()
 
             // Invoke Logic
-            valueList.forEach {
-                logic.invoke(runtime, listOf(it)).let {
+            valueList.forEach {value ->
+                logic.invoke(runtime, listOf(value)).let {
 
                     // Validate Return
                     if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
 
                     // Include Element
-                    if(it.isTrue()) result.add(it)
+                    if(it.isTrue()) result.add(value)
                 }
             }
 
@@ -135,14 +135,14 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
             val result = ArrayList<KrashValue>()
 
             // Invoke Logic
-            valueList.forEach {
-                logic.invoke(runtime, listOf(it)).let {
+            valueList.forEach {value ->
+                logic.invoke(runtime, listOf(value)).let {
 
                     // Validate Return
                     if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
 
                     // Include Element
-                    if(!it.isTrue()) result.add(it)
+                    if(!it.isTrue()) result.add(value)
                 }
             }
 
