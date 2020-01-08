@@ -1,7 +1,6 @@
 package craicoverflow89.krash.components
 
 import craicoverflow89.krash.components.expressions.KrashExpression
-import craicoverflow89.krash.components.expressions.KrashExpressionReference
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueInteger

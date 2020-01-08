@@ -65,13 +65,14 @@ commandDeclareRef returns [KrashCommandDeclareReference result]
 
 commandDeclareRefIndex returns [KrashCommandDeclareReferenceIndex result]
     :   expressionRef
-        {
-            KrashExpression index = $expressionRef.result;
-        }
+        {KrashExpression expression = $expressionRef.result;}
         (
-            expressionIndex {index = new KrashExpressionIndex(index, $expressionIndex.result);}
+            indexMulti = expressionIndex {expression = new KrashExpressionIndex(expression, $indexMulti.result);}
+        )*
+        (
+            indexFinal = expressionIndex
         )+
-        {$result = new KrashCommandDeclareReferenceIndex($expressionRef.result, index);}
+        {$result = new KrashCommandDeclareReferenceIndex(expression, $indexFinal.result);}
     ;
 
 commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
