@@ -1,0 +1,16 @@
+// Basic Literals
+person = {name: "James", age: 30, isMale: true, lang: ["Kotlin", "Python"]}
+echo(person)
+
+/*
+ * Echoes Hello
+ *
+ * @param name
+ * @returns void
+ */
+hello = fun(name = "Somebody") {
+    echo("Hello " + name)
+}
+
+// Invoke Callable
+hello(person["name"])
