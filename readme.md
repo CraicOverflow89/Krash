@@ -1,7 +1,7 @@
 Krash Project
 =============
 
-Lightweight file manipulation DSL built in Kotlin.
+Lightweight file manipulation DSL, built with Kotlin and ANTLR.
 
 ### Features
 
