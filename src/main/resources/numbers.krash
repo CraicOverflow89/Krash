@@ -1,0 +1,17 @@
+// Create Integer
+i = 3
+
+// Create Double
+d = 7.2
+
+// Addition
+echo(i * d)
+
+// Subtraction
+echo(i - d)
+
+// Multiplication
+echo(i * 10)
+
+// Division
+echo(10 / 5)
