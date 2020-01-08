@@ -13,5 +13,23 @@ echo(data)
 // Print Size
 echo("size = " + !data.size())
 
-// Get Element
-echo("element at pos 0 = " + data[0])
+// Print Each
+data.each(echo)
+
+// Join Elements
+echo(data.join("|", "<", ">"))
+
+// Map Elements
+echo(data.map(fun() {
+    return it + "!"
+}))
+
+// Filter Elements
+echo(data.filter(fun() {
+    return it[0] == "K"
+}))
+
+// Reject Elements
+echo(data.reject(fun() {
+    return it[0] == "J"
+}))

@@ -1,0 +1,26 @@
+// Create String
+data = "James"
+
+// Print Value
+echo(data)
+
+// Print Size
+echo("size = " + !data.size)
+
+// Starts With
+echo("starts with J = " + !data.startsWith("J"))
+
+// Ends With
+echo("starts with E = " + !data.startsWith("E"))
+
+// Char Position
+echo("char at position 2 = " + data[1])
+
+// Concatenation
+echo(data + "!")
+
+// Char List
+echo(data.toList())
+
+// Split List
+echo(data.toList("m"))

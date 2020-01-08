@@ -13,6 +13,7 @@ Lightweight file manipulation DSL, built with Kotlin and ANTLR.
 
 ### Tasks
 
+ - need to add comparison operators
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
@@ -36,6 +37,7 @@ Lightweight file manipulation DSL, built with Kotlin and ANTLR.
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled
+ - comments are not currently allowed inside functions
 
 ### See Also
 
