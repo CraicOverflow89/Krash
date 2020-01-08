@@ -27,7 +27,9 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         KrashValueString(valueList.joinToString(""))
         // NOTE: need to parse arguments as separator, prefix and postfix
     }),
-    Pair("size", KrashValueInteger(valueList.size))
+    Pair("size", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+        KrashValueInteger(valueList.size)
+    })
 )) {
 
     init {

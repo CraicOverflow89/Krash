@@ -7,7 +7,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
- - should allow setting map/array values with `map[key] = value` and `array[pos] = value` syntax
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
  - commands for file/directory moving/copying (recursion flag)
    - create

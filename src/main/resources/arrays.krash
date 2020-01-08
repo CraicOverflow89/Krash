@@ -11,5 +11,7 @@ data[2] = "Java"
 echo(data)
 
 // Print Size
-echo("size is " + !data.size")
-// NOTE: size needs to be callable or value will be stored from init
+echo("size = " + !data.size())
+
+// Get Element
+echo("element at pos 0 = " + data[0])
