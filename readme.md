@@ -30,8 +30,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
 
 ### Issues
 
- - should allow any characters in comments (regardless of parser recognising pieces of code)
- - spaces in string literals are causing issues (whitespace)
  - loading script does not allow for absolute paths
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef

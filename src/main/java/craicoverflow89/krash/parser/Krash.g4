@@ -258,17 +258,12 @@ expressionLitNull returns [KrashExpressionLiteralNull result]
     ;
 
 expressionLitString returns [KrashExpressionLiteralString result]
-    :   {StringBuffer buffer = new StringBuffer();}
-        QUOTE
-        (
-            chars = expressionLitStringChars {buffer.append($chars.text);}
-        )*
-        QUOTE
-        {$result = new KrashExpressionLiteralString(buffer.toString());}
+    :   expressionLitStringChars
+        {$result = new KrashExpressionLiteralString($expressionLitStringChars.text.replaceAll("\"", ""));}
     ;
 
 expressionLitStringChars
-    :   (ALPHA | AMPER | APOST | ASTER | CHAR | COLON | COMMA | CUBR1 | CUBR2 | DIGIT | EQUAL | FULLS | MINUS | SLASH | SPACE | SQBR1 | SQBR2 | STBR1 | STBR2 | UNDER)+
+    :   STRING
     ;
 
 expressionMember returns [String result]
@@ -333,10 +328,9 @@ SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';
 STBR2: ')';
+STRING: '"' ~[\\"]* '"';
 UNDER: '_';
 WHITESPACE: [ \t\r\n]+ -> skip;
-SPACE: [ ]+;
-QUOTE: '"';
 CHAR: ~[ "];
 COMMENT_MULTI: '/*' .* '*/';
 COMMENT_SINGLE: '//' ~[\r\n]*;
