@@ -3,7 +3,7 @@ person = {name: "James", age: 30, isMale: true, lang: ["Kotlin", "Python"]}
 echo(person)
 
 /*
- * Echoes Hello
+ * Says Hello
  *
  * @param name
  * @returns void
@@ -14,3 +14,10 @@ hello = fun(name = "Somebody") {
 
 // Invoke Callable
 hello(person["name"])
+
+// IIFE
+fun(){echo("IIFE")}()
+
+// Simple Callable
+simple = fun() = echo("simple callable")
+simple()
