@@ -62,8 +62,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
 
     fun setElement(pos: Int, value: KrashValue) {
 
-        // Set Element
-        if(pos >= 0 && pos <= valueList.size) valueList[pos] = value
+        // New Element
+        if(pos == valueList.size) valueList.add(value)
+
+        // Update Element
+        else if(pos >= 0 && pos < valueList.size) valueList[pos] = value
 
         // Invalid Index
         else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")

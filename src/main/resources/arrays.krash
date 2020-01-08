@@ -1,0 +1,15 @@
+// Create Array
+data = ["Kotlin"]
+
+// Add Data (add method)
+data.add("Python")
+
+// Add Data (short syntax)
+data[2] = "Java"
+
+// Print Array
+echo(data)
+
+// Print Size
+echo("size is " + !data.size")
+// NOTE: size needs to be callable or value will be stored from init
