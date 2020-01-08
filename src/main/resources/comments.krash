@@ -1,0 +1,9 @@
+// this is a single line comment
+echo("single")
+
+/*
+ * this is a multiline comment
+ *
+ * @hint text
+ */
+echo("multi")

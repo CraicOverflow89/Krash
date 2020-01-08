@@ -166,14 +166,14 @@ class KrashScript(private val commandList: List<KrashCommand>) {
         val runtime = KrashRuntime(cwd)
 
         // Iterate Commands
-        commandList.forEachIndexed {line, command ->
+        commandList.forEach {
 
             // Invoke Command
-            try {command.invoke(runtime)}
+            try {it.invoke(runtime)}
 
             // Error Handling
             catch(ex: RuntimeException) {
-                KrashRuntime.println("ERROR (line ${line + 1}): ${ex.message}")
+                KrashRuntime.println("ERROR: ${ex.message}")
             }
         }
 

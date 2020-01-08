@@ -307,12 +307,14 @@ expressionOpSubtract returns [KrashExpression result]
     ;
 
 expressionRef returns [KrashExpressionReference result]
-    :   {boolean byRef = false;}
+    :   {KrashExpressionReferenceModifier modifier = KrashExpressionReferenceModifier.NONE;}
         (
-            AMPER {byRef = true;}
+            AMPER {modifier = KrashExpressionReferenceModifier.REF;}
+        |
+            BANG {modifier = KrashExpressionReferenceModifier.STRING;}
         )?
         expressionRefChars
-        {$result = new KrashExpressionReference($expressionRefChars.text, byRef);}
+        {$result = new KrashExpressionReference($expressionRefChars.text, modifier);}
     ;
 
 expressionRefChars
@@ -325,6 +327,7 @@ AMPER: '&';
 APOST: '\'';
 ASTER: '*';
 AT: '@';
+BANG: '!';
 COLON: ':';
 COMMA: ',';
 CUBR1: '{';

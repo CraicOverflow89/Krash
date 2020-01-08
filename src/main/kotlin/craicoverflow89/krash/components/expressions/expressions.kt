@@ -106,9 +106,23 @@ class KrashExpressionMember(private val value: KrashExpression, private val memb
 
 }
 
-class KrashExpressionReference(private val value: String, private val byRef: Boolean): KrashExpression() {
+class KrashExpressionReference(private val value: String, private val modifier: KrashExpressionReferenceModifier): KrashExpression() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueReference(value, byRef).toSimple(runtime)
-    // NOTE: this really isn't suitable (will need byRef at times)
+    override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
+        // Resolve Reference
+        return KrashValueReference(value, modifier == KrashExpressionReferenceModifier.REF).toSimple(runtime).let {
+
+            // Cast String
+            if(modifier == KrashExpressionReferenceModifier.STRING) KrashValueString(it.toString())
+
+            // Keep Reference
+            it
+        }
+    }
+
+}
+
+enum class KrashExpressionReferenceModifier {
+    NONE, REF, STRING
 }
