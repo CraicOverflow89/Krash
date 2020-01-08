@@ -262,12 +262,111 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
                 KrashValueBoolean(data.containsKey(it.value))
             }
         }
+        memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                it
+            }
+
+            // Invoke Logic
+            data.forEach {
+                logic.invoke(runtime, listOf(KrashValueString(it.key), it.value))
+            }
+
+            // Return Map
+            this
+        }
+        memberPut("filter") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                it
+            }
+
+            // Create Result
+            val result = ArrayList<KrashValueMapPair>()
+
+            // Invoke Logic
+            data.forEach {k, v ->
+                logic.invoke(runtime, listOf(KrashValueString(k), v)).let {
+
+                    // Validate Return
+                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+
+                    // Include Element
+                    if(it.isTrue()) result.add(KrashValueMapPair(k, v))
+                }
+            }
+
+            // Return Result
+            KrashValueMap(result)
+        }
         memberPut("keys") {_: KrashRuntime, _: List<KrashValue> ->
             KrashValueArray(ArrayList<KrashValue>().apply {
                 data.forEach {
                     add(KrashValueString(it.key))
                 }
             })
+        }
+        memberPut("map") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                it
+            }
+
+            // Create Result
+            val result = ArrayList<KrashValueMapPair>()
+
+            // Invoke Logic
+            data.forEach {k, v ->
+                result.add(KrashValueMapPair(k, logic.invoke(runtime, listOf(KrashValueString(k), v))))
+            }
+
+            // Return Result
+            KrashValueMap(result)
+        }
+        memberPut("reject") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                it
+            }
+
+            // Create Result
+            val result = ArrayList<KrashValueMapPair>()
+
+            // Invoke Logic
+            data.forEach {k, v ->
+                logic.invoke(runtime, listOf(KrashValueString(k), v)).let {
+
+                    // Validate Return
+                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+
+                    // Include Element
+                    if(!it.isTrue()) result.add(KrashValueMapPair(k, v))
+                }
+            }
+
+            // Return Result
+            KrashValueMap(result)
         }
     }
 

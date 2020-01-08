@@ -18,3 +18,21 @@ echo("contains name = " + !data.contains("name"))
 
 // Get Name
 echo("value of name = " + data["name"])
+
+// Print Each
+data.each(echo)
+
+// Map Elements
+echo(data.map(fun(k, v) {
+    return !v + "!"
+}))
+
+// Filter Elements
+echo(data.filter(fun(k, v) {
+    return !v == "J"
+}))
+
+// Reject Elements
+echo(data.reject(fun(k, v) {
+    return k == "age"
+}))
