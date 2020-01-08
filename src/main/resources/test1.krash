@@ -11,10 +11,6 @@ echo("temp 1")
  * @param name
  * @returns void
  */
-
-// TEMP DEBUG
-echo("temp 1.5")
-
 hello = fun(name = "Somebody") {
     echo("Hello " + name)
 }

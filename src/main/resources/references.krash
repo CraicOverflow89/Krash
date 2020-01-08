@@ -1,0 +1,18 @@
+// Create Map
+data = {name: "James"}
+
+// Get Value
+name_value = data["name"]
+
+// Get Reference
+name_ref = &data["name"]
+
+// Update Map
+data = {name: "Jamie"}
+
+// Echo Name
+echo(name_value, name_ref)
+
+// Cast String
+echo("seven as string: " + !7)
+echo("map as string: " + !data)

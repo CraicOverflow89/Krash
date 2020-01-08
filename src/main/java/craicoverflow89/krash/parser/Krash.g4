@@ -62,6 +62,15 @@ commandExpression returns [KrashCommandExpression result]
     ;
 
 expression returns [KrashExpression result]
+    :   {Boolean toString = false;}
+        (
+            BANG {toString = true;}
+        )?
+        expressionData
+        {$result = new KrashExpressionData($expressionData.result, toString);}
+    ;
+
+expressionData returns [KrashExpression result]
     :   (
             expressionGlobal {$result = $expressionGlobal.result;}
         |
@@ -307,14 +316,12 @@ expressionOpSubtract returns [KrashExpression result]
     ;
 
 expressionRef returns [KrashExpressionReference result]
-    :   {KrashExpressionReferenceModifier modifier = KrashExpressionReferenceModifier.NONE;}
+    :   {Boolean byRef = false;}
         (
-            AMPER {modifier = KrashExpressionReferenceModifier.REF;}
-        |
-            BANG {modifier = KrashExpressionReferenceModifier.STRING;}
+            AMPER {byRef = true;}
         )?
         expressionRefChars
-        {$result = new KrashExpressionReference($expressionRefChars.text, modifier);}
+        {$result = new KrashExpressionReference($expressionRefChars.text, byRef);}
     ;
 
 expressionRefChars
