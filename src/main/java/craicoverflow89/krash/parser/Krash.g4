@@ -63,6 +63,8 @@ commandExpression returns [KrashCommandExpression result]
 
 expression returns [KrashExpression result]
     :   (
+            expressionGlobal {$result = $expressionGlobal.result;}
+        |
             expressionLit {$result = $expressionLit.result;}
         |
             expressionRef {$result = $expressionRef.result;}
@@ -82,6 +84,15 @@ expression returns [KrashExpression result]
         |
             expressionOpSubtract {$result = new KrashExpressionOperatorSubtraction($result, $expressionOpSubtract.result);}
         )*
+    ;
+
+expressionGlobal returns [KrashExpressionGlobal result]
+    :   expressionGlobalChars
+        {$result = new KrashExpressionGlobal($expressionGlobalChars.text.replace("$", ""));}
+    ;
+
+expressionGlobalChars
+    :   GLOBAL
     ;
 
 expressionIndex returns [KrashExpression result]
@@ -334,3 +345,4 @@ WHITESPACE: [ \t\r\n]+ -> skip;
 CHAR: ~[ "];
 COMMENT_MULTI: '/*' .* '*/';
 COMMENT_SINGLE: '//' ~[\r\n]*;
+GLOBAL: '$' [A-Z]+;

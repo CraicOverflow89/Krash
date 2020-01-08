@@ -8,9 +8,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
  - should allow setting map/array values with `map[key] = value` and `array[pos] = value` syntax
- - global constants that cannot be overwritten and always exist
-   - cwd (file)
-   - home (file)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
  - commands for file/directory moving/copying (recursion flag)
    - create
@@ -20,11 +17,10 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
    - delete
    - read
    - write
- - ensure that `null` is not being returned when errors should be thrown
  - all `KrashValue` classes should have private values and methods to get them
  - string buffer object
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
- - allow `@` and `*` chars in comments and provide meta data access
+ - provide meta data access for comments?
  - formatted string (able to use references inside)
 
 ### Issues

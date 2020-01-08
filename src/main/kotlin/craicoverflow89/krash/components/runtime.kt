@@ -1,9 +1,6 @@
 package craicoverflow89.krash.components
 
-import craicoverflow89.krash.components.objects.KrashValue
-import craicoverflow89.krash.components.objects.KrashValueClass
-import craicoverflow89.krash.components.objects.KrashValueNull
-import craicoverflow89.krash.components.objects.KrashValueReference
+import craicoverflow89.krash.components.objects.*
 import kotlin.system.exitProcess
 
 class KrashException(message: String): RuntimeException(message)
@@ -102,6 +99,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         // Define Properties
         private var cwdPath = ""
         private var output: KrashOutput = KrashOutputShell()
+        private var userDirectoryPath = System.getProperty("user.home").replace("\\", "/")
 
         fun cwd() = cwdPath
 
@@ -111,13 +109,29 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             cwdPath = path.replace("\\", "/")
         }
 
+        fun cwdString() = KrashValueString(cwdPath)
+
         fun error(value: Any) = output.err(value.toString())
+
+        fun global(value: String): KrashValueSimple = when(value) {
+
+            // Working Directory
+            "CWD" -> cwdString()
+
+            // User Directory
+            "HOME" -> userDirectoryString()
+
+            // Invalid Value
+            else -> throw KrashException("Constant '$value' does not exist!")
+        }
 
         fun println(value: Any) = output.out(value.toString())
 
         fun outputSet(value: KrashOutput) {
             output = value
         }
+
+        fun userDirectoryString() = KrashValueString(userDirectoryPath)
 
     }
 

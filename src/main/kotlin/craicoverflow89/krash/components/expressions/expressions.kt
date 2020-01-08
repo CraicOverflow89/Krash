@@ -19,6 +19,12 @@ abstract class KrashExpression {
 
 }
 
+class KrashExpressionGlobal(private val value: String): KrashExpression() {
+
+    override fun toValue(runtime: KrashRuntime) = KrashRuntime.global(value)
+
+}
+
 class KrashExpressionIndex(private val value: KrashExpression, private val index: KrashExpression): KrashExpression() {
 
     override fun toValue(runtime: KrashRuntime) = value.toValue(runtime).let {value ->

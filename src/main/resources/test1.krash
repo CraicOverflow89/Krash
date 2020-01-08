@@ -21,3 +21,6 @@ fun(){echo("IIFE")}()
 // Simple Callable
 simple = fun() = echo("simple callable")
 simple()
+
+// CWD Global
+echo("cwd is " + $CWD, "user directory is " + $HOME)
