@@ -1,7 +1,15 @@
 Krash Project
 =============
 
-Lightweight DSL for file manipulation (and more, later), built in Kotlin.
+Lightweight file manipulation DSL built in Kotlin.
+
+### Features
+
+ - runs on any operating system with JVM
+ - interpreted language
+ - uses object-oriented paradigm
+ - uses type inference
+ - functions are first class
 
 ### Tasks
 
