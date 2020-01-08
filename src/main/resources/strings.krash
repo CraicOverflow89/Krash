@@ -24,3 +24,9 @@ echo(data.toList())
 
 // Split List
 echo(data.toList("m"))
+
+// Equality
+echo(data == "James")
+
+// Inequality
+echo(data != "Jamie")

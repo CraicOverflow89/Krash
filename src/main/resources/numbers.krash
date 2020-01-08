@@ -15,3 +15,15 @@ echo(i * 10)
 
 // Division
 echo(10 / 5)
+
+// Equality
+echo(i == 3)
+
+// Inequality
+echo(d != 7.1)
+
+// Greater Than
+echo(d > i)
+
+// Lesser Than
+echo(i < d)

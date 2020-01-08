@@ -13,7 +13,6 @@ Lightweight file manipulation DSL, built with Kotlin and ANTLR.
 
 ### Tasks
 
- - need to add each/filter/map/reject for maps
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
