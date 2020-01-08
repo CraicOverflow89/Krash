@@ -12,7 +12,11 @@ import org.antlr.v4.runtime.CommonTokenStream
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main(args: Array<String>) = when {
+fun main() {
+    loadScript("src/main/resources/test1.krash")
+}
+
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -25,7 +29,7 @@ fun main(args: Array<String>) = when {
     // Script Mode
     else -> loadScript(args[0])
     // NOTE: this will completely ignore anything after script path (flags?)
-}
+}*/
 
 fun loadFlags(flags: String) {
 

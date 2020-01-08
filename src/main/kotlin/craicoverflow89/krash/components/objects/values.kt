@@ -167,7 +167,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         data.forEach {
             add("${it.key}: ${it.value}")
         }
-    }.joinToString(",", "{", "}")
+    }.joinToString(", ", "{", "}")
 
 }
 

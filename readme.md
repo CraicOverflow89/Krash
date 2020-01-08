@@ -26,8 +26,7 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
  - string buffer object
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
  - allow `@` and `*` chars in comments and provide meta data access
- - other stuff
-   - vsc language pack
+ - formatted string (able to use references inside)
 
 ### Issues
 

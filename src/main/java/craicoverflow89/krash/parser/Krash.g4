@@ -33,12 +33,21 @@ command returns [KrashCommand result]
     ;
 
 commandComment returns [KrashCommandComment result]
-    :   SLASH ASTER commandCommentChars ASTER SLASH
-        {$result = new KrashCommandComment($commandCommentChars.text);}
+    :   (
+            commandCommentMulti
+            {$result = new KrashCommandComment($commandCommentMulti.text);}
+        |
+            commandCommentSingle
+            {$result = new KrashCommandComment($commandCommentSingle.text);}
+        )
     ;
 
-commandCommentChars
-    :   (ALPHA | COLON | DIGIT | SPACE)+
+commandCommentMulti
+    :   COMMENT_MULTI
+    ;
+
+commandCommentSingle
+    :   COMMENT_SINGLE
     ;
 
 commandDeclare returns [KrashCommandDeclare result]
@@ -309,6 +318,7 @@ ALPHA: [A-Za-z];
 AMPER: '&';
 APOST: '\'';
 ASTER: '*';
+AT: '@';
 COLON: ':';
 COMMA: ',';
 CUBR1: '{';
@@ -328,3 +338,5 @@ WHITESPACE: [ \t\r\n]+ -> skip;
 SPACE: [ ]+;
 QUOTE: '"';
 CHAR: ~[ "];
+COMMENT_MULTI: '/*' .* '*/';
+COMMENT_SINGLE: '//' ~[\r\n]*;
