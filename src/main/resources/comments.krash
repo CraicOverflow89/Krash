@@ -1,9 +1,16 @@
-// this is a single line comment
+// Single Comment
 echo("single")
 
 /*
- * this is a multiline comment
+ * Multiline Comment
  *
- * @hint text
+ * @label value
  */
 echo("multi")
+
+// Create Function
+fun(){
+
+    // Function Comment
+    echo("function")
+}()

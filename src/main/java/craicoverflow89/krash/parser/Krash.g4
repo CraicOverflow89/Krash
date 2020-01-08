@@ -90,18 +90,14 @@ expression returns [KrashExpression result]
         (
             BANG {toString = true;}
         )?
-        expressionData
-        {$result = new KrashExpressionData($expressionData.result, toString);}
-    ;
-
-expressionData returns [KrashExpression result]
-    :   (
+        (
             expressionGlobal {$result = $expressionGlobal.result;}
         |
             expressionLit {$result = $expressionLit.result;}
         |
             expressionRef {$result = $expressionRef.result;}
         )
+        {$result = new KrashExpressionData($result, toString);}
         (
             expressionIndex {$result = new KrashExpressionIndex($result, $expressionIndex.result);}
         |
@@ -243,6 +239,8 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
         (
             CUBR1
             (
+                commandComment
+            |
                 {boolean isReturn = false;}
                 (
                     'return' {isReturn = true;}

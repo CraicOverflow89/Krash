@@ -1,0 +1,7 @@
+/*data = {name: "James", age: 30}.each(fun(k, v) {
+    echo(k + " = " + !v)
+})*/
+
+data = ["James", 30]
+echo(data[0] == "James")
+echo(!data[1] == "James")

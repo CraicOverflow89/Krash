@@ -29,7 +29,7 @@ echo(data.map(fun(k, v) {
 
 // Filter Elements
 echo(data.filter(fun(k, v) {
-    return !v == "J"
+    return !v.startsWith("J")
 }))
 
 // Reject Elements
