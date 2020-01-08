@@ -1,0 +1,20 @@
+// Create Map
+data = {name: "James", age: 30}
+
+// Add Data (add method)
+data.add("lang", ["Kotlin", "Python"])
+
+// Add Data (short syntax)
+data["isMale"] = true
+
+// Print Map
+echo(data)
+
+// Get Keys
+echo("keys = " + !data.keys)
+
+// Contains Name
+echo("contains name = " + !data.contains("name"))
+
+// Get Name
+echo("value of name = " + data["name"])

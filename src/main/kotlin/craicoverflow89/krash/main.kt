@@ -14,7 +14,10 @@ val KRASH_VERSION = "ALPHA"
 
 fun main() {
     //loadScript("src/main/resources/comments.krash")
-    loadScript("src/main/resources/references.krash")
+    loadScript("src/main/resources/maps.krash")
+    //loadScript("src/main/resources/references.krash")
+
+    // NOTE: multiline comment is currently taking all text after /**
     //loadScript("src/main/resources/test1.krash")
 }
 

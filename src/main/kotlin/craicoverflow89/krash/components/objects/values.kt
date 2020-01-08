@@ -124,26 +124,37 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         memberPut("add") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Resolve Key
-            val key = argumentList[0].toSimple(runtime)
+            argumentList[0].toSimple(runtime).let {
 
-            // Append Pair
-            if(key is KrashValueString) data[key.value] = argumentList[1]
+                // Invalid Type
+                if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
 
-            // Invalid Type
-            else throw KrashException("Invalid type for map key!")
+                // Assign Value
+                data[it.value] = argumentList[1]
+            }
 
             // Done
             KrashValueNull()
         }
-        /*memberPut("contains") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
-            KrashValueBoolean(data.containsKey(argumentList[0].toSimple(runtime)))
-        }*/
-        // NOTE: need to get the above working
-        memberPut("keys", KrashValueArray(ArrayList<KrashValue>().apply {
-            data.forEach {
-                add(KrashValueString(it.key))
+        memberPut("contains") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Resolve Key
+            argumentList[0].toSimple(runtime).let {
+
+                // Invalid Type
+                if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
+
+                // Return Result
+                KrashValueBoolean(data.containsKey(it.value))
             }
-        }))
+        }
+        memberPut("keys") {_: KrashRuntime, _: List<KrashValue> ->
+            KrashValueArray(ArrayList<KrashValue>().apply {
+                data.forEach {
+                    add(KrashValueString(it.key))
+                }
+            })
+        }
     }
 
     fun getData() = data
