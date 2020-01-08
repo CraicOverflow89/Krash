@@ -1,5 +1,6 @@
 package craicoverflow89.krash.components.expressions
 
+import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueCallable
@@ -31,8 +32,7 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
                     if(index is KrashValueInteger) value.getElement(index.value)
 
                     // Invalid Type
-                    else throw RuntimeException("Array indexes must be integers!")
-                    // NOTE: this is where custom exception handling should be added
+                    else throw KrashException("Array indexes must be integers!")
                 }
 
                 // Map Key
@@ -42,8 +42,7 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
                     if(index is KrashValueString) value.getData(index.value)
 
                     // Invalid Type
-                    else throw RuntimeException("Map indexes must be strings!")
-                    // NOTE: this is where custom exception handling should be added
+                    else throw KrashException("Map indexes must be strings!")
                 }
 
                 // String Character
@@ -53,13 +52,11 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
                     if(index is KrashValueInteger) value.getChar(index.value)
 
                     // Invalid Type
-                    else throw RuntimeException("Character indexes must be integers!")
-                    // NOTE: come back to this; use custom exceptions later
+                    else throw KrashException("Character indexes must be integers!")
                 }
 
                 // Invalid Type
-                else -> throw RuntimeException("Cannot access index $index of this value!")
-                // NOTE: come back to this; use custom exceptions later
+                else -> throw KrashException("Cannot access index $index of this value!")
             }.toSimple(runtime)
         }
     }
@@ -82,8 +79,7 @@ class KrashExpressionInvoke(private val value: KrashExpression, private val argu
             })
 
             // Invalid Type
-            else -> throw RuntimeException("Could not invoke this non-callable value!")
-            // NOTE: come back to this; use custom exceptions later
+            else -> throw KrashException("Could not invoke this non-callable value!")
         }
     }
 
@@ -99,18 +95,14 @@ class KrashExpressionMember(private val value: KrashExpression, private val memb
         //       when all resolution stuff is handled in expressions
 
         // Invalid Type
-        else throw RuntimeException("Cannot access members for this value!")
-        // NOTE: come back to this; use custom exceptions later
+        else throw KrashException("Cannot access members for this value!")
     }
 
 }
 
 class KrashExpressionReference(private val value: String, private val byRef: Boolean): KrashExpression() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueReference(
-        value,
-        byRef
-    ).toSimple(runtime)
+    override fun toValue(runtime: KrashRuntime) = KrashValueReference(value, byRef).toSimple(runtime)
     // NOTE: this really isn't suitable (will need byRef at times)
 
 }

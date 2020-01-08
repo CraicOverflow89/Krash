@@ -1,5 +1,6 @@
 package craicoverflow89.krash.components.objects
 
+import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
 import java.io.File
 
@@ -41,7 +42,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             Pair("pair", KrashValueClass("pair") {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
-                if(argumentList.size != 2) throw RuntimeException("Must supply two arguments for pair!")
+                if(argumentList.size != 2) throw KrashException("Must supply two arguments for pair!")
 
                 // Define Values
                 val first = argumentList[0]
@@ -64,7 +65,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             if(nativeObjects.containsKey(name)) return nativeObjects[name]!!
 
             // Invalid Key
-            throw RuntimeException("Could not find '$name' native object!")
+            throw KrashException("Could not find '$name' native object!")
         }
 
         fun nativeReserved() = nativeObjects.keys

@@ -20,7 +20,6 @@ Lightweight DSL for file manipulation (and more, later), built in Kotlin.
    - delete
    - read
    - write
- - look at removing `KrashReference` completely in favour of `KrashValueReference`
  - ensure that `null` is not being returned when errors should be thrown
  - all `KrashValue` classes should have private values and methods to get them
  - string buffer object

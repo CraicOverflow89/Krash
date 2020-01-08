@@ -22,10 +22,8 @@ class KrashCommandDeclare(private val ref: String, private val value: KrashExpre
 
         // Reserved Term
         if(KrashReserved.contains(ref)) {
-            throw RuntimeException("Could not create a reference with the reserved term '${ref}'")
-            // NOTE: come back to this; use custom exceptions later
+            throw KrashException("Could not create a reference with the reserved term '${ref}'")
         }
-        // NOTE: maybe there should be a KrashReference.isValid / validate method instead of writing logic here
 
         // Update Heap
         runtime.heapPut(ref, value.toValue(runtime))

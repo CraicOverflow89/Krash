@@ -1,5 +1,6 @@
 package craicoverflow89.krash.components.objects
 
+import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashMethod
 import craicoverflow89.krash.components.KrashReserved
 import craicoverflow89.krash.components.KrashRuntime
@@ -36,7 +37,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw RuntimeException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
                 it
             }
 
@@ -56,7 +57,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         return if(pos < valueList.size) valueList[pos]
 
         // Invalid Index
-        else throw RuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
+        else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
     override fun toSimple(runtime: KrashRuntime): KrashValueArray {
@@ -110,8 +111,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         valueList.forEach {
 
             // Reserved Term
-            if(KrashReserved.contains(it.key)) throw RuntimeException("Cannot use reserved term '${it.key}' for map key!")
-            // NOTE: come back to this
+            if(KrashReserved.contains(it.key)) throw KrashException("Cannot use reserved term '${it.key}' for map key!")
 
             // Append Pair
             put(it.key, it.value)
@@ -130,8 +130,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
             if(key is KrashValueString) data[key.value] = argumentList[1]
 
             // Invalid Type
-            else throw RuntimeException("Invalid type for map key!")
-            // NOTE: come back to this
+            else throw KrashException("Invalid type for map key!")
 
             // Done
             KrashValueNull()
@@ -155,7 +154,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         return if(data.containsKey(key)) data[key]!!
 
         // Invalid Index
-        else throw RuntimeException("Invalid key '$key' for map!")
+        else throw KrashException("Invalid key '$key' for map!")
     }
 
     override fun toSimple(runtime: KrashRuntime) =
@@ -204,7 +203,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 
     fun memberContains(key: String) = memberList.containsKey(key)
 
-    fun memberGet(key: String): KrashValue = memberList[key] ?: throw RuntimeException("No member '$key' exists on value!")
+    fun memberGet(key: String): KrashValue = memberList[key] ?: throw KrashException("No member '$key' exists on value!")
 
     fun memberPut(key: String, value: KrashValue) {
         memberList[key] = value
@@ -261,8 +260,7 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
     }.let { pos ->
 
         // Invalid Position
-        if (pos >= value.length || pos < 0) throw RuntimeException("Character index $pos out of bounds for string length ${value.length}!")
-        // NOTE: come back to this; use custom exceptions later
+        if (pos >= value.length || pos < 0) throw KrashException("Character index $pos out of bounds for string length ${value.length}!")
 
         // Fetch Character
         value.substring(pos, pos + 1)

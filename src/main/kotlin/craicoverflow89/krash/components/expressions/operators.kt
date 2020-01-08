@@ -1,12 +1,10 @@
 package craicoverflow89.krash.components.expressions
 
+import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.objects.KrashValueDouble
-import craicoverflow89.krash.components.objects.KrashValueInteger
 import craicoverflow89.krash.components.objects.KrashValueSimple
 import craicoverflow89.krash.components.objects.KrashValueSimpleNumeric
 import craicoverflow89.krash.components.objects.KrashValueString
-import kotlin.math.floor
 
 abstract class KrashExpressionOperator(private val first: KrashExpression, private val second: KrashExpression): KrashExpression() {
 
@@ -27,7 +25,7 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() + second.toDouble())
 
             // Invalid Type
-            else -> throw RuntimeException("Invalid type to perform addition!")
+            else -> throw KrashException("Invalid type to perform addition!")
         }
 
         // String Concatenation
@@ -37,11 +35,11 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
             is KrashValueString -> KrashValueString(first.value + second.value)
 
             // Invalid Type
-            else -> throw RuntimeException("Invalid type to perform addition!")
+            else -> throw KrashException("Invalid type to perform addition!")
         }
 
         // Invalid Type
-        else -> throw RuntimeException("Invalid type to perform operator!")
+        else -> throw KrashException("Invalid type to perform operator!")
     }
 
 }
@@ -57,18 +55,18 @@ class KrashExpressionOperatorDivision(first: KrashExpression, second: KrashExpre
             is KrashValueSimpleNumeric -> {
 
                 // Zero Safety
-                if(second.toDouble() == 0.0) throw RuntimeException("Cannot perform division by zero!")
+                if(second.toDouble() == 0.0) throw KrashException("Cannot perform division by zero!")
 
                 // Perform Division
                 KrashValueSimpleNumeric.create(first.toDouble() / second.toDouble())
             }
 
             // Invalid Type
-            else -> throw RuntimeException("Invalid type to perform division!")
+            else -> throw KrashException("Invalid type to perform division!")
         }
 
         // Invalid Type
-        else -> throw RuntimeException("Invalid type to perform operator!")
+        else -> throw KrashException("Invalid type to perform operator!")
     }
 
 }
@@ -84,11 +82,11 @@ class KrashExpressionOperatorMultiplication(first: KrashExpression, second: Kras
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() * second.toDouble())
 
             // Invalid Type
-            else -> throw RuntimeException("Invalid type to perform multiplication!")
+            else -> throw KrashException("Invalid type to perform multiplication!")
         }
 
         // Invalid Type
-        else -> throw RuntimeException("Invalid type to perform operator!")
+        else -> throw KrashException("Invalid type to perform operator!")
     }
 
 }
@@ -104,11 +102,11 @@ class KrashExpressionOperatorSubtraction(first: KrashExpression, second: KrashEx
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() - second.toDouble())
 
             // Invalid Type
-            else -> throw RuntimeException("Invalid type to perform subtraction!")
+            else -> throw KrashException("Invalid type to perform subtraction!")
         }
 
         // Invalid Type
-        else -> throw RuntimeException("Invalid type to perform operator!")
+        else -> throw KrashException("Invalid type to perform operator!")
     }
 
 }

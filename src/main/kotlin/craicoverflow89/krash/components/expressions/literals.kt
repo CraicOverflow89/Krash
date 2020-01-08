@@ -102,8 +102,7 @@ class KrashExpressionLiteralMap(private val value: List<KrashExpressionLiteralMa
 
 class KrashExpressionLiteralMapPair(private val key: String, private val value: KrashExpression) {
 
-    fun toValue(runtime: KrashRuntime) =
-        KrashValueMapPair(key, value.toValue(runtime))
+    fun toValue(runtime: KrashRuntime) = KrashValueMapPair(key, value.toValue(runtime))
 
 }
 

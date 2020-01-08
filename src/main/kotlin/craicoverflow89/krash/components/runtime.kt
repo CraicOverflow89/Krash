@@ -6,6 +6,8 @@ import craicoverflow89.krash.components.objects.KrashValueNull
 import craicoverflow89.krash.components.objects.KrashValueReference
 import kotlin.system.exitProcess
 
+class KrashException(message: String): RuntimeException(message)
+
 class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap?) {
 
     // Define Heap
@@ -23,7 +25,7 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
     fun get(ref: String): KrashValue {
 
         // Fetch Value
-        return heap[ref] ?: parent?.get(ref) ?: throw RuntimeException("Reference '$ref' does not exist!")
+        return heap[ref] ?: parent?.get(ref) ?: throw KrashException("Reference '$ref' does not exist!")
     }
 
     fun put(ref: String, value: KrashValue) {
@@ -67,8 +69,6 @@ class KrashOutputShell: KrashOutput() {
     }
 
 }
-
-class KrashReference(val value: String)
 
 class KrashReserved {
 
@@ -136,8 +136,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         exitProcess(code)
     }
 
-    fun heapContains(ref: KrashReference) = heap.contains(ref.value)
-    // NOTE: replace with String when KrashReference is removed altogether
+    fun heapContains(ref: String) = heap.contains(ref)
 
     fun heapGet(ref: String) = heap.get(ref)
 
