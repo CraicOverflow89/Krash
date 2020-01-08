@@ -54,7 +54,16 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
     fun getElement(pos: Int): KrashValue {
 
         // Return Element
-        return if(pos < valueList.size) valueList[pos]
+        return if(pos >= 0 && pos < valueList.size) valueList[pos]
+
+        // Invalid Index
+        else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
+    }
+
+    fun setElement(pos: Int, value: KrashValue) {
+
+        // Set Element
+        if(pos >= 0 && pos <= valueList.size) valueList[pos] = value
 
         // Invalid Index
         else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
@@ -166,6 +175,10 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
 
         // Invalid Index
         else throw KrashException("Invalid key '$key' for map!")
+    }
+
+    fun setData(key: String, value: KrashValue) {
+        data[key] = value
     }
 
     override fun toSimple(runtime: KrashRuntime) =

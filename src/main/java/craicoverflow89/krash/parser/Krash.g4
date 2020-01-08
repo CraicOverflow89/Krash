@@ -51,9 +51,32 @@ commandCommentSingle
     ;
 
 commandDeclare returns [KrashCommandDeclare result]
-    :   expressionRefChars EQUAL expression
-        // NOTE: could add list[1] and map["key"] update syntax
-        {$result = new KrashCommandDeclare($expressionRefChars.text, $expression.result);}
+    :   commandDeclareRef EQUAL expression
+        {$result = new KrashCommandDeclare($commandDeclareRef.result, $expression.result);}
+    ;
+
+commandDeclareRef returns [KrashCommandDeclareReference result]
+    :   (
+            commandDeclareRefIndex {$result = $commandDeclareRefIndex.result;}
+        |
+            commandDeclareRefSimple {$result = $commandDeclareRefSimple.result;}
+        )
+    ;
+
+commandDeclareRefIndex returns [KrashCommandDeclareReferenceIndex result]
+    :   expressionRef
+        {
+            KrashExpression index = $expressionRef.result;
+        }
+        (
+            expressionIndex {index = new KrashExpressionIndex(index, $expressionIndex.result);}
+        )+
+        {$result = new KrashCommandDeclareReferenceIndex($expressionRef.result, index);}
+    ;
+
+commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
+    :   expressionRefChars
+        {$result = new KrashCommandDeclareReferenceSimple($expressionRefChars.text);}
     ;
 
 commandExpression returns [KrashCommandExpression result]

@@ -10,8 +10,8 @@ data["isMale"] = true
 // Print Map
 echo(data)
 
-// Get Keys
-echo("keys = " + !data.keys)
+// Print Keys
+echo("keys = " + !data.keys())
 
 // Contains Name
 echo("contains name = " + !data.contains("name"))
