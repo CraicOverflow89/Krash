@@ -387,20 +387,37 @@ expressionStruct returns [KrashExpressionStructure result]
     ;
 
 expressionStructIf returns [KrashExpressionStructureIf result]
-    :   {ArrayList<KrashExpression> body = new ArrayList();}
+    :   {
+            ArrayList<KrashExpression> bodyTrue = new ArrayList();
+            ArrayList<KrashExpression> bodyElse = new ArrayList();
+        }
         'if' STBR1 condition = expression STBR2
         (
-            b1 = expression {body.add($b1.result);}
+            b1 = expression {bodyTrue.add($b1.result);}
         |
             CUBR1
             (
                 commandComment
             |
-                b2 = expression {body.add($b2.result);}
+                b2 = expression {bodyTrue.add($b2.result);}
             )*
             CUBR2
         )
-        {$result = new KrashExpressionStructureIf($condition.result, body);}
+        (
+            'else'
+            (
+                e1 = expression {bodyElse.add($e1.result);}
+            |
+                CUBR1
+                (
+                    commandComment
+                |
+                    e2 = expression {bodyElse.add($e2.result);}
+                )*
+                CUBR2
+            )
+        )?
+        {$result = new KrashExpressionStructureIf($condition.result, bodyTrue, bodyElse);}
     ;
 
 // Lexer Rules

@@ -8,7 +8,7 @@ import craicoverflow89.krash.components.objects.KrashValueSimple
 
 abstract class KrashExpressionStructure: KrashExpression()
 
-class KrashExpressionStructureIf(private val condition: KrashExpression, private val expressionList: List<KrashExpression>): KrashExpressionStructure() {
+class KrashExpressionStructureIf(private val condition: KrashExpression, private val expressionListTrue: List<KrashExpression>, private val expressionListElse: List<KrashExpression>): KrashExpressionStructure() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
@@ -19,16 +19,21 @@ class KrashExpressionStructureIf(private val condition: KrashExpression, private
         if(condition.toValue(runtime).let {
 
             // Return Result
-            if (it is KrashValueBoolean) it.isTrue()
+            if(it is KrashValueBoolean) it.isTrue()
 
             // Invalid Type
             else throw KrashException("Condition must be boolean!")
         }) {
 
             // Execute Body
-            expressionList.forEach {
+            expressionListTrue.forEach {
                 result = it.toValue(runtime)
             }
+        }
+
+        // Execute Else
+        else expressionListElse.forEach {
+            result = it.toValue(runtime)
         }
 
         // Return Result
