@@ -30,7 +30,7 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
         is KrashValueString -> when(second) {
 
             // Perform Concatenation
-            is KrashValueString -> KrashValueString(first.value + second.value)
+            is KrashValueString -> KrashValueString(first.getValue() + second.getValue())
 
             // Invalid Type
             else -> throw KrashException("Invalid type to perform addition!")
@@ -137,7 +137,7 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                                     runtime.heapPut(ref.getRef(runtime).value, collection.apply {
 
                                         // Update Map
-                                        setData(index.value, result)
+                                        setData(index.getValue(), result)
                                     })
                                 }
 

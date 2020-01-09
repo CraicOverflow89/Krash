@@ -40,7 +40,7 @@ class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpr
 
         // Compare Strings
         is KrashValueString -> when(second) {
-            is KrashValueString -> first.value == second.value
+            is KrashValueString -> first.getValue() == second.getValue()
             else -> throw KrashException("Invalid type for equality comparison with string!")
         }
 
@@ -90,7 +90,7 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
 
         // Compare Strings
         is KrashValueString -> when(second) {
-            is KrashValueString -> first.value != second.value
+            is KrashValueString -> first.getValue() != second.getValue()
             else -> throw KrashException("Invalid type for inequality comparison with string!")
         }
 

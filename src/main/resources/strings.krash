@@ -33,3 +33,7 @@ echo(data != "Jamie")
 
 // Escaped Characters
 echo("hello\nworld\"")
+
+// Formatted Strings
+name = "James"
+echo("hello $name")

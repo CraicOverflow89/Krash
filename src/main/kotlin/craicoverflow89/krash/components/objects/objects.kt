@@ -25,7 +25,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                         if(it !is KrashValueString) throw KrashException("File path must be a string!")
 
                         // Return Value
-                        it.value
+                        it.getValue()
                     }
 
                     // Default Path
@@ -60,7 +60,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     if(it !is KrashValueString) throw KrashException("Network url must be a string!")
 
                     // Return Value
-                    it.value
+                    it.getValue()
                 })
                 /*val method = if(argumentList.size > 1) argumentList[1].let {
 

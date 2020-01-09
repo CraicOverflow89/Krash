@@ -133,6 +133,32 @@ class KrashExpressionLiteralNull: KrashExpressionLiteral() {
 
 class KrashExpressionLiteralString(private val value: String): KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueString(value)
+    override fun toValue(runtime: KrashRuntime) = KrashValueString(value.let {
+
+        // Complex Value
+        val pattern = Regex("\\$[A-Za-z_][A-Za-z0-9_]*")
+        if(it.contains(pattern)) {
+
+            // Resolution Logic
+            fun resolve(text: String, match: MatchResult): String {
+
+                // Update String
+                val result = match.value.substring(1).let {ref ->
+                    text.replace(match.value, runtime.heapGet(ref).toString())
+                }
+
+                // Match All
+                return match.next()?.let {
+                    resolve(result, it)
+                } ?: result
+            }
+
+            // Match References
+            resolve(it, pattern.find(it)!!)
+        }
+
+        // Simple Value
+        else it
+    })
 
 }

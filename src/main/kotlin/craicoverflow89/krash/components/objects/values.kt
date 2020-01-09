@@ -30,15 +30,15 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         // Parse Arguments
         val separator = if(argumentList.isNotEmpty()) argumentList[0].toSimple(runtime).let {
             if(it !is KrashValueString) throw KrashException("Invalid type for separator!")
-            it.value
+            it.getValue()
         } else ""
         val prefix: String = if(argumentList.size > 1) argumentList[1].toSimple(runtime).let {
             if(it !is KrashValueString) throw KrashException("Invalid type for prefix!")
-            it.value
+            it.getValue()
         } else ""
         val postfix = if(argumentList.size > 2) argumentList[2].toSimple(runtime).let {
             if(it !is KrashValueString) throw KrashException("Invalid type for postfix!")
-            it.value
+            it.getValue()
         } else ""
 
         // Return Result
@@ -267,7 +267,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
                 if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
 
                 // Assign Value
-                data[it.value] = argumentList[1]
+                data[it.getValue()] = argumentList[1]
             }
 
             // Done
@@ -282,7 +282,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
                 if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
 
                 // Return Result
-                KrashValueBoolean(data.containsKey(it.value))
+                KrashValueBoolean(data.containsKey(it.getValue()))
             }
         }
         memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
@@ -441,7 +441,7 @@ class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<Str
         if(memberContains("toString")) memberGet("toString").let {
 
             // Custom String
-            if(it is KrashValueString) return@toString it.value
+            if(it is KrashValueString) return@toString it.getValue()
         }
 
         // Default Value
@@ -499,64 +499,69 @@ abstract class KrashValueSimpleNumeric: KrashValueSimple() {
 
 }
 
-class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
-    Pair("endsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+class KrashValueString(private val value: String): KrashValueSimple() {
 
-        // Validate Characters
-        if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
+    init {
+        // NOTE: convert "$ref" pieces if valueInitial contains '$'
 
-        // Parse Characters
-        KrashValueBoolean(argumentList[0].let {
+        // Append Members
+        memberPut("endsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
 
-            // Invalid Type
-            if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
+            // Validate Characters
+            if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
 
-            // Return Result
-            value.endsWith(it.value)
-        })
-    }),
-    Pair("toList", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
-        KrashValueArray(ArrayList<KrashValue>().apply {
-
-            // Use Delimiter
-            if(argumentList.isNotEmpty()) argumentList[0].let {
+            // Parse Characters
+            KrashValueBoolean(argumentList[0].let {
 
                 // Invalid Type
-                if(it !is KrashValueString) throw KrashException("Invalid type for delimiter!")
+                if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
 
-                // Split String
-                value.split(it.value).forEach {
-                    add(KrashValueString(it))
-                }
-            }
-
-            // Char List
-            else {
-                var pos = 0
-                while(pos < value.length) {
-                    add(KrashValueString(value.substring(pos, pos + 1)))
-                    pos ++
-                }
-            }
+                // Return Result
+                value.endsWith(it.value)
+            })
         })
-    }),
-    Pair("size", KrashValueInteger(value.length)),
-    Pair("startsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("toList", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+            KrashValueArray(ArrayList<KrashValue>().apply {
 
-        // Validate Characters
-        if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
+                // Use Delimiter
+                if(argumentList.isNotEmpty()) argumentList[0].let {
 
-        // Parse Characters
-        KrashValueBoolean(argumentList[0].let {
+                    // Invalid Type
+                    if(it !is KrashValueString) throw KrashException("Invalid type for delimiter!")
 
-            // Invalid Type
-            if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
+                    // Split String
+                    value.split(it.value).forEach {
+                        add(KrashValueString(it))
+                    }
+                }
 
-            // Return Result
-            value.startsWith(it.value)
+                // Char List
+                else {
+                    var pos = 0
+                    while(pos < value.length) {
+                        add(KrashValueString(value.substring(pos, pos + 1)))
+                        pos ++
+                    }
+                }
+            })
         })
-    })
-)) {
+        memberPut("size", KrashValueInteger(value.length))
+        memberPut("startsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Characters
+            if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
+
+            // Parse Characters
+            KrashValueBoolean(argumentList[0].let {
+
+                // Invalid Type
+                if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
+
+                // Return Result
+                value.startsWith(it.value)
+            })
+        })
+    }
 
     fun getChar(pos: Int) = KrashValueString(pos.let {
 
@@ -565,7 +570,7 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
 
         // Positive Position
         else it
-    }.let { pos ->
+    }.let {pos ->
 
         // Invalid Position
         if (pos >= value.length || pos < 0) throw KrashException("Character index $pos out of bounds for string length ${value.length}!")
@@ -574,6 +579,8 @@ class KrashValueString(val value: String): KrashValueSimple(hashMapOf(
         value.substring(pos, pos + 1)
         // NOTE: need to consider complex positions like [1, 3] (char 1 to 3)
     })
+
+    fun getValue() = value
 
     override fun toString() = value
 

@@ -46,19 +46,19 @@ class KrashArrayTest: KrashTest() {
         // Default
         with(invokeLine("[0, 1, 2].join()")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("012", (this as KrashValueString).value)
+            Assert.assertEquals("012", (this as KrashValueString).getValue())
         }
 
         // Separator
         with(invokeLine("[0, 1, 2].join(\"|\")")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("0|1|2", (this as KrashValueString).value)
+            Assert.assertEquals("0|1|2", (this as KrashValueString).getValue())
         }
 
         // Prefix and Postfix
         with(invokeLine("[0, 1, 2].join(\"|\", \"<\", \">\")")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("<0|1|2>", (this as KrashValueString).value)
+            Assert.assertEquals("<0|1|2>", (this as KrashValueString).getValue())
         }
     }
 

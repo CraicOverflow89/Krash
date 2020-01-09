@@ -56,7 +56,7 @@ class KrashCommandDeclare(private val ref: KrashCommandDeclareReference, private
                         is KrashValueMap -> {
 
                             // String Key
-                            if(it.index is KrashValueString) it.value.setData(it.index.value, valueSimple)
+                            if(it.index is KrashValueString) it.value.setData(it.index.getValue(), valueSimple)
 
                             // Invalid Type
                             else throw KrashException("Map indexes must be strings!")

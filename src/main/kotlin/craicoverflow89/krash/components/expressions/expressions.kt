@@ -58,7 +58,7 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
                 is KrashValueMap -> {
 
                     // String Key
-                    if(index is KrashValueString) value.getData(index.value)
+                    if(index is KrashValueString) value.getData(index.getValue())
 
                     // Invalid Type
                     else throw KrashException("Map indexes must be strings!")

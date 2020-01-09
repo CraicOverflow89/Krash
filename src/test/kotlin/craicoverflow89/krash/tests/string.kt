@@ -29,7 +29,7 @@ class KrashStringTest: KrashTest() {
     @Test
     fun index() = with(invokeLine("\"index\"[4]")) {
         Assert.assertTrue(this is KrashValueString)
-        Assert.assertEquals("x", (this as KrashValueString).value)
+        Assert.assertEquals("x", (this as KrashValueString).getValue())
     }
 
     @Test
@@ -38,13 +38,19 @@ class KrashStringTest: KrashTest() {
         // Simple Characters
         with(invokeLine("\"string literal\"")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("string literal", (this as KrashValueString).value)
+            Assert.assertEquals("string literal", (this as KrashValueString).getValue())
         }
 
         // Escape Characters
         with(invokeLine("\"string\nliteral with \\\"quotes\\\"\"")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("string\nliteral with \"quotes\"", (this as KrashValueString).value)
+            Assert.assertEquals("string\nliteral with \"quotes\"", (this as KrashValueString).getValue())
+        }
+
+        // Reference Syntax
+        with(invokeLines(listOf("name = \"James\"", "\"\$name\""))) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals("James", (this as KrashValueString).getValue())
         }
     }
 
@@ -78,7 +84,7 @@ class KrashStringTest: KrashTest() {
             Assert.assertTrue(this is KrashValueArray)
             (this as KrashValueArray).let {
                 Assert.assertEquals("[h, e, l, l, o]", it.toString())
-                Assert.assertEquals("l", (it.getElement(2) as KrashValueString).value)
+                Assert.assertEquals("l", (it.getElement(2) as KrashValueString).getValue())
             }
         }
 
@@ -87,7 +93,7 @@ class KrashStringTest: KrashTest() {
             Assert.assertTrue(this is KrashValueArray)
             (this as KrashValueArray).let {
                 Assert.assertEquals("[hello, world]", it.toString())
-                Assert.assertEquals("world", (it.getElement(1) as KrashValueString).value)
+                Assert.assertEquals("world", (it.getElement(1) as KrashValueString).getValue())
             }
         }
     }
