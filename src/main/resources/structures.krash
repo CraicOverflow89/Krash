@@ -8,6 +8,11 @@ if(1 < 2) {
     echo("1 < 2")
 }
 
+// If (negation operator)
+if(!false) {
+    echo("!false is true")
+}
+
 // If Else (single expression)
 if(1 > 2) echo("1 > 2") else echo("not 1 > 2")
 

@@ -387,7 +387,10 @@ expressionLitNull returns [KrashExpressionLiteralNull result]
 
 expressionLitString returns [KrashExpressionLiteralString result]
     :   expressionLitStringChars
-        {$result = new KrashExpressionLiteralString($expressionLitStringChars.text.replaceAll("\"", ""));}
+        {
+            String text = $expressionLitStringChars.text.replaceAll("\\\\\"", "\"");
+            $result = new KrashExpressionLiteralString(text.substring(1, text.length() - 1));
+        }
     ;
 
 expressionLitStringChars
@@ -522,7 +525,7 @@ SQBR1: '[';
 SQBR2: ']';
 STBR1: '(';
 STBR2: ')';
-STRING: '"' ~[\\"]* '"';
+STRING: '"' (~[\\"] | '\\' .)* '"';
 UNDER: '_';
 WHITESPACE: [ \t\r\n]+ -> skip;
 CHAR: ~[ "];

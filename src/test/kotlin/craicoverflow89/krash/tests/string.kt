@@ -33,9 +33,19 @@ class KrashStringTest: KrashTest() {
     }
 
     @Test
-    fun literal() = with(invokeLine("\"string literal\"")) {
-        Assert.assertTrue(this is KrashValueString)
-        Assert.assertEquals("string literal", (this as KrashValueString).value)
+    fun literal() {
+
+        // Simple Characters
+        with(invokeLine("\"string literal\"")) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals("string literal", (this as KrashValueString).value)
+        }
+
+        // Escape Characters
+        with(invokeLine("\"string\nliteral with \\\"quotes\\\"\"")) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals("string\nliteral with \"quotes\"", (this as KrashValueString).value)
+        }
     }
 
     @Test

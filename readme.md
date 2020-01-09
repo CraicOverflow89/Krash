@@ -196,7 +196,6 @@ message = "Hello " + name + "!"
 
 ### Tasks
 
- - add escape characters to string literals (need to be able to contain quotes)
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`

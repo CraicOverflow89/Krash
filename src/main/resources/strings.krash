@@ -30,3 +30,6 @@ echo(data == "James")
 
 // Inequality
 echo(data != "Jamie")
+
+// Escaped Characters
+echo("hello\nworld\"")
