@@ -14,6 +14,12 @@ class KrashCommentTest: KrashTest() {
     }
 
     @Test
+    fun nested() = with(parseLine("/* comment\n// nested\nmultiple */")) {
+        Assert.assertTrue(this is KrashCommandComment)
+        Assert.assertEquals("comment\n// nested\nmultiple", (this as KrashCommandComment).getValue())
+    }
+
+    @Test
     fun single() = with(parseLine("// comment")) {
         Assert.assertTrue(this is KrashCommandComment)
         Assert.assertEquals("comment", (this as KrashCommandComment).getValue())
