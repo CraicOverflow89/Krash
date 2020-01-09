@@ -77,6 +77,21 @@ first_reference = &list[0]
 // changes to first_reference update list (position 0)
 ```
 
+#### Implicit It
+
+When there is only one value passed to a function, it is available as `it` implicitly;
+
+```
+list.each(fun() {
+    echo(it)
+})
+
+// does the same as
+list.each(fun(value) {
+    echo(value)
+})
+```
+
 #### Control Structures
 
 Krash supports standard _if / else_ statements;
