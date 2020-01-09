@@ -34,11 +34,11 @@ Lightweight file manipulation DSL, built with Kotlin and ANTLR.
  - the lexer/parser logic isn't DRY (they're created in multiple places)
  - replace use of `toString` in unit tests with checking actual value of objects
  - need to add `!` boolean negation
- - should be able to use `fun(@value)` to cast to string
 
 ### Issues
 
  - loading script does not allow for absolute paths
+    - there should be a single `isAbsolutePath` method (already have this logic in file constructor)
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled

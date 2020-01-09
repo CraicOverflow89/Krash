@@ -35,7 +35,21 @@ class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpress
 
             // Inject Arguments
             callableArgs.forEachIndexed {pos, arg ->
-                callableRuntime.heapPut(arg.name, if(pos < argumentList.size) argumentList[pos] else arg.defaultValue(runtime))
+                callableRuntime.heapPut(arg.name, argumentList.let {
+
+                    // Argument Value
+                    if(pos < argumentList.size) argumentList[pos].let {
+
+                        // Cast String
+                        if(arg.modifier == KrashExpressionLiteralCallableArgumentModifier.STRING) it.toStringType()
+
+                        // Keep Value
+                        else it
+                    }
+
+                    // Default Value
+                    else arg.defaultValue(runtime)
+                })
             }
 
             // Implicit It
@@ -69,10 +83,14 @@ class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpress
 
 }
 
-class KrashExpressionLiteralCallableArgument(val name: String, private val defaultValue: KrashExpression? = null) {
+class KrashExpressionLiteralCallableArgument(val name: String, private val defaultValue: KrashExpression? = null, val modifier: KrashExpressionLiteralCallableArgumentModifier) {
 
     fun defaultValue(runtime: KrashRuntime) = defaultValue?.toValue(runtime) ?: KrashValueNull()
 
+}
+
+enum class KrashExpressionLiteralCallableArgumentModifier {
+    NONE, REF, STRING
 }
 
 class KrashExpressionLiteralCallableExpression(private val command: KrashCommand, val isReturn: Boolean): KrashExpressionLiteral() {

@@ -16,6 +16,8 @@ interface KrashValue {
         return result
     }
 
+    fun toStringType() = KrashValueString(this.toString())
+
 }
 
 class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueSimple(hashMapOf(

@@ -263,13 +263,21 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
     ;
 
 expressionLitCallableArg returns [KrashExpressionLiteralCallableArgument result]
-    :   {KrashExpression defaultValue = null;}
+    :   {
+            KrashExpressionLiteralCallableArgumentModifier modifier = KrashExpressionLiteralCallableArgumentModifier.NONE;
+            KrashExpression defaultValue = null;
+        }
+        (
+            AMPER {modifier = KrashExpressionLiteralCallableArgumentModifier.REF;}
+        |
+            AT {modifier = KrashExpressionLiteralCallableArgumentModifier.STRING;}
+        )?
         expressionRefChars
         (
             EQUAL expression
             {defaultValue = $expression.result;}
         )?
-        {$result = new KrashExpressionLiteralCallableArgument($expressionRefChars.text, defaultValue);}
+        {$result = new KrashExpressionLiteralCallableArgument($expressionRefChars.text, defaultValue, modifier);}
     ;
 
 expressionLitDouble returns [KrashExpressionLiteralDouble result]

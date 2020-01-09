@@ -23,13 +23,13 @@ echo("value of name = " + data["name"])
 data.each(echo)
 
 // Map Elements
-echo(data.map(fun(k, v) {
-    return @v + "!"
+echo(data.map(fun(k, @v) {
+    return v + "!"
 }))
 
 // Filter Elements
-echo(data.filter(fun(k, v) {
-    return v.toString().startsWith("J")
+echo(data.filter(fun(k, @v) {
+    return v.startsWith("J")
 }))
 
 // Reject Elements
