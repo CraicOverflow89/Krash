@@ -1,8 +1,0 @@
-// Create Object
-n = network("https://www.google.co.uk/")
-
-// Send Request
-r = n.send()
-
-// Echo Result
-echo(r)

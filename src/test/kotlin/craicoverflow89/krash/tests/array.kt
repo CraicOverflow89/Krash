@@ -35,9 +35,19 @@ class KrashArrayTest: KrashTest() {
     }
 
     @Test
-    fun index() = with(invokeLine("[0, 1, 2][1]")) {
-        Assert.assertTrue(this is KrashValueInteger)
-        Assert.assertEquals(1, (this as KrashValueInteger).value)
+    fun index() {
+
+        // Flat
+        with(invokeLine("[0, 1, 2][1]")) {
+            Assert.assertTrue(this is KrashValueInteger)
+            Assert.assertEquals(1, (this as KrashValueInteger).value)
+        }
+
+        // Nested
+        with(invokeLine("[[0, 1, 2]][0][1]")) {
+            Assert.assertTrue(this is KrashValueInteger)
+            Assert.assertEquals(1, (this as KrashValueInteger).value)
+        }
     }
 
     @Test
@@ -93,6 +103,31 @@ class KrashArrayTest: KrashTest() {
     fun size() = with(invokeLine("[0, 1, 2].size()")) {
         Assert.assertTrue(this is KrashValueInteger)
         Assert.assertEquals(3, (this as KrashValueInteger).value)
+    }
+
+    @Test
+    fun update() {
+
+        // Flat
+        with(invokeLines(listOf("list = [0, 1]", "list[2] = 2", "list"))) {
+            Assert.assertTrue(this is KrashValueArray)
+            (this as KrashValueArray).let {
+                Assert.assertEquals(3, it.getSize())
+                Assert.assertEquals(2, (it.getElement(2) as KrashValueInteger).value)
+            }
+        }
+
+        // Nested
+        with(invokeLines(listOf("list = [[\"a\", \"b\"], [0, 1, 2]]", "list[0][2] = \"c\"", "list"))) {
+            Assert.assertTrue(this is KrashValueArray)
+            (this as KrashValueArray).getElement(0).let {
+                Assert.assertTrue(it is KrashValueArray)
+                (it as KrashValueArray).let {
+                    Assert.assertEquals(3, it.getSize())
+                    Assert.assertEquals("c", (it.getElement(2) as KrashValueString).getValue())
+                }
+            }
+        }
     }
 
 }

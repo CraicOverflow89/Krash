@@ -221,6 +221,8 @@ false_value = !true_value
  - convert `KrashOutput` to handle input (from CLI) for some cases
     - would also be useful to have access to args from `$krash [script] [args]`
  - add test to each suite to check that correct output is produced by `echo(value)`
+    - also need to add `comparison` test that checks conditional operators
+    - check all operators for type
 
 ### Issues
 

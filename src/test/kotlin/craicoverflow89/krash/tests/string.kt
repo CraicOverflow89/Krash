@@ -11,6 +11,34 @@ import org.junit.Test
 class KrashStringTest: KrashTest() {
 
     @Test
+    fun comparison() {
+
+        // Equality True
+        with(invokeLine("\"text\" == \"text\"")) {
+            Assert.assertTrue(this is KrashValueBoolean)
+            Assert.assertEquals(true, (this as KrashValueBoolean).isTrue())
+        }
+
+        // Equality False
+        with(invokeLine("\"text\" == \"chars\"")) {
+            Assert.assertTrue(this is KrashValueBoolean)
+            Assert.assertEquals(false, (this as KrashValueBoolean).isTrue())
+        }
+
+        // Inequality True
+        with(invokeLine("\"text\" != \"chars\"")) {
+            Assert.assertTrue(this is KrashValueBoolean)
+            Assert.assertEquals(true, (this as KrashValueBoolean).isTrue())
+        }
+
+        // Inequality False
+        with(invokeLine("\"text\" != \"text\"")) {
+            Assert.assertTrue(this is KrashValueBoolean)
+            Assert.assertEquals(false, (this as KrashValueBoolean).isTrue())
+        }
+    }
+
+    @Test
     fun endsWith() {
 
         // True

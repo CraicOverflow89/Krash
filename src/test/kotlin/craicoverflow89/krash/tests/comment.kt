@@ -2,6 +2,7 @@ package craicoverflow89.krash.tests
 
 import craicoverflow89.krash.KrashTest
 import craicoverflow89.krash.components.KrashCommandComment
+import craicoverflow89.krash.components.objects.KrashValueCallable
 import org.junit.Assert
 import org.junit.Test
 
@@ -14,9 +15,18 @@ class KrashCommentTest: KrashTest() {
     }
 
     @Test
-    fun nested() = with(parseLine("/* comment\n// nested\nmultiple */")) {
-        Assert.assertTrue(this is KrashCommandComment)
-        Assert.assertEquals("comment\n// nested\nmultiple", (this as KrashCommandComment).getValue())
+    fun nested() {
+
+        // Within Comment
+        with(parseLine("/* comment\n// nested\nmultiple */")) {
+            Assert.assertTrue(this is KrashCommandComment)
+            Assert.assertEquals("comment\n// nested\nmultiple", (this as KrashCommandComment).getValue())
+        }
+
+        // Within Function
+        with(invokeLine("fun(){\n// comment\n}")) {
+            Assert.assertTrue(this is KrashValueCallable)
+        }
     }
 
     @Test
