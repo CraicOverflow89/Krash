@@ -209,10 +209,15 @@ message = "Hello " + name + "!"
  - need to add `!` boolean negation
  - need to add built-in JSON parse/stringify methods
  - need to add http get capabilities
- - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation 
+ - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation
+ - convert `KrashOutput` to handle input (from CLI) for some cases
+    - would also be useful to have access to args from `$krash [script] [args]`  
 
 ### Issues
 
+ - nested updates of arrays/maps are not working
+    - setting value `ref[index][index] = value`
+    - incrementing value `ref[index][index] ++`
  - looks like single comments inside of multiline comments cause errors
  - loading script does not allow for absolute paths
     - there should be a single `isAbsolutePath` method (already have this logic in file constructor)

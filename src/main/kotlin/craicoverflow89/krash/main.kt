@@ -16,7 +16,7 @@ fun main() {
     //loadScript("src/main/resources/arrays.krash")
     //loadScript("src/main/resources/comments.krash")
     //loadScript("src/main/resources/functions.krash")
-    //loadScript("src/main/resources/maps.krash")
+    loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
     //loadScript("src/main/resources/strings.krash")
@@ -24,7 +24,7 @@ fun main() {
 
     // NOTE: multiline comment is currently taking all text
     //loadScript("src/main/resources/test1.krash")
-    loadScript("src/main/resources/test2.krash")
+    //loadScript("src/main/resources/test2.krash")
 }
 
 /*fun main(args: Array<String>) = when {

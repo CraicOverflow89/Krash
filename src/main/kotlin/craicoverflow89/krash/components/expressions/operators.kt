@@ -102,7 +102,16 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                             is KrashValueArray -> {
 
                                 // Integer Position
-                                if(index is KrashValueInteger) collection.setElement(index.value, result)
+                                //if(index is KrashValueInteger) collection.setElement(index.value, result)
+
+                                // TEMP DEBUG
+                                if(index is KrashValueInteger) {
+                                    collection.setElement(index.value, result)
+                                    println("updating array collection")
+                                    println(collection)
+                                    println(collection.getElement(index.value))
+                                    println("")
+                                }
 
                                 // Invalid Type
                                 else throw KrashException("Array indexes must be integers!")

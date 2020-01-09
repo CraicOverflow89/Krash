@@ -36,3 +36,9 @@ echo(data.filter(fun(k, @v) {
 echo(data.reject(fun(k, v) {
     return k == "age"
 }))
+
+// Nested Update
+data = {value: {value: 7}}
+data["value"]["value"] = 8
+echo(data)
+// NOTE: this is broken

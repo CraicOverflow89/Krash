@@ -38,3 +38,9 @@ echo(data.filter(fun() {
 echo(data.reject(fun() {
     return it[0] == "J"
 }))
+
+// Nested Update
+data = [[7]]
+data[0][0] = 8
+echo(data)
+// NOTE: this is broken
