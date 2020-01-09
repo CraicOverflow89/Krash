@@ -13,7 +13,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
         private val nativeObjects: HashMap<String, KrashValueClass> = hashMapOf(
 
             // File Object
-            Pair("file", KrashValueClass("file") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("file", KrashValueClass("file") {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Define Values
                 val path = argumentList.let {

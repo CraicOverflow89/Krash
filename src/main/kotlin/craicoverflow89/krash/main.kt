@@ -34,8 +34,14 @@ fun main(args: Array<String>) = when {
     })
 
     // Script Mode
-    else -> loadScript(args[0])
-    // NOTE: this will completely ignore anything after script path (flags?)
+    else -> loadScript(args[0], args.let {
+
+        // Script Arguments
+        if(it.size > 1) it.copyOfRange(1, args.size).toList()
+
+        // No Arguments
+        else listOf()
+    })
 }
 
 fun loadFlags(flags: String) {
@@ -44,7 +50,7 @@ fun loadFlags(flags: String) {
     if(listOf("version", "v").contains(flags)) printInfo()
 }
 
-fun loadScript(scriptPath: String) {
+fun loadScript(scriptPath: String, scriptArgs: List<String>) {
 
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""
@@ -63,7 +69,7 @@ fun loadScript(scriptPath: String) {
     }
 
     // Invoke Script
-    KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd)
+    KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd, scriptFile.absolutePath, scriptArgs)
 }
 
 fun loadShell() {

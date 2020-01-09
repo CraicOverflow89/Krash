@@ -103,6 +103,22 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         private var cwdPath = ""
         private var output: KrashOutput = KrashOutputShell()
         private var userDirectoryPath = System.getProperty("user.home").replace("\\", "/")
+        private var scriptPath: KrashValueString? = null
+        private var argList: List<KrashValueString> = listOf()
+
+        fun argGet() = argList
+
+        fun argGet(pos: Int) = argList[pos]
+
+        fun createScript(cwd: String, file: KrashValueString, args: List<KrashValueString>): KrashRuntime {
+
+            // Set Values
+            scriptPath = file
+            argList = args
+
+            // Return Runtime
+            return KrashRuntime(cwd)
+        }
 
         fun cwd() = cwdPath
 
@@ -165,10 +181,12 @@ class KrashRuntimeException(message: String): KrashException(message)
 
 class KrashScript(private val commandList: List<KrashCommand>) {
 
-    fun invoke(cwd: String) {
+    fun invoke(cwd: String, file: String, args: List<String>) {
 
         // Create Runtime
-        val runtime = KrashRuntime(cwd)
+        val runtime = KrashRuntime.createScript(cwd, KrashValueString(file), args.map {
+            KrashValueString(it)
+        })
 
         // Iterate Commands
         commandList.forEach {
