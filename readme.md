@@ -30,12 +30,24 @@ callable = fun(name = "James") {
 }
 ```
 
+#### String Concatenation
+
+Multiple `string` values can be combined using the `+` operator. Simple references can be included within (and cast to) a `string` using the `$` character;
+
+```
+message = "Hello $name"
+// is the same as
+message = "Hello " + name + "!"
+```
+
 #### String Modifier
 
-In addition to the `value.toString()` method, you can use the `@value` modifier to cast values to strings, for example;
+In addition to the `value.toString()` method, you can use the `@value` modifier to cast values to `string` type, for example;
 
 ```
 echo("list contents = " + @list)
+// is the same as
+echo("list contents = $list)
 // is the same as
 echo("list contents = " list.toString())
 
@@ -184,14 +196,6 @@ It is possible to flip between `true` and `false` for boolean values like this;
 ```
 true_value = true
 false_value = !true_value
-```
-
-#### String Concatenation
-
-Strings can be combined using the `+` operator;
-
-```
-message = "Hello " + name + "!"
 ```
 
 ### Tasks
