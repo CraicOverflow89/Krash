@@ -177,6 +177,15 @@ Conventional mathematical operators work with both `integer` and `double` values
 7 / 5.0
 ```
 
+#### Boolean Negation
+
+It is possible to flip between `true` and `false` for boolean values like this;
+
+```
+true_value = true
+false_value = !true_value
+```
+
 #### String Concatenation
 
 Strings can be combined using the `+` operator;
