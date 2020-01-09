@@ -86,6 +86,18 @@ commandExpression returns [KrashCommandExpression result]
     ;
 
 expression returns [KrashExpression result]
+    :   (
+            e1 = expressionBody {$result = $e1.result;}
+        /*|
+            STBR1
+            e2 = expressionBody {$result = $e2.result;}
+            STBR2
+            // NOTE: this just gets confused with trying to invoke previous expression
+        */
+        )
+    ;
+
+expressionBody returns [KrashExpression result]
     :   {
             Boolean toString = false;
             Boolean negate = false;

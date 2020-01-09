@@ -234,7 +234,6 @@ echo("Welcome $name!")
  - string buffer object
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
  - provide meta data access for comments?
- - the lexer/parser logic isn't DRY (they're created in multiple places)
  - replace use of `toString` in unit tests with checking actual value of objects
  - need to add built-in JSON parse/stringify methods
  - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation

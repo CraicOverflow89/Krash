@@ -209,7 +209,7 @@ class KrashScript(private val commandList: List<KrashCommand>) {
             try {it.invoke(runtime)}
 
             // Error Handling
-            catch(ex: KrashRuntimeException) {
+            catch(ex: KrashException) {
                 KrashRuntime.error(ex.message())
             }
         }
