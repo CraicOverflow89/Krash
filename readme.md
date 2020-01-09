@@ -36,6 +36,16 @@ In addition to the `value.toString()` method, you can use the `@value` modifier 
 
 ```
 echo("list contents = " + @list)
+// is the same as
+echo("list contents = " list.toString())
+
+@list.size()
+// size of list, as a string
+// the modifier casts the entire expression
+
+list.toString().size
+// list as string; get size property
+// this is NOT the same as the above
 ```
 
 This can also be used in function arguments, like so;
@@ -101,6 +111,9 @@ There is no standard _for_ loop, as this exists in the form of member functions,
 
 ```
 array.each(echo)
+array.eachIndexed(fun(i, v) {
+    echo("value at position " @i + " is " + @v)
+})
 map.each(fun(k, @v) {
     echo(k + " = " + v)
 })
@@ -108,7 +121,7 @@ map.each(fun(k, @v) {
 
 #### Equality Operators
 
-Conventional equality operators return `boolean` (can be used anywhere that a boolean is required).
+Conventional equality operators return `boolean` (can be used anywhere).
 
 ```
 // Equal To
@@ -128,7 +141,7 @@ Conventional equality operators return `boolean` (can be used anywhere that a bo
 
 #### Mathematical Operators
 
-Conventional mathematical operators work with integers and doubles. The result of the operation will result in an integer where possible, otherwise a double will be returned.
+Conventional mathematical operators work with both `integer` and `double` values. The result of the operation will result in an `integer` where possible, otherwise a `double` will be returned.
 
 ```
 // Addition
