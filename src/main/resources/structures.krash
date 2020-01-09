@@ -25,7 +25,7 @@ echo(if(true) "hello" else "goodbye")
 // While
 x = 0
 while(x < 5) {
-    echo("x is " + !x)
+    echo("x is " + @x)
     //x ++
     x = x + 1
 }

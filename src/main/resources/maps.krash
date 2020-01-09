@@ -11,10 +11,10 @@ data["isMale"] = true
 echo(data)
 
 // Print Keys
-echo("keys = " + !data.keys())
+echo("keys = " + @data.keys())
 
 // Contains Name
-echo("contains name = " + !data.contains("name"))
+echo("contains name = " + @data.contains("name"))
 
 // Get Name
 echo("value of name = " + data["name"])
@@ -24,12 +24,12 @@ data.each(echo)
 
 // Map Elements
 echo(data.map(fun(k, v) {
-    return !v + "!"
+    return @v + "!"
 }))
 
 // Filter Elements
 echo(data.filter(fun(k, v) {
-    return !v.startsWith("J")
+    return v.toString().startsWith("J")
 }))
 
 // Reject Elements

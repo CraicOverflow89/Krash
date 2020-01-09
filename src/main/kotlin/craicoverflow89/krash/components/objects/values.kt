@@ -433,7 +433,19 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 
     fun memberContains(key: String) = memberList.containsKey(key)
 
-    fun memberGet(key: String): KrashValue = memberList[key] ?: throw KrashException("No member '$key' exists on value!")
+    fun memberGet(key: String): KrashValue = when {
+
+        // Get Member
+        memberList.containsKey(key) -> memberList[key]!!
+
+        // Default Method
+        key == "toString" -> KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+            KrashValueString("this.toString()")
+        }
+
+        // Invalid Key
+        else -> throw KrashException("No member '$key' exists on value!")
+    }
 
     fun memberPut(key: String, value: KrashValue) {
         memberList[key] = value

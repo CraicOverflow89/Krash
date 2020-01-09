@@ -14,5 +14,5 @@ data = {name: "Jamie"}
 echo(name_value, name_ref)
 
 // Cast String
-echo("seven as string: " + !7)
-echo("map as string: " + !data)
+echo("seven as string: " + @7)
+echo("map as string: " + @data)

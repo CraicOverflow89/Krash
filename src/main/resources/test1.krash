@@ -39,10 +39,10 @@ echo("cwd is " + $CWD, "user directory is " + $HOME)
 x = 1
 fun() {
     x = 2
-    echo("inside first callable: " + !x)
+    echo("inside first callable: " + @x)
     fun() {
         x = 3
-        echo("inside second callable: " + !x)
+        echo("inside second callable: " + @x)
     }()
 }()
 */

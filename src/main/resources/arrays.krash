@@ -11,7 +11,7 @@ data[2] = "Java"
 echo(data)
 
 // Print Size
-echo("size = " + !data.size())
+echo("size = " + @data.size())
 
 // Print Each
 data.each(echo)

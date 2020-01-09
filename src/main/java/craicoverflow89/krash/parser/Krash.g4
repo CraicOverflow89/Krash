@@ -88,17 +88,19 @@ commandExpression returns [KrashCommandExpression result]
 expression returns [KrashExpression result]
     :   {Boolean toString = false;}
         (
-            BANG {toString = true;}
+            AT {toString = true;}
         )?
         expressionData
-        {$result = new KrashExpressionData($expressionData.result, toString);}
+        {$result = $expressionData.result;}
         (
             expressionIndex {$result = new KrashExpressionIndex($result, $expressionIndex.result);}
         |
             expressionInvoke {$result = new KrashExpressionInvoke($result, $expressionInvoke.result);}
         |
             expressionMember {$result = new KrashExpressionMember($result, $expressionMember.result);}
-        |
+        )*
+        {$result = new KrashExpressionData($result, toString);}
+        (
             expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
         |
             expressionCoGreater {$result = new KrashExpressionConditionGreater($result, $expressionCoGreater.result);}

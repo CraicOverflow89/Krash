@@ -5,13 +5,13 @@ data = "James"
 echo(data)
 
 // Print Size
-echo("size = " + !data.size)
+echo("size = " + @data.size)
 
 // Starts With
-echo("starts with J = " + !data.startsWith("J"))
+echo("starts with J = " + @data.startsWith("J"))
 
 // Ends With
-echo("starts with E = " + !data.startsWith("E"))
+echo("starts with E = " + @data.startsWith("E"))
 
 // Char Position
 echo("char at position 2 = " + data[1])
