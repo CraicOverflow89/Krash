@@ -218,8 +218,6 @@ false_value = !true_value
  - replace use of `toString` in unit tests with checking actual value of objects
  - need to add built-in JSON parse/stringify methods
  - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation
- - convert `KrashOutput` to handle input (from CLI) for some cases
-    - would also be useful to have access to args from `$krash [script] [args]`
  - add test to each suite to check that correct output is produced by `echo(value)`
     - also need to add `comparison` test that checks conditional operators
     - check all operators for type

@@ -1,0 +1,8 @@
+// Script Arguments
+echo($ARGS)
+echo($ARGS.size())
+echo($ARGS[1])
+
+// Shell Input
+echo("Enter some text")
+echo("Text is " + read())

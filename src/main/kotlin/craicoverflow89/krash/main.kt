@@ -9,11 +9,11 @@ import kotlin.system.exitProcess
 val KRASH_VERSION = "ALPHA"
 
 fun main() {
-    loadScript("src/main/resources/args.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
+    loadScript("src/main/resources/script.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/structures.krash")
 
     // NOTE: multiline comment is currently taking all text

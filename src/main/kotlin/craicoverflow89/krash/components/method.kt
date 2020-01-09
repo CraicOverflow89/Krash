@@ -3,6 +3,7 @@ package craicoverflow89.krash.components
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueCallable
 import craicoverflow89.krash.components.objects.KrashValueNull
+import craicoverflow89.krash.components.objects.KrashValueString
 
 open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueCallable(logic) {
 
@@ -10,7 +11,8 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
         private val nativeMethods = mapOf(
             Pair("echo", KrashMethodEcho()),
-            Pair("exit", KrashMethodExit())
+            Pair("exit", KrashMethodExit()),
+            Pair("read", KrashMethodRead())
         )
 
         fun nativeContains(name: String) = nativeMethods.containsKey(name)
@@ -50,3 +52,5 @@ class KrashMethodExit: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
     return KrashValueNull()
 
 })
+
+class KrashMethodRead: KrashMethod(fun(_: KrashRuntime, _: List<KrashValue>) = KrashValueString(KrashRuntime.read()))

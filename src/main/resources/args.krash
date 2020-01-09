@@ -1,3 +1,0 @@
-echo($ARGS)
-echo($ARGS.size())
-echo($ARGS[1])

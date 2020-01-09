@@ -4,6 +4,36 @@ import craicoverflow89.krash.KrashException
 import craicoverflow89.krash.components.objects.*
 import kotlin.system.exitProcess
 
+abstract class KrashChannel {
+
+    abstract fun err(text: String)
+
+    open fun read(): String {
+        throw KrashChannelException("Input is not supported by this channel!")
+    }
+
+    abstract fun out(text: String)
+
+}
+
+class KrashChannelException(message: String): KrashException(message)
+
+class KrashChannelShell: KrashChannel() {
+
+    override fun err(text: String) {
+        System.err.println(text)
+    }
+
+    override fun read(): String {
+        return readLine() ?: ""
+    }
+
+    override fun out(text: String) {
+        println(text)
+    }
+
+}
+
 class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap?) {
 
     // Define Heap
@@ -46,26 +76,6 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
 
 }
 
-abstract class KrashOutput {
-
-    abstract fun err(text: String)
-
-    abstract fun out(text: String)
-
-}
-
-class KrashOutputShell: KrashOutput() {
-
-    override fun err(text: String) {
-        System.err.println(text)
-    }
-
-    override fun out(text: String) {
-        println(text)
-    }
-
-}
-
 class KrashReserved {
 
     companion object {
@@ -97,10 +107,14 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
         // Define Properties
         private var cwdPath = ""
-        private var output: KrashOutput = KrashOutputShell()
+        private var channel: KrashChannel = KrashChannelShell()
         private var userDirectoryPath = System.getProperty("user.home").replace("\\", "/")
         private var scriptPath: KrashValueString? = null
         private var scriptArgs: KrashValueArray = KrashValueArray()
+
+        fun channelSet(value: KrashChannel) {
+            channel = value
+        }
 
         fun createScript(cwd: String, file: KrashValueString, args: List<KrashValueString>): KrashRuntime {
 
@@ -126,7 +140,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
         fun cwdString() = KrashValueString(cwdPath)
 
-        fun error(value: Any) = output.err(value.toString())
+        fun error(value: Any) = channel.err(value.toString())
 
         fun global(value: String): KrashValueSimple = when(value) {
 
@@ -143,11 +157,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             else -> throw KrashRuntimeException("Constant '$value' does not exist!")
         }
 
-        fun println(value: Any) = output.out(value.toString())
+        fun println(value: Any) = channel.out(value.toString())
 
-        fun outputSet(value: KrashOutput) {
-            output = value
-        }
+        fun read() = channel.read()
 
         fun userDirectoryString() = KrashValueString(userDirectoryPath)
 

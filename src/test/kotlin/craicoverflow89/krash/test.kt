@@ -1,25 +1,25 @@
 package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
-import craicoverflow89.krash.components.KrashOutput
+import craicoverflow89.krash.components.KrashChannel
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueNull
 
 open class KrashTest {
 
-    protected val output = KrashTestOutput()
+    private val channel = KrashTestChannel()
     private val runtime = KrashRuntime().apply {
-        KrashRuntime.outputSet(output)
+        KrashRuntime.channelSet(channel)
     }
 
     fun invokeLine(value: String): KrashValue {
-        output.clear()
+        channel.clear()
         return parseLine(value).invoke(runtime)
     }
 
     fun invokeLines(value: List<String>): KrashValue {
-        output.clear()
+        channel.clear()
         var result: KrashValue = KrashValueNull()
         value.forEach {
             result = invokeLine(it)
@@ -33,7 +33,7 @@ open class KrashTest {
 
 }
 
-class KrashTestOutput: KrashOutput() {
+class KrashTestChannel: KrashChannel() {
 
     private val errList = ArrayList<String>()
     private val outList = ArrayList<String>()
