@@ -31,6 +31,7 @@ Lightweight file manipulation DSL, built with Kotlin and ANTLR.
  - indexes for arrays/strings should be more capable like `list[2, 6, 2]` (start, end, step)
  - provide meta data access for comments?
  - formatted string (able to use references inside)
+ - the lexer/parser logic isn't DRY
 
 ### Issues
 

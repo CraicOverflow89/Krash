@@ -3,6 +3,8 @@ package craicoverflow89.krash
 import craicoverflow89.krash.components.KrashCommand
 import craicoverflow89.krash.components.KrashOutput
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.objects.KrashValue
+import craicoverflow89.krash.components.objects.KrashValueNull
 import craicoverflow89.krash.parser.KrashLexer
 import craicoverflow89.krash.parser.KrashParser
 import org.antlr.v4.runtime.ANTLRInputStream
@@ -10,13 +12,24 @@ import org.antlr.v4.runtime.CommonTokenStream
 
 open class KrashTest {
 
+    protected val output = KrashTestOutput()
     private val runtime = KrashRuntime().apply {
-        KrashRuntime.outputSet(KrashTestOutput())
+        KrashRuntime.outputSet(output)
     }
 
-    fun invokeLine(value: String) = parseLine(value).invoke(runtime)
+    fun invokeLine(value: String): KrashValue {
+        output.clear()
+        return parseLine(value).invoke(runtime)
+    }
 
-    fun invokeLines(value: List<String>) = parseLines(value).invoke(runtime)
+    fun invokeLines(value: List<String>): KrashValue {
+        output.clear()
+        var result: KrashValue = KrashValueNull()
+        value.forEach {
+            result = invokeLine(it)
+        }
+        return result
+    }
 
     fun parseLine(value: String): KrashCommand {
         val lexer = KrashLexer(ANTLRInputStream(value))
@@ -42,20 +55,12 @@ class KrashTestOutput: KrashOutput() {
         outList.clear()
     }
 
-    fun errGet(): ArrayList<String> {
-        val value = errList
-        errList.clear()
-        return value
-    }
+    fun errGet(): List<String> = errList
 
     override fun out(text: String) {
         outList.add(text)
     }
 
-    fun outGet(): ArrayList<String> {
-        val value = outList
-        outList.clear()
-        return value
-    }
+    fun outGet(): List<String> = outList
 
 }

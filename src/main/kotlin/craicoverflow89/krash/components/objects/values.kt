@@ -160,6 +160,8 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
+    fun getSize() = valueList.size
+
     fun setElement(pos: Int, value: KrashValue) {
 
         // New Element

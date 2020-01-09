@@ -90,16 +90,8 @@ expression returns [KrashExpression result]
         (
             BANG {toString = true;}
         )?
-        (
-            expressionGlobal {$result = $expressionGlobal.result;}
-        |
-            expressionLit {$result = $expressionLit.result;}
-        |
-            expressionRef {$result = $expressionRef.result;}
-        |
-            expressionStruct {$result = $expressionStruct.result;}
-        )
-        {$result = new KrashExpressionData($result, toString);}
+        expressionData
+        {$result = new KrashExpressionData($expressionData.result, toString);}
         (
             expressionIndex {$result = new KrashExpressionIndex($result, $expressionIndex.result);}
         |
@@ -117,11 +109,7 @@ expression returns [KrashExpression result]
         |
             expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
         |
-            expressionOpDecrement {$result = new KrashExpressionOperatorDecrement($result);}
-        |
             expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
-        |
-            expressionOpIncrement {$result = new KrashExpressionOperatorIncrement($result);}
         |
             expressionOpMultiply {$result = new KrashExpressionOperatorMultiplication($result, $expressionOpMultiply.result);}
         |
@@ -147,6 +135,18 @@ expressionCoInequal returns [KrashExpression result]
 expressionCoLesser returns [KrashExpression result]
     :   '<' expression
         {$result = $expression.result;}
+    ;
+
+expressionData returns [KrashExpression result]
+    :   (
+            expressionGlobal {$result = $expressionGlobal.result;}
+        |
+            expressionLit {$result = $expressionLit.result;}
+        |
+            expressionRef {$result = $expressionRef.result;}
+        |
+            expressionStruct {$result = $expressionStruct.result;}
+        )
     ;
 
 expressionGlobal returns [KrashExpressionGlobal result]

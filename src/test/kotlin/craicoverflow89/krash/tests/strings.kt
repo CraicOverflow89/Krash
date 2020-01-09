@@ -27,6 +27,12 @@ class KrashStringTest: KrashTest() {
     }
 
     @Test
+    fun index() = with(invokeLine("\"index\"[4]")) {
+        Assert.assertTrue(this is KrashValueString)
+        Assert.assertEquals("x", (this as KrashValueString).value)
+    }
+
+    @Test
     fun literal() = with(invokeLine("\"string literal\"")) {
         Assert.assertTrue(this is KrashValueString)
         Assert.assertEquals("string literal", (this as KrashValueString).value)
