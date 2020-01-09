@@ -1,0 +1,4 @@
+list = [[7]]
+echo("list value is " + @list)
+list[0][0] ++
+echo("list value is " + @list)

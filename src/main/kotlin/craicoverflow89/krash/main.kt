@@ -16,15 +16,21 @@ fun main() {
     //loadScript("src/main/resources/arrays.krash")
     //loadScript("src/main/resources/comments.krash")
     //loadScript("src/main/resources/functions.krash")
-    loadScript("src/main/resources/maps.krash")
+    //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
     //loadScript("src/main/resources/strings.krash")
     //loadScript("src/main/resources/structures.krash")
 
     // NOTE: multiline comment is currently taking all text
+    //       looks like single comments within multiline comments are causing errors
     //loadScript("src/main/resources/test1.krash")
+
+    // NOTE: multiple indexes for update and increment operations are not working
     //loadScript("src/main/resources/test2.krash")
+
+    // TEMP
+    loadScript("src/main/resources/test3.krash")
 }
 
 /*fun main(args: Array<String>) = when {

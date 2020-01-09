@@ -102,15 +102,25 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                             is KrashValueArray -> {
 
                                 // Integer Position
-                                //if(index is KrashValueInteger) collection.setElement(index.value, result)
-
-                                // TEMP DEBUG
                                 if(index is KrashValueInteger) {
-                                    collection.setElement(index.value, result)
-                                    println("updating array collection")
-                                    println(collection)
-                                    println(collection.getElement(index.value))
-                                    println("")
+
+                                    // TEMP DEBUG
+                                    println("KrashExpressionOperatorIncrement updating array")
+                                    println(" collection is $collection")
+                                    println(" index is ${index.value}")
+
+                                    // NOTE: using setElement on collection is working fine
+                                    //       however it's the root collection that needs to be committed to heap
+                                    //       so this setElement (then finally heapPut) logic needs to cascade through parents
+                                    //       all of this logic (see also KrashCommandDeclareReferenceIndex) needs to be moved
+                                    //       into a single method for updating collection values and committing to heap
+
+                                    // Update Heap
+                                    runtime.heapPut(ref.getRef(runtime).value, collection.apply {
+
+                                        // Update Collection
+                                        collection.setElement(index.value, result)
+                                    })
                                 }
 
                                 // Invalid Type
@@ -121,7 +131,15 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                             is KrashValueMap -> {
 
                                 // String Key
-                                if(index is KrashValueString) collection.setData(index.value, result)
+                                if(index is KrashValueString) {
+
+                                    // Update Heap
+                                    runtime.heapPut(ref.getRef(runtime).value, collection.apply {
+
+                                        // Update Map
+                                        setData(index.value, result)
+                                    })
+                                }
 
                                 // Invalid Type
                                 else throw KrashException("Map indexes must be strings!")
@@ -161,6 +179,14 @@ class KrashExpressionOperatorIncrementIndex(private val value: KrashExpression, 
     fun getCollection(runtime: KrashRuntime) = value.toValue(runtime)
 
     fun getIndex(runtime: KrashRuntime) = index.toValue(runtime)
+
+    fun getRef(runtime: KrashRuntime): KrashValueReference = value.toValueRef(runtime).let {
+        // TEMP
+        if(it !is KrashValueReference) throw KrashException("Could not resolve to a reference for this value!")
+        it
+    }
+
+    fun getValue(runtime: KrashRuntime) = value.toValue(runtime)
 
     override fun toValue(runtime: KrashRuntime) = KrashExpressionIndex(value, index).toValue(runtime)
 

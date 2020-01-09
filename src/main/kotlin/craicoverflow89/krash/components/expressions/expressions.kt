@@ -80,6 +80,8 @@ class KrashExpressionIndex(private val value: KrashExpression, private val index
         }
     }
 
+    override fun toValueRef(runtime: KrashRuntime) = value.toValueRef(runtime)
+
 }
 
 class KrashExpressionInvoke(private val value: KrashExpression, private val argumentList: List<KrashExpression>): KrashExpression() {
