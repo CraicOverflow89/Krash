@@ -74,7 +74,7 @@ class KrashReserved {
         private val reservedTerms = ArrayList<String>().apply {
 
             // Structural Keyword
-            addAll(listOf("fun", "return"))
+            addAll(listOf("fun", "if", "return"))
 
             // Literal Keywords
             addAll(listOf("false", "null", "true"))

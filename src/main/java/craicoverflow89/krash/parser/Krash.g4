@@ -96,6 +96,8 @@ expression returns [KrashExpression result]
             expressionLit {$result = $expressionLit.result;}
         |
             expressionRef {$result = $expressionRef.result;}
+        |
+            expressionStruct {$result = $expressionStruct.result;}
         )
         {$result = new KrashExpressionData($result, toString);}
         (
@@ -376,6 +378,29 @@ expressionRef returns [KrashExpressionReference result]
 
 expressionRefChars
     :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
+    ;
+
+expressionStruct returns [KrashExpressionStructure result]
+    :   (
+            expressionStructIf {$result = $expressionStructIf.result;}
+        )
+    ;
+
+expressionStructIf returns [KrashExpressionStructureIf result]
+    :   {ArrayList<KrashExpression> body = new ArrayList();}
+        'if' STBR1 condition = expression STBR2
+        (
+            b1 = expression {body.add($b1.result);}
+        |
+            CUBR1
+            (
+                commandComment
+            |
+                b2 = expression {body.add($b2.result);}
+            )*
+            CUBR2
+        )
+        {$result = new KrashExpressionStructureIf($condition.result, body);}
     ;
 
 // Lexer Rules
