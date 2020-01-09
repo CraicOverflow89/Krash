@@ -45,37 +45,6 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
 
 }
 
-class KrashExpressionOperatorDecrement(private val value: KrashExpression): KrashExpression() {
-
-    private fun invoke(runtime: KrashRuntime, value: KrashValueReference): KrashValueSimple = value.toSimple(runtime).let {
-        when(it) {
-
-            // Numeric Decrement
-            is KrashValueSimpleNumeric -> {
-
-                // Decrement Value
-                runtime.heapPut(value.value, KrashValueSimpleNumeric.create(it.toDouble() - 1))
-
-                // Return Original
-                it
-            }
-
-            // Invalid Type
-            else -> throw KrashException("Invalid type to perform decrement!")
-        }
-    }
-
-    override fun toValue(runtime: KrashRuntime): KrashValueSimple {
-
-        // Reference Expression
-        if(value is KrashExpressionReference) return invoke(runtime, value.toValueRef(runtime))
-
-        // Invalid Type
-        else throw KrashException("Invalid type to perform operator!")
-    }
-
-}
-
 class KrashExpressionOperatorDivision(first: KrashExpression, second: KrashExpression): KrashExpressionOperator(first, second) {
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
@@ -103,47 +72,64 @@ class KrashExpressionOperatorDivision(first: KrashExpression, second: KrashExpre
 
 }
 
-class KrashExpressionOperatorIncrement(private val value: KrashExpression): KrashExpression() {
+class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorIncrementValue, private val type: KrashExpressionOperatorIncrementType): KrashExpression() {
 
-    private fun invoke(runtime: KrashRuntime, value: KrashValueReference): KrashValueSimple = value.toSimple(runtime).let {
-        when(it) {
+    private fun invoke(runtime: KrashRuntime, value: KrashValueSimpleNumeric): KrashValueSimple {
 
-            // Numeric Increment
-            is KrashValueSimpleNumeric -> {
+        // Increment Value
+        runtime.heapPut(ref.getValue(), KrashValueSimpleNumeric.create(when(type) {
+            KrashExpressionOperatorIncrementType.MINUS -> value.toDouble() - 1
+            KrashExpressionOperatorIncrementType.PLUS -> value.toDouble() + 1
+        }))
+        // NOTE: this only works for x ++
+        //       when it's x[y][z] it needs to update the list or map
 
-                // Increment Value
-                runtime.heapPut(value.value, KrashValueSimpleNumeric.create(it.toDouble() + 1))
-
-                // Return Original
-                it
-            }
-
-            // Invalid Type
-            else -> throw KrashException("Invalid type to perform increment!")
-        }
+        // Return Result
+        return value
     }
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
         // Resolve Expression
-        val valueRef = value.toValueRef(runtime)
+        val value = ref.toValue(runtime)
 
-        // TEMP DEBUG
-        println("KrashExpressionOperatorIncrement")
-        println(value)
-        println(valueRef)
-        println()
-        // NOTE: need a new parser rule for pre/post inc/dec operations
-        //       PLUS PLUS ref (index)* -> value after change
-        //       ref (index)* PLUS PLUS -> value before
-        //       use the same logic as map[key] = value to preserve reference to update
-
-        // Reference Value
-        if(valueRef is KrashValueReference) return invoke(runtime, valueRef)
+        // Increment Value
+        if(value is KrashValueSimpleNumeric) return invoke(runtime, value)
 
         // Invalid Type
         else throw KrashException("Invalid type to perform operator!")
     }
+
+}
+
+class KrashExpressionOperatorIncrementIndex(private val ref: KrashExpressionOperatorIncrementValue, private val index: KrashExpression): KrashExpressionOperatorIncrementValue {
+
+    override fun getValue() = ref.getValue()
+
+    override fun toValue(runtime: KrashRuntime) = index.toValue(runtime)
+
+}
+
+class KrashExpressionOperatorIncrementReference(private val ref: String): KrashExpressionOperatorIncrementValue {
+
+    override fun getValue() = ref
+
+    override fun toValue(runtime: KrashRuntime) = runtime.heapGet(ref).toSimple(runtime)
+    // NOTE: this will need to be updated for reference persistence
+
+}
+
+enum class KrashExpressionOperatorIncrementType {
+    MINUS, PLUS
+}
+
+interface KrashExpressionOperatorIncrementValue {
+
+    fun getValue(): String
+
+    fun index(index: KrashExpression) = KrashExpressionOperatorIncrementIndex(this, index)
+
+    fun toValue(runtime: KrashRuntime): KrashValueSimple
 
 }
 

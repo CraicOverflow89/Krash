@@ -1,0 +1,27 @@
+// Plus
+echo("test: x ++")
+x = 7
+x ++
+echo("x is now " + @x)
+echo("")
+
+// Minus
+echo("test: x --")
+x = 7
+x --
+echo("x is now " + @x)
+echo("")
+
+// List Value
+echo("test: list[0] ++")
+list = [7]
+echo(list)
+list[0] ++
+echo(list)
+
+// Map Value
+/*echo("test: map[value] ++")
+map = {value: 7}
+echo(map)
+map["value"] ++
+echo(map)*/

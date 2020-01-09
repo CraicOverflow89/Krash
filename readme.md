@@ -125,10 +125,15 @@ while(condition) {
 There is no standard _for_ loop, as this exists in the form of member functions, for example;
 
 ```
+// For element in array
 array.each(echo)
+
+// For element in array with index
 array.eachIndexed(fun(i, v) {
     echo("value at position " @i + " is " + @v)
 })
+
+// For key and value in map
 map.each(fun(k, @v) {
     echo(k + " = " + v)
 })
@@ -182,6 +187,7 @@ message = "Hello " + name + "!"
 
 ### Tasks
 
+ - add escape characters to string literals (need to be able to contain quotes)
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - custom parser error handling (without default printing to console)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
@@ -203,6 +209,7 @@ message = "Hello " + name + "!"
  - need to add `!` boolean negation
  - need to add built-in JSON parse/stringify methods
  - need to add http get capabilities
+ - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation 
 
 ### Issues
 

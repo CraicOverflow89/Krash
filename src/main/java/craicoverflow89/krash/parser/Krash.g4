@@ -143,6 +143,8 @@ expressionData returns [KrashExpression result]
     :   (
             expressionGlobal {$result = $expressionGlobal.result;}
         |
+            expressionInc {$result = $expressionInc.result;}
+        |
             expressionLit {$result = $expressionLit.result;}
         |
             expressionRef {$result = $expressionRef.result;}
@@ -158,6 +160,24 @@ expressionGlobal returns [KrashExpressionGlobal result]
 
 expressionGlobalChars
     :   GLOBAL
+    ;
+
+expressionInc returns [KrashExpression result]
+    :   (
+            e1 = expressionIncRef expressionOpIncrement
+            {$result = new KrashExpressionOperatorIncrement($e1.result, KrashExpressionOperatorIncrementType.PLUS);}
+        |
+            e2 = expressionIncRef expressionOpDecrement
+            {$result = new KrashExpressionOperatorIncrement($e2.result, KrashExpressionOperatorIncrementType.MINUS);}
+        )
+    ;
+
+expressionIncRef returns [KrashExpressionOperatorIncrementValue result]
+    :   expressionRefChars
+        {$result = new KrashExpressionOperatorIncrementReference($expressionRefChars.text);}
+        (
+            expressionIndex {$result = $result.index($expressionIndex.result);}
+        )*
     ;
 
 expressionIndex returns [KrashExpression result]

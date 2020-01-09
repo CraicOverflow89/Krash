@@ -13,7 +13,7 @@ import org.antlr.v4.runtime.CommonTokenStream
 val KRASH_VERSION = "ALPHA"
 
 fun main() {
-    loadScript("src/main/resources/arrays.krash")
+    //loadScript("src/main/resources/arrays.krash")
     //loadScript("src/main/resources/comments.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
@@ -24,6 +24,7 @@ fun main() {
 
     // NOTE: multiline comment is currently taking all text
     //loadScript("src/main/resources/test1.krash")
+    loadScript("src/main/resources/test2.krash")
 }
 
 /*fun main(args: Array<String>) = when {
