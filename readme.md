@@ -69,25 +69,29 @@ first_reference = &list[0]
 
 #### Control Structures
 
-Krash supports standard _if / else_ and _while_ loops;
+Krash supports standard _if / else_ statements;
 
 ```
-// If with single expression
+// Single Expression
 result = if(condition) "yes" else "no"
 // if is an expression, so it can be used as a value
 
-// If with multiple expressions
+// Multiple Expressions
 if(condition) {
     // logic here
 }
 else {
     // logic here
 }
+```
 
-// While with single expression
+Standard _while_ loops;
+
+```
+// Single Expression
 while(condition) logic()
 
-// While with multiple expressions
+// Multiple Expressions
 while(condition) {
     // logic here
 }
@@ -100,6 +104,52 @@ array.each(echo)
 map.each(fun(k, @v) {
     echo(k + " = " + v)
 })
+```
+
+#### Equality Operators
+
+Conventional equality operators return `boolean` (can be used anywhere that a boolean is required).
+
+```
+// Equal To
+"abc" == "abc"
+7 == 7
+
+// Not Equal
+"abc" != "def"
+7 != 5
+
+// Greater Than
+7 > 5
+
+// Lesser Than
+5 < 7
+```
+
+#### Mathematical Operators
+
+Conventional mathematical operators work with integers and doubles. The result of the operation will result in an integer where possible, otherwise a double will be returned.
+
+```
+// Addition
+7 + 5.0
+
+// Subtraction
+7 - 5.0
+
+// Multiplication
+7 * 5.0
+
+// Division
+7 / 5.0
+```
+
+#### String Concatenation
+
+Strings can be combined using the `+` operator;
+
+```
+message = "Hello " + name + "!"
 ```
 
 ### Tasks
