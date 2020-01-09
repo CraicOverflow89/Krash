@@ -17,6 +17,7 @@ fun main() {
     //loadScript("src/main/resources/comments.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
+    loadScript("src/main/resources/network.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
     //loadScript("src/main/resources/strings.krash")
@@ -30,7 +31,7 @@ fun main() {
     //loadScript("src/main/resources/test2.krash")
 
     // TEMP
-    loadScript("src/main/resources/test3.krash")
+    //loadScript("src/main/resources/test3.krash")
 }
 
 /*fun main(args: Array<String>) = when {

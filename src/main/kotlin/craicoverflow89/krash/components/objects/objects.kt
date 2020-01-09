@@ -3,6 +3,8 @@ package craicoverflow89.krash.components.objects
 import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
 import java.io.File
+import java.net.HttpURLConnection
+import java.net.URL
 
 class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
 
@@ -17,7 +19,14 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                 val path = argumentList.let {
 
                     // Custom Path
-                    if(it.isNotEmpty()) (it[0] as KrashValueString).value
+                    if(it.isNotEmpty()) it[0].let {
+
+                        // Invalid Type
+                        if(it !is KrashValueString) throw KrashException("File path must be a string!")
+
+                        // Return Value
+                        it.value
+                    }
 
                     // Default Path
                     else KrashRuntime.cwd()
@@ -35,6 +44,47 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     })),
                     Pair("path", KrashValueString(path)),
                     Pair("toString", KrashValueString(path))
+                )
+            }),
+
+            // Network Object
+            Pair("network", KrashValueClass("network") { _: KrashRuntime, argumentList: List<KrashValue> ->
+
+                // Validate Arguments
+                if(argumentList.isEmpty()) throw KrashException("Must supply url!")
+
+                // Define Values
+                val url = URL(argumentList[0].let {
+
+                    // Invalid Type
+                    if(it !is KrashValueString) throw KrashException("Network url must be a string!")
+
+                    // Return Value
+                    it.value
+                })
+                /*val method = if(argumentList.size > 1) argumentList[1].let {
+
+                    // Invalid Type
+                    // NOTE: throw if not string
+
+                    // Invalid Valid
+                    // NOTE: throw if not GET or POST
+                } else "GET"*/
+
+                // Return Members
+                hashMapOf(
+                    Pair("send", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+
+                        // Send Request
+                        with(url.openConnection() as HttpURLConnection) {
+
+                            // Return Result
+                            KrashValueMap(listOf(
+                                KrashValueMapPair("body", KrashValueString(inputStream.bufferedReader().readText())),
+                                KrashValueMapPair("status", KrashValueInteger(responseCode))
+                            ))
+                        }
+                    })
                 )
             }),
 

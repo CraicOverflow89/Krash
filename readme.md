@@ -208,7 +208,6 @@ message = "Hello " + name + "!"
  - replace use of `toString` in unit tests with checking actual value of objects
  - need to add `!` boolean negation
  - need to add built-in JSON parse/stringify methods
- - need to add http get capabilities
  - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation
  - convert `KrashOutput` to handle input (from CLI) for some cases
     - would also be useful to have access to args from `$krash [script] [args]`  
