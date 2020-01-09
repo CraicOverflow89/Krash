@@ -27,3 +27,11 @@ echo(d > i)
 
 // Lesser Than
 echo(i < d)
+
+// Increment
+i ++
+echo(i)
+
+// Decrement
+i --
+echo(i)

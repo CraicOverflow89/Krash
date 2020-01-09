@@ -117,7 +117,11 @@ expression returns [KrashExpression result]
         |
             expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
         |
+            expressionOpDecrement {$result = new KrashExpressionOperatorDecrement($result);}
+        |
             expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
+        |
+            expressionOpIncrement {$result = new KrashExpressionOperatorIncrement($result);}
         |
             expressionOpMultiply {$result = new KrashExpressionOperatorMultiplication($result, $expressionOpMultiply.result);}
         |
@@ -350,9 +354,17 @@ expressionOpAdd returns [KrashExpression result]
         {$result = $expression.result;}
     ;
 
+expressionOpDecrement
+    :   MINUS MINUS
+    ;
+
 expressionOpDivide returns [KrashExpression result]
     :   SLASH expression
         {$result = $expression.result;}
+    ;
+
+expressionOpIncrement
+    :   PLUS PLUS
     ;
 
 expressionOpMultiply returns [KrashExpression result]

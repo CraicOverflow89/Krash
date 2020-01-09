@@ -2,6 +2,7 @@ package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueCallable
 import craicoverflow89.krash.components.objects.KrashValueClass
@@ -10,12 +11,16 @@ import craicoverflow89.krash.components.objects.KrashValueMap
 import craicoverflow89.krash.components.objects.KrashValueReference
 import craicoverflow89.krash.components.objects.KrashValueSimple
 import craicoverflow89.krash.components.objects.KrashValueString
-// NOTE: should be able to eliminate the concept of KrashValueSimple altogether
-//       when all resolution stuff is handled in expressions
 
 abstract class KrashExpression {
 
     abstract fun toValue(runtime: KrashRuntime): KrashValueSimple
+
+    open fun toValueRef(runtime: KrashRuntime): KrashValue {
+
+        // Default Behaviour
+        return toValue(runtime)
+    }
 
 }
 
@@ -105,8 +110,6 @@ class KrashExpressionMember(private val value: KrashExpression, private val memb
 
         // Access Member
         if(it is KrashValueSimple) return it.memberGet(member).toSimple(runtime)
-        // NOTE: should be able to eliminate the concept of KrashValueSimple altogether
-        //       when all resolution stuff is handled in expressions
 
         // Invalid Type
         else throw KrashException("Cannot access members for this value!")
@@ -117,5 +120,7 @@ class KrashExpressionMember(private val value: KrashExpression, private val memb
 class KrashExpressionReference(private val value: String, private val byRef: Boolean): KrashExpression() {
 
     override fun toValue(runtime: KrashRuntime) = KrashValueReference(value, byRef).toSimple(runtime)
+
+    override fun toValueRef(runtime: KrashRuntime) = KrashValueReference(value, byRef)
 
 }
