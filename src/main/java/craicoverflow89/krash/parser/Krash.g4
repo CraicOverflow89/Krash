@@ -35,10 +35,10 @@ command returns [KrashCommand result]
 commandComment returns [KrashCommandComment result]
     :   (
             commandCommentMulti
-            {$result = new KrashCommandComment($commandCommentMulti.text);}
+            {$result = new KrashCommandComment($commandCommentMulti.text.replace("/*", "").replace("*/", "").trim());}
         |
             commandCommentSingle
-            {$result = new KrashCommandComment($commandCommentSingle.text);}
+            {$result = new KrashCommandComment($commandCommentSingle.text.replace("//", "").trim());}
         )
     ;
 

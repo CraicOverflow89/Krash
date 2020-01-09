@@ -17,6 +17,8 @@ interface KrashCommand {
 
 class KrashCommandComment(private val value: String): KrashCommand {
 
+    fun getValue() = value
+
     override fun invoke(runtime: KrashRuntime) = KrashValueNull()
 
 }

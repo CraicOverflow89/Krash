@@ -135,7 +135,8 @@ class KrashExpressionOperatorIncrement(private val value: KrashExpression): Kras
         println()
         // NOTE: need a new parser rule for pre/post inc/dec operations
         //       PLUS PLUS ref (index)* -> value after change
-        //       ref (index)* PLUS PLUS -> value before change
+        //       ref (index)* PLUS PLUS -> value before
+        //       use the same logic as map[key] = value to preserve reference to update
 
         // Reference Value
         if(valueRef is KrashValueReference) return invoke(runtime, valueRef)

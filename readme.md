@@ -1,6 +1,8 @@
 Krash Project
 =============
 
+[![Known Vulnerabilities](https://snyk.io//test/github/CraicOverflow89/Krash/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/CraicOverflow89/Krash?targetFile=build.gradle)
+
 Lightweight file manipulation DSL, built with Kotlin and ANTLR.
 
 ### Features
