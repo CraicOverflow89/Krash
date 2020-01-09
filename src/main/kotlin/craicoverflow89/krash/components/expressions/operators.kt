@@ -2,10 +2,7 @@ package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashException
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.objects.KrashValueReference
-import craicoverflow89.krash.components.objects.KrashValueSimple
-import craicoverflow89.krash.components.objects.KrashValueSimpleNumeric
-import craicoverflow89.krash.components.objects.KrashValueString
+import craicoverflow89.krash.components.objects.*
 
 abstract class KrashExpressionOperator(private val first: KrashExpression, private val second: KrashExpression): KrashExpression() {
 
@@ -77,12 +74,60 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
     private fun invoke(runtime: KrashRuntime, value: KrashValueSimpleNumeric): KrashValueSimple {
 
         // Increment Value
-        runtime.heapPut(ref.getValue(), KrashValueSimpleNumeric.create(when(type) {
+        val result = KrashValueSimpleNumeric.create(when(type) {
             KrashExpressionOperatorIncrementType.MINUS -> value.toDouble() - 1
             KrashExpressionOperatorIncrementType.PLUS -> value.toDouble() + 1
-        }))
-        // NOTE: this only works for x ++
-        //       when it's x[y][z] it needs to update the list or map
+        })
+
+        // Update Reference
+        when(ref) {
+
+            // Indexed Reference
+            is KrashExpressionOperatorIncrementIndex -> {
+
+                /*println("KrashExpressionOperatorIncrement.invoke")
+                println(" updating an index")
+                println(" value is $value")
+                println(" collection is ${ref.getCollection(runtime)}")
+                println("")*/
+
+                // Update Collection
+                ref.getCollection(runtime).let {collection ->
+
+                    // Resolve Index
+                    ref.getIndex(runtime).let {index ->
+                        when(collection) {
+
+                            // Update Array
+                            is KrashValueArray -> {
+
+                                // Integer Position
+                                if(index is KrashValueInteger) collection.setElement(index.value, result)
+
+                                // Invalid Type
+                                else throw KrashException("Array indexes must be integers!")
+                            }
+
+                            // Update Map
+                            is KrashValueMap -> {
+
+                                // String Key
+                                if(index is KrashValueString) collection.setData(index.value, result)
+
+                                // Invalid Type
+                                else throw KrashException("Map indexes must be strings!")
+                            }
+
+                            // Invalid Type
+                            else -> throw KrashException("Cannot append to a non-indexable value!")
+                        }
+                    }
+                }
+            }
+
+            // Simple Reference
+            is KrashExpressionOperatorIncrementReference -> runtime.heapPut(ref.value, result)
+        }
 
         // Return Result
         return value
@@ -102,19 +147,19 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
 
 }
 
-class KrashExpressionOperatorIncrementIndex(private val ref: KrashExpressionOperatorIncrementValue, private val index: KrashExpression): KrashExpressionOperatorIncrementValue {
+class KrashExpressionOperatorIncrementIndex(private val value: KrashExpression, private val index: KrashExpression): KrashExpressionOperatorIncrementValue {
 
-    override fun getValue() = ref.getValue()
+    fun getCollection(runtime: KrashRuntime) = value.toValue(runtime)
 
-    override fun toValue(runtime: KrashRuntime) = index.toValue(runtime)
+    fun getIndex(runtime: KrashRuntime) = index.toValue(runtime)
+
+    override fun toValue(runtime: KrashRuntime) = KrashExpressionIndex(value, index).toValue(runtime)
 
 }
 
-class KrashExpressionOperatorIncrementReference(private val ref: String): KrashExpressionOperatorIncrementValue {
+class KrashExpressionOperatorIncrementReference(val value: String): KrashExpressionOperatorIncrementValue {
 
-    override fun getValue() = ref
-
-    override fun toValue(runtime: KrashRuntime) = runtime.heapGet(ref).toSimple(runtime)
+    override fun toValue(runtime: KrashRuntime) = runtime.heapGet(value).toSimple(runtime)
     // NOTE: this will need to be updated for reference persistence
 
 }
@@ -124,10 +169,6 @@ enum class KrashExpressionOperatorIncrementType {
 }
 
 interface KrashExpressionOperatorIncrementValue {
-
-    fun getValue(): String
-
-    fun index(index: KrashExpression) = KrashExpressionOperatorIncrementIndex(this, index)
 
     fun toValue(runtime: KrashRuntime): KrashValueSimple
 

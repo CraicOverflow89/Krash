@@ -213,6 +213,7 @@ message = "Hello " + name + "!"
 
 ### Issues
 
+ - looks like single comments inside of multiline comments cause errors
  - loading script does not allow for absolute paths
     - there should be a single `isAbsolutePath` method (already have this logic in file constructor)
  - references don't persist with `name = &data["name"]` since moving to experssions

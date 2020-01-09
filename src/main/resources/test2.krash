@@ -13,11 +13,12 @@ echo("x is now " + @x)
 echo("")
 
 // List Value
-echo("test: list[0] ++")
-list = [7]
+echo("test: list[0][0] ++")
+list = [[7]]
 echo(list)
-list[0] ++
+list[0][0] ++
 echo(list)
+// NOTE: this isn't working
 
 // Map Value
 /*echo("test: map[value] ++")

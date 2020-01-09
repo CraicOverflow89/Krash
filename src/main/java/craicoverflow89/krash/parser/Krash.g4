@@ -173,11 +173,26 @@ expressionInc returns [KrashExpression result]
     ;
 
 expressionIncRef returns [KrashExpressionOperatorIncrementValue result]
+    :   (
+            expressionIncRefIndex {$result = $expressionIncRefIndex.result;}
+        |
+            expressionIncRefSimple {$result = $expressionIncRefSimple.result;}
+        )
+    ;
+
+expressionIncRefIndex returns [KrashExpressionOperatorIncrementIndex result]
+    :   expressionRef
+        {KrashExpression expression = $expressionRef.result;}
+        (
+            indexMulti = expressionIndex {expression = new KrashExpressionIndex(expression, $indexMulti.result);}
+        )*
+        indexFinal = expressionIndex
+        {$result = new KrashExpressionOperatorIncrementIndex(expression, $indexFinal.result);}
+    ;
+
+expressionIncRefSimple returns [KrashExpressionOperatorIncrementReference result]
     :   expressionRefChars
         {$result = new KrashExpressionOperatorIncrementReference($expressionRefChars.text);}
-        (
-            expressionIndex {$result = $result.index($expressionIndex.result);}
-        )*
     ;
 
 expressionIndex returns [KrashExpression result]
