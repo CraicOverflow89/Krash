@@ -71,6 +71,25 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
             // Return Array
             this
         }
+        memberPut("eachIndexed") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+
+            // Validate Logic
+            val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
+                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                it
+            }
+
+            // Invoke Logic
+            valueList.forEachIndexed {index, value ->
+                logic.invoke(runtime, listOf(KrashValueInteger(index), value))
+            }
+
+            // Return Array
+            this
+        }
         memberPut("filter") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments

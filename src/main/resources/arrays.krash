@@ -16,6 +16,11 @@ echo("size = " + @data.size())
 // Print Each
 data.each(echo)
 
+// Each Indexed
+data.eachIndexed(fun(i, v) {
+    echo("pos " + @i + " is " + @v)
+})
+
 // Join Elements
 echo(data.join("|", "<", ">"))
 
