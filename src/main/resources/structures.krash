@@ -1,20 +1,31 @@
-// Single If
+// If (single expression)
 if(1 == 1) echo("1 == 1")
 if(1 > 2) echo("1 > 2")
 if(1 != 2) echo("1 != 2")
 
-// Multi If
+// If (multiple expressions)
 if(1 < 2) {
     echo("1 < 2")
 }
 
-// Single If Else
+// If Else (single expression)
 if(1 > 2) echo("1 > 2") else echo("not 1 > 2")
 
-// Multi If Else
+// If Else (multiple expressions)
 if(2 < 1) {
     echo("2 < 1")
 }
 else {
     echo("not 2 < 1")
+}
+
+// If Else (using values)
+echo(if(true) "hello" else "goodbye")
+
+// While
+x = 0
+while(x < 5) {
+    echo("x is " + !x)
+    //x ++
+    x = x + 1
 }

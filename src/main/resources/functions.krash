@@ -1,0 +1,21 @@
+// Create Function
+data = fun(name = "James") {
+
+    // Create Message
+    message = "Hello " + name
+
+    // Print Message
+    echo(message)
+}
+
+// Invoke Function
+data()
+
+// Single Expression
+single = fun() = echo("single")
+single()
+
+// Instantly Invoke
+fun() {
+    echo("IIFE")
+}()

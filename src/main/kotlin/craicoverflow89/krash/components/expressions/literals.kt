@@ -1,5 +1,6 @@
 package craicoverflow89.krash.components.expressions
 
+import craicoverflow89.krash.components.KrashCommand
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.*
 
@@ -74,9 +75,9 @@ class KrashExpressionLiteralCallableArgument(val name: String, private val defau
 
 }
 
-class KrashExpressionLiteralCallableExpression(private val expression: KrashExpression, val isReturn: Boolean): KrashExpressionLiteral() {
+class KrashExpressionLiteralCallableExpression(private val command: KrashCommand, val isReturn: Boolean): KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime) = expression.toValue(runtime)
+    override fun toValue(runtime: KrashRuntime) = command.invoke(runtime).toSimple(runtime)
 
 }
 

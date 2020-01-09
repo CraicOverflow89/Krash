@@ -241,19 +241,17 @@ expressionLitCallable returns [KrashExpressionLiteralCallable result]
         (
             CUBR1
             (
-                commandComment
-            |
                 {boolean isReturn = false;}
                 (
                     'return' {isReturn = true;}
                 )?
-                exp1 = expression
-                {body.add(new KrashExpressionLiteralCallableExpression($exp1.result, isReturn));}
+                c1 = command
+                {body.add(new KrashExpressionLiteralCallableExpression($c1.result, isReturn));}
             )*
             CUBR2
         |
-            EQUAL exp2 = expression
-            {body.add(new KrashExpressionLiteralCallableExpression($exp2.result, true));}
+            EQUAL c2 = command
+            {body.add(new KrashExpressionLiteralCallableExpression($c2.result, true));}
         )
         {$result = new KrashExpressionLiteralCallable(args, body);}
     ;
@@ -383,41 +381,54 @@ expressionRefChars
 expressionStruct returns [KrashExpressionStructure result]
     :   (
             expressionStructIf {$result = $expressionStructIf.result;}
+        |
+            expressionStructWhile {$result = $expressionStructWhile.result;}
         )
     ;
 
 expressionStructIf returns [KrashExpressionStructureIf result]
     :   {
-            ArrayList<KrashExpression> bodyTrue = new ArrayList();
-            ArrayList<KrashExpression> bodyElse = new ArrayList();
+            ArrayList<KrashCommand> bodyTrue = new ArrayList();
+            ArrayList<KrashCommand> bodyElse = new ArrayList();
         }
         'if' STBR1 condition = expression STBR2
         (
-            b1 = expression {bodyTrue.add($b1.result);}
+            b1 = command {bodyTrue.add($b1.result);}
         |
             CUBR1
             (
-                commandComment
-            |
-                b2 = expression {bodyTrue.add($b2.result);}
+                b2 = command {bodyTrue.add($b2.result);}
             )*
             CUBR2
         )
         (
             'else'
             (
-                e1 = expression {bodyElse.add($e1.result);}
+                e1 = command {bodyElse.add($e1.result);}
             |
                 CUBR1
                 (
-                    commandComment
-                |
-                    e2 = expression {bodyElse.add($e2.result);}
+                    e2 = command {bodyElse.add($e2.result);}
                 )*
                 CUBR2
             )
         )?
         {$result = new KrashExpressionStructureIf($condition.result, bodyTrue, bodyElse);}
+    ;
+
+expressionStructWhile returns [KrashExpressionStructureWhile result]
+    :   {ArrayList<KrashCommand> body = new ArrayList();}
+        'while' STBR1 condition = expression STBR2
+        (
+            b1 = command {body.add($b1.result);}
+        |
+            CUBR1
+            (
+                b2 = command {body.add($b2.result);}
+            )*
+            CUBR2
+        )
+        {$result = new KrashExpressionStructureWhile($condition.result, body);}
     ;
 
 // Lexer Rules
