@@ -1,18 +1,14 @@
 package craicoverflow89.krash
 
-import craicoverflow89.krash.components.KrashCommand
+import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.parser.KrashLexer
-import craicoverflow89.krash.parser.KrashParser
 import java.io.File
 import kotlin.system.exitProcess
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.CommonTokenStream
 
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main() {
+/*fun main() {
     //loadScript("src/main/resources/arrays.krash")
     //loadScript("src/main/resources/comments.krash")
     //loadScript("src/main/resources/functions.krash")
@@ -20,7 +16,7 @@ fun main() {
     //loadScript("src/main/resources/network.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
-    loadScript("src/main/resources/strings.krash")
+    //loadScript("src/main/resources/strings.krash")
     //loadScript("src/main/resources/structures.krash")
 
     // NOTE: multiline comment is currently taking all text
@@ -29,9 +25,9 @@ fun main() {
 
     // NOTE: multiple indexes for update and increment operations are not working
     //loadScript("src/main/resources/test2.krash")
-}
+}*/
 
-/*fun main(args: Array<String>) = when {
+fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -44,7 +40,7 @@ fun main() {
     // Script Mode
     else -> loadScript(args[0])
     // NOTE: this will completely ignore anything after script path (flags?)
-}*/
+}
 
 fun loadFlags(flags: String) {
 
@@ -70,15 +66,8 @@ fun loadScript(scriptPath: String) {
         exitProcess(-1)
     }
 
-    // Parse File
-    val scriptData = scriptFile.readText().let {
-        val lexer = KrashLexer(ANTLRInputStream(it))
-        val parser = KrashParser(CommonTokenStream(lexer))
-        parser.script().result
-    }
-
     // Invoke Script
-    scriptData.invoke(cwd)
+    KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd)
 }
 
 fun loadShell() {
@@ -91,13 +80,6 @@ fun loadShell() {
 
     // Create Runtime
     val runtime = KrashRuntime(cwd)
-
-    // Parse Command
-    val parse = fun(input: String): KrashCommand {
-        val lexer = KrashLexer(ANTLRInputStream(input))
-        val parser = KrashParser(CommonTokenStream(lexer))
-        return parser.line().result
-    }
 
     // Shell Loop
     while(true) {
@@ -148,11 +130,11 @@ fun loadShell() {
         }
 
         // Invoke Command
-        try {parse(input).invoke(runtime)}
+        try {KrashInterpreter.parseCommand(input).invoke(runtime)}
 
         // Error Handling
-        catch(ex: RuntimeException) {
-            KrashRuntime.println("ERROR: ${ex.message}")
+        catch(ex: KrashException) {
+            KrashRuntime.error(ex.message())
         }
     }
 
@@ -165,4 +147,10 @@ fun printInfo() {
     KrashRuntime.println("Krash Project")
     KrashRuntime.println("Version $KRASH_VERSION")
     KrashRuntime.println("")
+}
+
+abstract class KrashException(message: String): Exception(message) {
+
+    fun message(): String =  message ?: "Unknown Exception"
+
 }

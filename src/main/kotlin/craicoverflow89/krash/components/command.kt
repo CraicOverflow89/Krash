@@ -49,7 +49,7 @@ class KrashCommandDeclare(private val ref: KrashCommandDeclareReference, private
                             if(it.index is KrashValueInteger) it.value.setElement(it.index.value, valueSimple)
 
                             // Invalid Type
-                            else throw KrashException("Array indexes must be integers!")
+                            else throw KrashRuntimeException("Array indexes must be integers!")
                         }
 
                         // Update Map
@@ -59,11 +59,11 @@ class KrashCommandDeclare(private val ref: KrashCommandDeclareReference, private
                             if(it.index is KrashValueString) it.value.setData(it.index.getValue(), valueSimple)
 
                             // Invalid Type
-                            else throw KrashException("Map indexes must be strings!")
+                            else throw KrashRuntimeException("Map indexes must be strings!")
                         }
 
                         // Invalid Type
-                        else -> throw KrashException("Cannot append to a non-indexable value!")
+                        else -> throw KrashRuntimeException("Cannot append to a non-indexable value!")
                     }
                 }
             }
@@ -73,7 +73,7 @@ class KrashCommandDeclare(private val ref: KrashCommandDeclareReference, private
 
                 // Reserved Term
                 if(KrashReserved.contains(it)) {
-                    throw KrashException("Reserved term '$it' is not a valid reference!")
+                    throw KrashRuntimeException("Reserved term '$it' is not a valid reference!")
                 }
 
                 // Update Heap

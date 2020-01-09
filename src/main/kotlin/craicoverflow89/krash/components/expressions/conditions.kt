@@ -1,6 +1,6 @@
 package craicoverflow89.krash.components.expressions
 
-import craicoverflow89.krash.components.KrashException
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValueBoolean
 import craicoverflow89.krash.components.objects.KrashValueNull
@@ -23,29 +23,29 @@ class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpr
         // Compare Boolean
         is KrashValueBoolean -> when(second) {
             is KrashValueBoolean -> first.isTrue() == second.isTrue()
-            else -> throw KrashException("Invalid type for equality comparison with boolean!")
+            else -> throw KrashRuntimeException("Invalid type for equality comparison with boolean!")
         }
 
         // Compare Null
         is KrashValueNull -> when(second) {
             is KrashValueNull -> true
-            else -> throw KrashException("Invalid type for equality comparison with null!")
+            else -> throw KrashRuntimeException("Invalid type for equality comparison with null!")
         }
 
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {
             is KrashValueSimpleNumeric -> first.toDouble() == second.toDouble()
-            else -> throw KrashException("Invalid type for equality comparison with number!")
+            else -> throw KrashRuntimeException("Invalid type for equality comparison with number!")
         }
 
         // Compare Strings
         is KrashValueString -> when(second) {
             is KrashValueString -> first.getValue() == second.getValue()
-            else -> throw KrashException("Invalid type for equality comparison with string!")
+            else -> throw KrashRuntimeException("Invalid type for equality comparison with string!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type for equality comparison!")
+        else -> throw KrashRuntimeException("Invalid type for equality comparison!")
     }
 
 }
@@ -57,11 +57,11 @@ class KrashExpressionConditionGreater(first: KrashExpression, second: KrashExpre
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {
             is KrashValueSimpleNumeric -> first.toDouble() > second.toDouble()
-            else -> throw KrashException("Invalid type for greater than comparison with number!")
+            else -> throw KrashRuntimeException("Invalid type for greater than comparison with number!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type for greater than comparison!")
+        else -> throw KrashRuntimeException("Invalid type for greater than comparison!")
     }
 
 }
@@ -73,29 +73,29 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
         // Compare Boolean
         is KrashValueBoolean -> when(second) {
             is KrashValueBoolean -> first.isTrue() != second.isTrue()
-            else -> throw KrashException("Invalid type for inequality comparison with boolean!")
+            else -> throw KrashRuntimeException("Invalid type for inequality comparison with boolean!")
         }
 
         // Compare Null
         is KrashValueNull -> when(second) {
             is KrashValueNull -> false
-            else -> throw KrashException("Invalid type for inequality comparison with null!")
+            else -> throw KrashRuntimeException("Invalid type for inequality comparison with null!")
         }
 
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {
             is KrashValueSimpleNumeric -> first.toDouble() != second.toDouble()
-            else -> throw KrashException("Invalid type for inequality comparison with number!")
+            else -> throw KrashRuntimeException("Invalid type for inequality comparison with number!")
         }
 
         // Compare Strings
         is KrashValueString -> when(second) {
             is KrashValueString -> first.getValue() != second.getValue()
-            else -> throw KrashException("Invalid type for inequality comparison with string!")
+            else -> throw KrashRuntimeException("Invalid type for inequality comparison with string!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type for inequality comparison!")
+        else -> throw KrashRuntimeException("Invalid type for inequality comparison!")
     }
 
 }
@@ -107,11 +107,11 @@ class KrashExpressionConditionLesser(first: KrashExpression, second: KrashExpres
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {
             is KrashValueSimpleNumeric -> first.toDouble() < second.toDouble()
-            else -> throw KrashException("Invalid type for lesser than comparison with number!")
+            else -> throw KrashRuntimeException("Invalid type for lesser than comparison with number!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type for lesser than comparison!")
+        else -> throw KrashRuntimeException("Invalid type for lesser than comparison!")
     }
 
 }

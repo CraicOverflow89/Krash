@@ -1,9 +1,12 @@
 package craicoverflow89.krash.components
 
-import craicoverflow89.krash.components.objects.*
+import craicoverflow89.krash.KrashException
+import craicoverflow89.krash.components.objects.KrashValue
+import craicoverflow89.krash.components.objects.KrashValueClass
+import craicoverflow89.krash.components.objects.KrashValueReference
+import craicoverflow89.krash.components.objects.KrashValueSimple
+import craicoverflow89.krash.components.objects.KrashValueString
 import kotlin.system.exitProcess
-
-class KrashException(message: String): RuntimeException(message)
 
 class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap?) {
 
@@ -22,7 +25,7 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
     fun get(ref: String): KrashValue {
 
         // Fetch Value
-        return heap[ref] ?: parent?.get(ref) ?: throw KrashException("Reference '$ref' does not exist!")
+        return heap[ref] ?: parent?.get(ref) ?: throw KrashRuntimeException("Reference '$ref' does not exist!")
     }
 
     fun put(ref: String, value: KrashValue) {
@@ -122,7 +125,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             "HOME" -> userDirectoryString()
 
             // Invalid Value
-            else -> throw KrashException("Constant '$value' does not exist!")
+            else -> throw KrashRuntimeException("Constant '$value' does not exist!")
         }
 
         fun println(value: Any) = output.out(value.toString())
@@ -158,6 +161,8 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
 }
 
+class KrashRuntimeException(message: String): KrashException(message)
+
 class KrashScript(private val commandList: List<KrashCommand>) {
 
     fun invoke(cwd: String) {
@@ -172,8 +177,8 @@ class KrashScript(private val commandList: List<KrashCommand>) {
             try {it.invoke(runtime)}
 
             // Error Handling
-            catch(ex: RuntimeException) {
-                KrashRuntime.println("ERROR: ${ex.message}")
+            catch(ex: KrashRuntimeException) {
+                KrashRuntime.error(ex.message())
             }
         }
 

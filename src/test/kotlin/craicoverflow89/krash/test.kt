@@ -1,14 +1,10 @@
 package craicoverflow89.krash
 
-import craicoverflow89.krash.components.KrashCommand
+import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashOutput
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueNull
-import craicoverflow89.krash.parser.KrashLexer
-import craicoverflow89.krash.parser.KrashParser
-import org.antlr.v4.runtime.ANTLRInputStream
-import org.antlr.v4.runtime.CommonTokenStream
 
 open class KrashTest {
 
@@ -31,11 +27,7 @@ open class KrashTest {
         return result
     }
 
-    fun parseLine(value: String): KrashCommand {
-        val lexer = KrashLexer(ANTLRInputStream(value))
-        val parser = KrashParser(CommonTokenStream(lexer))
-        return parser.line().result
-    }
+    fun parseLine(value: String) = KrashInterpreter.parseCommand(value)
 
     fun parseLines(value: List<String>) = parseLine(value.joinToString("\n"))
 

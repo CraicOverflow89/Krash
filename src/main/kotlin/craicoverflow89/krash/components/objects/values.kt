@@ -1,6 +1,6 @@
 package craicoverflow89.krash.components.objects
 
-import craicoverflow89.krash.components.KrashException
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashMethod
 import craicoverflow89.krash.components.KrashReserved
 import craicoverflow89.krash.components.KrashRuntime
@@ -29,15 +29,15 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
 
         // Parse Arguments
         val separator = if(argumentList.isNotEmpty()) argumentList[0].toSimple(runtime).let {
-            if(it !is KrashValueString) throw KrashException("Invalid type for separator!")
+            if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for separator!")
             it.getValue()
         } else ""
         val prefix: String = if(argumentList.size > 1) argumentList[1].toSimple(runtime).let {
-            if(it !is KrashValueString) throw KrashException("Invalid type for prefix!")
+            if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for prefix!")
             it.getValue()
         } else ""
         val postfix = if(argumentList.size > 2) argumentList[2].toSimple(runtime).let {
-            if(it !is KrashValueString) throw KrashException("Invalid type for postfix!")
+            if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for postfix!")
             it.getValue()
         } else ""
 
@@ -55,11 +55,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -74,11 +74,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         memberPut("eachIndexed") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -93,11 +93,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         memberPut("filter") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -109,7 +109,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
                 logic.invoke(runtime, listOf(value)).let {
 
                     // Validate Return
-                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+                    if(it !is KrashValueBoolean) throw KrashRuntimeException("Logic must return boolean!")
 
                     // Include Element
                     if(it.isTrue()) result.add(value)
@@ -122,11 +122,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         memberPut("map") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -144,11 +144,11 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         memberPut("reject") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -160,7 +160,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
                 logic.invoke(runtime, listOf(value)).let {
 
                     // Validate Return
-                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+                    if(it !is KrashValueBoolean) throw KrashRuntimeException("Logic must return boolean!")
 
                     // Include Element
                     if(!it.isTrue()) result.add(value)
@@ -178,7 +178,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         return if(pos >= 0 && pos < valueList.size) valueList[pos]
 
         // Invalid Index
-        else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
+        else throw KrashRuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
     fun getSize() = valueList.size
@@ -192,7 +192,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueS
         else if(pos >= 0 && pos < valueList.size) valueList[pos] = value
 
         // Invalid Index
-        else throw KrashException("Element index $pos out of bounds for array length ${valueList.size}!")
+        else throw KrashRuntimeException("Element index $pos out of bounds for array length ${valueList.size}!")
     }
 
     override fun toSimple(runtime: KrashRuntime): KrashValueArray {
@@ -248,7 +248,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         valueList.forEach {
 
             // Reserved Term
-            if(KrashReserved.contains(it.key)) throw KrashException("Cannot use reserved term '${it.key}' for map key!")
+            if(KrashReserved.contains(it.key)) throw KrashRuntimeException("Cannot use reserved term '${it.key}' for map key!")
 
             // Append Pair
             put(it.key, it.value)
@@ -264,7 +264,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
             argumentList[0].toSimple(runtime).let {
 
                 // Invalid Type
-                if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
+                if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for map key!")
 
                 // Assign Value
                 data[it.getValue()] = argumentList[1]
@@ -279,7 +279,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
             argumentList[0].toSimple(runtime).let {
 
                 // Invalid Type
-                if(it !is KrashValueString) throw KrashException("Invalid type for map key!")
+                if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for map key!")
 
                 // Return Result
                 KrashValueBoolean(data.containsKey(it.getValue()))
@@ -288,11 +288,11 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         memberPut("each") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -307,11 +307,11 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         memberPut("filter") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -323,7 +323,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
                 logic.invoke(runtime, listOf(KrashValueString(k), v)).let {
 
                     // Validate Return
-                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+                    if(it !is KrashValueBoolean) throw KrashRuntimeException("Logic must return boolean!")
 
                     // Include Element
                     if(it.isTrue()) result.add(KrashValueMapPair(k, v))
@@ -343,11 +343,11 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         memberPut("map") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -365,11 +365,11 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         memberPut("reject") {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Arguments
-            if(argumentList.isEmpty()) throw KrashException("No value provided for logic!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
 
             // Validate Logic
             val logic: KrashValueCallable = argumentList[0].toSimple(runtime).let {
-                if(it !is KrashValueCallable) throw KrashException("Logic must be callable!")
+                if(it !is KrashValueCallable) throw KrashRuntimeException("Logic must be callable!")
                 it
             }
 
@@ -381,7 +381,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
                 logic.invoke(runtime, listOf(KrashValueString(k), v)).let {
 
                     // Validate Return
-                    if(it !is KrashValueBoolean) throw KrashException("Logic must return boolean!")
+                    if(it !is KrashValueBoolean) throw KrashRuntimeException("Logic must return boolean!")
 
                     // Include Element
                     if(!it.isTrue()) result.add(KrashValueMapPair(k, v))
@@ -401,7 +401,7 @@ class KrashValueMap(valueList: List<KrashValueMapPair>): KrashValueSimple() {
         return if(data.containsKey(key)) data[key]!!
 
         // Invalid Index
-        else throw KrashException("Invalid key '$key' for map!")
+        else throw KrashRuntimeException("Invalid key '$key' for map!")
     }
 
     fun setData(key: String, value: KrashValue) {
@@ -465,7 +465,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
         }
 
         // Invalid Key
-        else -> throw KrashException("No member '$key' exists on value!")
+        else -> throw KrashRuntimeException("No member '$key' exists on value!")
     }
 
     fun memberPut(key: String, value: KrashValue) {
@@ -508,13 +508,13 @@ class KrashValueString(private val value: String): KrashValueSimple() {
         memberPut("endsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Characters
-            if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for characters!")
 
             // Parse Characters
             KrashValueBoolean(argumentList[0].let {
 
                 // Invalid Type
-                if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
+                if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for characters!")
 
                 // Return Result
                 value.endsWith(it.value)
@@ -527,7 +527,7 @@ class KrashValueString(private val value: String): KrashValueSimple() {
                 if(argumentList.isNotEmpty()) argumentList[0].let {
 
                     // Invalid Type
-                    if(it !is KrashValueString) throw KrashException("Invalid type for delimiter!")
+                    if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for delimiter!")
 
                     // Split String
                     value.split(it.value).forEach {
@@ -549,13 +549,13 @@ class KrashValueString(private val value: String): KrashValueSimple() {
         memberPut("startsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Characters
-            if(argumentList.isEmpty()) throw KrashException("No value provided for characters!")
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for characters!")
 
             // Parse Characters
             KrashValueBoolean(argumentList[0].let {
 
                 // Invalid Type
-                if(it !is KrashValueString) throw KrashException("Invalid type for characters!")
+                if(it !is KrashValueString) throw KrashRuntimeException("Invalid type for characters!")
 
                 // Return Result
                 value.startsWith(it.value)
@@ -573,7 +573,7 @@ class KrashValueString(private val value: String): KrashValueSimple() {
     }.let {pos ->
 
         // Invalid Position
-        if (pos >= value.length || pos < 0) throw KrashException("Character index $pos out of bounds for string length ${value.length}!")
+        if (pos >= value.length || pos < 0) throw KrashRuntimeException("Character index $pos out of bounds for string length ${value.length}!")
 
         // Fetch Character
         value.substring(pos, pos + 1)

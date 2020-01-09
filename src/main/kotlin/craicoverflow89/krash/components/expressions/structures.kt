@@ -1,7 +1,7 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashCommand
-import craicoverflow89.krash.components.KrashException
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueBoolean
@@ -24,7 +24,7 @@ class KrashExpressionStructureIf(private val condition: KrashExpression, private
             if(it is KrashValueBoolean) it.isTrue()
 
             // Invalid Type
-            else throw KrashException("Condition must be boolean!")
+            else throw KrashRuntimeException("Condition must be boolean!")
         }) {
 
             // Execute Body
@@ -55,7 +55,7 @@ class KrashExpressionStructureWhile(private val condition: KrashExpression, priv
             if(it is KrashValueBoolean) it.isTrue()
 
             // Invalid Type
-            else throw KrashException("Condition must be boolean!")
+            else throw KrashRuntimeException("Condition must be boolean!")
         }) {
 
             // Execute Body

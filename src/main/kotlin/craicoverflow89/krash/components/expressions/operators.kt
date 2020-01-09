@@ -1,6 +1,6 @@
 package craicoverflow89.krash.components.expressions
 
-import craicoverflow89.krash.components.KrashException
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.*
 
@@ -23,7 +23,7 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() + second.toDouble())
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform addition!")
+            else -> throw KrashRuntimeException("Invalid type to perform addition!")
         }
 
         // String Concatenation
@@ -33,11 +33,11 @@ class KrashExpressionOperatorAddition(first: KrashExpression, second: KrashExpre
             is KrashValueString -> KrashValueString(first.getValue() + second.getValue())
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform addition!")
+            else -> throw KrashRuntimeException("Invalid type to perform addition!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type to perform operator!")
+        else -> throw KrashRuntimeException("Invalid type to perform operator!")
     }
 
 }
@@ -53,18 +53,18 @@ class KrashExpressionOperatorDivision(first: KrashExpression, second: KrashExpre
             is KrashValueSimpleNumeric -> {
 
                 // Zero Safety
-                if(second.toDouble() == 0.0) throw KrashException("Cannot perform division by zero!")
+                if(second.toDouble() == 0.0) throw KrashRuntimeException("Cannot perform division by zero!")
 
                 // Perform Division
                 KrashValueSimpleNumeric.create(first.toDouble() / second.toDouble())
             }
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform division!")
+            else -> throw KrashRuntimeException("Invalid type to perform division!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type to perform operator!")
+        else -> throw KrashRuntimeException("Invalid type to perform operator!")
     }
 
 }
@@ -124,7 +124,7 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                                 }
 
                                 // Invalid Type
-                                else throw KrashException("Array indexes must be integers!")
+                                else throw KrashRuntimeException("Array indexes must be integers!")
                             }
 
                             // Update Map
@@ -142,11 +142,11 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
                                 }
 
                                 // Invalid Type
-                                else throw KrashException("Map indexes must be strings!")
+                                else throw KrashRuntimeException("Map indexes must be strings!")
                             }
 
                             // Invalid Type
-                            else -> throw KrashException("Cannot append to a non-indexable value!")
+                            else -> throw KrashRuntimeException("Cannot append to a non-indexable value!")
                         }
                     }
                 }
@@ -169,7 +169,7 @@ class KrashExpressionOperatorIncrement(private val ref: KrashExpressionOperatorI
         if(value is KrashValueSimpleNumeric) return invoke(runtime, value)
 
         // Invalid Type
-        else throw KrashException("Invalid type to perform operator!")
+        else throw KrashRuntimeException("Invalid type to perform operator!")
     }
 
 }
@@ -182,7 +182,7 @@ class KrashExpressionOperatorIncrementIndex(private val value: KrashExpression, 
 
     fun getRef(runtime: KrashRuntime): KrashValueReference = value.toValueRef(runtime).let {
         // TEMP
-        if(it !is KrashValueReference) throw KrashException("Could not resolve to a reference for this value!")
+        if(it !is KrashValueReference) throw KrashRuntimeException("Could not resolve to a reference for this value!")
         it
     }
 
@@ -220,11 +220,11 @@ class KrashExpressionOperatorMultiplication(first: KrashExpression, second: Kras
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() * second.toDouble())
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform multiplication!")
+            else -> throw KrashRuntimeException("Invalid type to perform multiplication!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type to perform operator!")
+        else -> throw KrashRuntimeException("Invalid type to perform operator!")
     }
 
 }
@@ -238,7 +238,7 @@ class KrashExpressionOperatorNegation(private val value: KrashExpression): Krash
             is KrashValueBoolean -> KrashValueBoolean(!it.isTrue())
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform operator!")
+            else -> throw KrashRuntimeException("Invalid type to perform operator!")
         }
     }
 
@@ -255,11 +255,11 @@ class KrashExpressionOperatorSubtraction(first: KrashExpression, second: KrashEx
             is KrashValueSimpleNumeric -> KrashValueSimpleNumeric.create(first.toDouble() - second.toDouble())
 
             // Invalid Type
-            else -> throw KrashException("Invalid type to perform subtraction!")
+            else -> throw KrashRuntimeException("Invalid type to perform subtraction!")
         }
 
         // Invalid Type
-        else -> throw KrashException("Invalid type to perform operator!")
+        else -> throw KrashRuntimeException("Invalid type to perform operator!")
     }
 
 }

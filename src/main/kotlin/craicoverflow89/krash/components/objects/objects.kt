@@ -1,6 +1,6 @@
 package craicoverflow89.krash.components.objects
 
-import craicoverflow89.krash.components.KrashException
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import java.io.File
 import java.net.HttpURLConnection
@@ -22,7 +22,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     if(it.isNotEmpty()) it[0].let {
 
                         // Invalid Type
-                        if(it !is KrashValueString) throw KrashException("File path must be a string!")
+                        if(it !is KrashValueString) throw KrashRuntimeException("File path must be a string!")
 
                         // Return Value
                         it.getValue()
@@ -51,13 +51,13 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             Pair("network", KrashValueClass("network") { _: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
-                if(argumentList.isEmpty()) throw KrashException("Must supply url!")
+                if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
 
                 // Define Values
                 val url = URL(argumentList[0].let {
 
                     // Invalid Type
-                    if(it !is KrashValueString) throw KrashException("Network url must be a string!")
+                    if(it !is KrashValueString) throw KrashRuntimeException("Network url must be a string!")
 
                     // Return Value
                     it.getValue()
@@ -92,7 +92,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             Pair("pair", KrashValueClass("pair") {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
-                if(argumentList.size != 2) throw KrashException("Must supply two arguments for pair!")
+                if(argumentList.size != 2) throw KrashRuntimeException("Must supply two arguments for pair!")
 
                 // Define Values
                 val first = argumentList[0]
@@ -115,7 +115,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             if(nativeObjects.containsKey(name)) return nativeObjects[name]!!
 
             // Invalid Key
-            throw KrashException("Could not find '$name' native object!")
+            throw KrashRuntimeException("Could not find '$name' native object!")
         }
 
         fun nativeReserved() = nativeObjects.keys
