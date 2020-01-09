@@ -1,8 +1,11 @@
 // Script Arguments
-echo($ARGS)
-echo($ARGS.size())
-echo($ARGS[1])
+echo(
+    "arguments: " + @$ARGS,
+    "count:     " + @$ARGS.size(),
+    "first arg: " + $ARGS[0]
+)
 
 // Shell Input
-echo("Enter some text")
-echo("Text is " + read())
+echo("Please enter your name;")
+name = read()
+echo("Welcome $name!")

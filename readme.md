@@ -198,6 +198,26 @@ true_value = true
 false_value = !true_value
 ```
 
+#### Shell Scripts
+
+When calling a script, you can access the optional arguments passed along with the `$ARGS` global;
+
+```
+echo(
+    "arguments: " + @$ARGS,
+    "count:     " + @$ARGS.size(),
+    "first arg: " + $ARGS[0]
+)
+```
+
+Provided that the runtime _channel_ supports it (the default does), you can read text from the command line (will throw `KrashChannelException` if custom channel does not support this);
+
+```
+echo("Please enter your name;")
+name = read()
+echo("Welcome $name!")
+``` 
+
 ### Tasks
 
  - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
@@ -221,6 +241,7 @@ false_value = !true_value
  - add test to each suite to check that correct output is produced by `echo(value)`
     - also need to add `comparison` test that checks conditional operators
     - check all operators for type
+ - might be useful to allow references to globals in string lits, like `echo("args = $ARGS")`
 
 ### Issues
 
