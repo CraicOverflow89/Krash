@@ -86,9 +86,15 @@ commandExpression returns [KrashCommandExpression result]
     ;
 
 expression returns [KrashExpression result]
-    :   {Boolean toString = false;}
+    :   {
+            Boolean toString = false;
+            Boolean negate = false;
+        }
         (
             AT {toString = true;}
+        )?
+        (
+            expressionOpNegation {negate = true;}
         )?
         expressionData
         {$result = $expressionData.result;}
@@ -99,7 +105,10 @@ expression returns [KrashExpression result]
         |
             expressionMember {$result = new KrashExpressionMember($result, $expressionMember.result);}
         )*
-        {$result = new KrashExpressionData($result, toString);}
+        {
+            $result = new KrashExpressionData($result, toString);
+            if(negate) $result = new KrashExpressionOperatorNegation($result);
+        }
         (
             expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
         |
@@ -415,6 +424,10 @@ expressionOpIncrement
 expressionOpMultiply returns [KrashExpression result]
     :   ASTER expression
         {$result = $expression.result;}
+    ;
+
+expressionOpNegation
+    :   BANG
     ;
 
 expressionOpSubtract returns [KrashExpression result]

@@ -229,6 +229,21 @@ class KrashExpressionOperatorMultiplication(first: KrashExpression, second: Kras
 
 }
 
+class KrashExpressionOperatorNegation(private val value: KrashExpression): KrashExpression() {
+
+    override fun toValue(runtime: KrashRuntime) = value.toValue(runtime).let {
+        when(it) {
+
+            // Boolean Negation
+            is KrashValueBoolean -> KrashValueBoolean(!it.isTrue())
+
+            // Invalid Type
+            else -> throw KrashException("Invalid type to perform operator!")
+        }
+    }
+
+}
+
 class KrashExpressionOperatorSubtraction(first: KrashExpression, second: KrashExpression): KrashExpressionOperator(first, second) {
 
     override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
