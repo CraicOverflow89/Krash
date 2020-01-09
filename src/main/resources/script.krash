@@ -1,6 +1,6 @@
 // Script Arguments
 echo(
-    "arguments: " + @$ARGS,
+    "arguments: $ARGS",
     "count:     " + @$ARGS.size(),
     "first arg: " + $ARGS[0]
 )

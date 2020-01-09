@@ -22,7 +22,7 @@ class KrashArrayTest: KrashTest() {
     @Test
     fun each() {
         invokeLine("[0, 1, 2].each(echo)")
-        Assert.assertEquals(listOf("0", "1", "2"), output.outGet())
+        Assert.assertEquals(listOf("0", "1", "2"), channel.outGet())
     }
 
     @Test

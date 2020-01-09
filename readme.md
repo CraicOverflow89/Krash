@@ -204,7 +204,7 @@ When calling a script, you can access the optional arguments passed along with t
 
 ```
 echo(
-    "arguments: " + @$ARGS,
+    "arguments: $ARGS",
     "count:     " + @$ARGS.size(),
     "first arg: " + $ARGS[0]
 )
@@ -241,7 +241,6 @@ echo("Welcome $name!")
  - add test to each suite to check that correct output is produced by `echo(value)`
     - also need to add `comparison` test that checks conditional operators
     - check all operators for type
- - might be useful to allow references to globals in string lits, like `echo("args = $ARGS")`
 
 ### Issues
 

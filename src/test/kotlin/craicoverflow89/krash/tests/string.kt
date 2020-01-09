@@ -75,7 +75,13 @@ class KrashStringTest: KrashTest() {
             Assert.assertEquals("string\nliteral with \"quotes\"", (this as KrashValueString).getValue())
         }
 
-        // Reference Syntax
+        // Global Reference
+        with(invokeLines(listOf("\"\$HOME\""))) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals(System.getProperty("user.home").replace("\\", "/"), (this as KrashValueString).getValue())
+        }
+
+        // Local Reference
         with(invokeLines(listOf("name = \"James\"", "\"\$name\""))) {
             Assert.assertTrue(this is KrashValueString)
             Assert.assertEquals("James", (this as KrashValueString).getValue())

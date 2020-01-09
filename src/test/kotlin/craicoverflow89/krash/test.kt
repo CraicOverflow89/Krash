@@ -8,7 +8,7 @@ import craicoverflow89.krash.components.objects.KrashValueNull
 
 open class KrashTest {
 
-    private val channel = KrashTestChannel()
+    protected val channel = KrashTestChannel()
     private val runtime = KrashRuntime().apply {
         KrashRuntime.channelSet(channel)
     }

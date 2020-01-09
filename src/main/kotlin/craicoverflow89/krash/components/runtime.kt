@@ -157,6 +157,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             else -> throw KrashRuntimeException("Constant '$value' does not exist!")
         }
 
+        fun globalContains(value: String) = listOf("ARGS", "CWD", "HOME").contains(value)
+        // NOTE: this needs to be merged with the above (single map of data)
+
         fun println(value: Any) = channel.out(value.toString())
 
         fun read() = channel.read()

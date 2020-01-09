@@ -144,7 +144,14 @@ class KrashExpressionLiteralString(private val value: String): KrashExpressionLi
 
                 // Update String
                 val result = match.value.substring(1).let {ref ->
-                    text.replace(match.value, runtime.heapGet(ref).toString())
+                    text.replace(match.value, ref.let {
+
+                        // Global Value
+                        if(KrashRuntime.globalContains(it)) KrashRuntime.global(it).toString()
+
+                        // Check Heap
+                        else runtime.heapGet(ref).toString()
+                    })
                 }
 
                 // Match All
