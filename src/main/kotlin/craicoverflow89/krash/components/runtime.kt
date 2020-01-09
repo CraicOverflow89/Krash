@@ -1,11 +1,7 @@
 package craicoverflow89.krash.components
 
 import craicoverflow89.krash.KrashException
-import craicoverflow89.krash.components.objects.KrashValue
-import craicoverflow89.krash.components.objects.KrashValueClass
-import craicoverflow89.krash.components.objects.KrashValueReference
-import craicoverflow89.krash.components.objects.KrashValueSimple
-import craicoverflow89.krash.components.objects.KrashValueString
+import craicoverflow89.krash.components.objects.*
 import kotlin.system.exitProcess
 
 class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap?) {
@@ -104,17 +100,17 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         private var output: KrashOutput = KrashOutputShell()
         private var userDirectoryPath = System.getProperty("user.home").replace("\\", "/")
         private var scriptPath: KrashValueString? = null
-        private var argList: List<KrashValueString> = listOf()
-
-        fun argGet() = argList
-
-        fun argGet(pos: Int) = argList[pos]
+        private var scriptArgs: KrashValueArray = KrashValueArray()
 
         fun createScript(cwd: String, file: KrashValueString, args: List<KrashValueString>): KrashRuntime {
 
             // Set Values
             scriptPath = file
-            argList = args
+            scriptArgs = KrashValueArray(ArrayList<KrashValue>().apply {
+                args.forEach {
+                    add(it)
+                }
+            })
 
             // Return Runtime
             return KrashRuntime(cwd)
@@ -133,6 +129,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         fun error(value: Any) = output.err(value.toString())
 
         fun global(value: String): KrashValueSimple = when(value) {
+
+            // Script Arguments
+            "ARGS" -> scriptArgs
 
             // Working Directory
             "CWD" -> cwdString()

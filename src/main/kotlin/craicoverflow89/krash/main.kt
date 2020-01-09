@@ -8,7 +8,8 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-/*fun main() {
+fun main() {
+    loadScript("src/main/resources/args.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
@@ -21,9 +22,12 @@ val KRASH_VERSION = "ALPHA"
 
     // NOTE: multiple indexes for update and increment operations are not working
     //loadScript("src/main/resources/test2.krash")
-}*/
 
-fun main(args: Array<String>) = when {
+    // TEST
+    //loadScript("src/main/resources/test3.krash")
+}
+
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -42,7 +46,7 @@ fun main(args: Array<String>) = when {
         // No Arguments
         else listOf()
     })
-}
+}*/
 
 fun loadFlags(flags: String) {
 
@@ -50,7 +54,7 @@ fun loadFlags(flags: String) {
     if(listOf("version", "v").contains(flags)) printInfo()
 }
 
-fun loadScript(scriptPath: String, scriptArgs: List<String>) {
+fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
 
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""

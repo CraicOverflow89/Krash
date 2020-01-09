@@ -20,7 +20,7 @@ interface KrashValue {
 
 }
 
-class KrashValueArray(private val valueList: ArrayList<KrashValue>): KrashValueSimple(hashMapOf(
+class KrashValueArray(private val valueList: ArrayList<KrashValue> = arrayListOf()): KrashValueSimple(hashMapOf(
     Pair("add", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
         valueList.add(argumentList[0])
         KrashValueNull()
