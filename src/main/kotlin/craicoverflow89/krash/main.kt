@@ -85,10 +85,7 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
 
     // Error Handling
     catch(ex: KrashException) {
-        //KrashRuntime.error(ex.message())
-
-        // TEMP
-        ex.printStackTrace()
+        KrashRuntime.error(ex.message())
     }
 }
 

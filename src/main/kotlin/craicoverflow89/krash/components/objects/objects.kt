@@ -44,6 +44,40 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
 
                 // Return Members
                 hashMapOf(
+                    Pair("copy", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+                        // Validate Arguments
+                        if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply destination!")
+
+                        // Destination Argument
+                        val destination = File(argumentList[0].toSimple(runtime).let {
+
+                            // Invalid Type
+                            if(it !is KrashValueString) throw KrashRuntimeException("File copy destination must be a string!")
+
+                            // Return Value
+                            it.getValue().let {
+
+                                // Absolute Path
+                                if(KrashFileSystem.isAbsolutePath((it))) it
+
+                                // Relative Path
+                                else "${KrashRuntime.cwd()}/$it"
+                            }
+                        })
+
+                        // Invalid File
+                        if(!file.exists()) throw KrashRuntimeException("Could not find file to copy!")
+
+                        // Copy Directory
+                        if(file.isDirectory) file.copyRecursively(destination, true)
+
+                        // Copy File
+                        else file.copyTo(destination, true)
+
+                        // Done
+                        KrashValueNull()
+                    }),
                     Pair("isDirectory", KrashValueBoolean(file.isDirectory)),
                     Pair("files", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
                         KrashValueArray(ArrayList<KrashValue>().apply {

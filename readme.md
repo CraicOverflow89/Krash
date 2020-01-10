@@ -275,9 +275,8 @@ echo("Welcome $name!")
 ### Tasks
 
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
- - commands for file/directory moving/copying (recursion flag)
+ - file commands
    - create
-   - copy
    - move
    - rename
    - delete
