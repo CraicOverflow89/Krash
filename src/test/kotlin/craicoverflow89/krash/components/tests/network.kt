@@ -1,13 +1,13 @@
-package craicoverflow89.krash.tests
+package craicoverflow89.krash.components.tests
 
-import craicoverflow89.krash.KrashTest
+import craicoverflow89.krash.components.KrashComponentTest
 import craicoverflow89.krash.components.objects.KrashValueInteger
 import craicoverflow89.krash.components.objects.KrashValueMap
 import craicoverflow89.krash.components.objects.KrashValueString
 import org.junit.Assert
 import org.junit.Test
 
-class KrashNetworkTest: KrashTest() {
+class KrashNetworkTest: KrashComponentTest() {
 
     @Test
     fun castString() = "https://www.google.co.uk/".let {path ->

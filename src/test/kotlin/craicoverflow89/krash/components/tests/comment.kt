@@ -1,12 +1,12 @@
-package craicoverflow89.krash.tests
+package craicoverflow89.krash.components.tests
 
-import craicoverflow89.krash.KrashTest
 import craicoverflow89.krash.components.KrashCommandComment
+import craicoverflow89.krash.components.KrashComponentTest
 import craicoverflow89.krash.components.objects.KrashValueCallable
 import org.junit.Assert
 import org.junit.Test
 
-class KrashCommentTest: KrashTest() {
+class KrashCommentTest: KrashComponentTest() {
 
     @Test
     fun multiple() = with(parseLine("/* comment\nmultiple */")) {

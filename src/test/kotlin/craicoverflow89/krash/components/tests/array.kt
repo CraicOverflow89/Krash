@@ -1,13 +1,13 @@
-package craicoverflow89.krash.tests
+package craicoverflow89.krash.components.tests
 
-import craicoverflow89.krash.KrashTest
+import craicoverflow89.krash.components.KrashComponentTest
 import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueInteger
 import craicoverflow89.krash.components.objects.KrashValueString
 import org.junit.Assert
 import org.junit.Test
 
-class KrashArrayTest: KrashTest() {
+class KrashArrayTest: KrashComponentTest() {
 
     @Test
     fun add() = with(invokeLines("list = [0, 1, 2]", "list.add(3)", "list")) {

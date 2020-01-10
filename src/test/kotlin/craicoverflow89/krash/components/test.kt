@@ -1,12 +1,9 @@
-package craicoverflow89.krash
+package craicoverflow89.krash.components
 
-import craicoverflow89.krash.components.KrashInterpreter
-import craicoverflow89.krash.components.KrashChannel
-import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueNull
 
-open class KrashTest {
+open class KrashComponentTest {
 
     protected val channel = KrashTestChannel()
     protected val runtime = KrashRuntime().apply {

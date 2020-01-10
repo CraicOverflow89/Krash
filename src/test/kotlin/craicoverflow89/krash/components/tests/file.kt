@@ -1,6 +1,6 @@
-package craicoverflow89.krash.tests
+package craicoverflow89.krash.components.tests
 
-import craicoverflow89.krash.KrashTest
+import craicoverflow89.krash.components.KrashComponentTest
 import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueBoolean
 import craicoverflow89.krash.components.objects.KrashValueObject
@@ -9,7 +9,7 @@ import org.junit.Assert
 import org.junit.Test
 import java.io.File
 
-class KrashFileTest: KrashTest() {
+class KrashFileTest: KrashComponentTest() {
 
     // NOTE: need to be able to create a temporary directory (in user home?)
     //       can create files and directories in here to copy, move, rename, etc...
