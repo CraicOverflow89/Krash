@@ -20,6 +20,14 @@ class KrashArrayTest: KrashTest() {
     }
 
     @Test
+    fun castString() = with(invokeLine("[0, 1, 2]")) {
+        Assert.assertTrue(this is KrashValueString)
+        (this as KrashValueString).let {
+            Assert.assertEquals("[0, 1, 2]", it.getValue())
+        }
+    }
+
+    @Test
     fun each() {
         invokeLine("[0, 1, 2].each(echo)")
         Assert.assertEquals(listOf("0", "1", "2"), channel.outGet())

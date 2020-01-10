@@ -11,6 +11,14 @@ import org.junit.Test
 class KrashStringTest: KrashTest() {
 
     @Test
+    fun castString() = with(invokeLine("\"string literal\"")) {
+        Assert.assertTrue(this is KrashValueString)
+        (this as KrashValueString).let {
+            Assert.assertEquals("string literal", it.getValue())
+        }
+    }
+
+    @Test
     fun comparison() {
 
         // Equality True

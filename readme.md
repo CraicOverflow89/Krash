@@ -237,7 +237,7 @@ echo("Welcome $name!")
  - replace use of `toString` in unit tests with checking actual value of objects
  - need to add built-in JSON parse/stringify methods
  - add "see article ↗➚⬈⬀ for more info" links to readme that go to documentation
- - add test to each suite to check that correct output is produced by `echo(value)`
+ - for all tests
     - also need to add `comparison` test that checks conditional operators
     - check all operators for type
 

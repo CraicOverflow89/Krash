@@ -45,7 +45,9 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                         })
                     }),
                     Pair("path", KrashValueString(path)),
-                    Pair("toString", KrashValueString(path))
+                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                        KrashValueString(path)
+                    })
                 )
             }),
 
@@ -56,14 +58,14 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                 if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
 
                 // Define Values
-                val url = URL(argumentList[0].let {
+                val url = argumentList[0].let {
 
                     // Invalid Type
                     if(it !is KrashValueString) throw KrashRuntimeException("Network url must be a string!")
 
                     // Return Value
                     it.getValue()
-                })
+                }
                 /*val method = if(argumentList.size > 1) argumentList[1].let {
 
                     // Invalid Type
@@ -78,7 +80,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                     Pair("send", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
 
                         // Send Request
-                        with(url.openConnection() as HttpURLConnection) {
+                        with(URL(url).openConnection() as HttpURLConnection) {
 
                             // Return Result
                             KrashValueMap(listOf(
@@ -86,6 +88,9 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                                 KrashValueMapPair("status", KrashValueInteger(responseCode))
                             ))
                         }
+                    }),
+                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                        KrashValueString(url)
                     })
                 )
             }),
@@ -104,7 +109,9 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                 hashMapOf(
                     Pair("first", first),
                     Pair("second", second),
-                    Pair("toString", KrashValueString("<$first, $second>"))
+                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                        KrashValueString("<$first, $second>")
+                    })
                 )
             })
         )

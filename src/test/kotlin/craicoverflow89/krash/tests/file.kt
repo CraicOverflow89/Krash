@@ -22,7 +22,6 @@ class KrashFileTest: KrashTest() {
             Assert.assertEquals("readme.md", it.getValue())
         }
     }
-    // NOTE: need to update the echo logic (and elsewhere?) to use toString method instead of property
 
     @Test
     fun create() = with(invokeLine("file(\"readme.md\")")) {
