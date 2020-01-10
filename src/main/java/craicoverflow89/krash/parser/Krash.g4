@@ -121,9 +121,23 @@ expression returns [KrashExpression result]
     ;
 
 expressionBlock returns [KrashExpression result]
-    :   STBR1
+    :   {
+            Boolean toString = false;
+            Boolean negate = false;
+        }
+        (
+            AT {toString = true;}
+        )?
+        (
+            expressionOpNegation {negate = true;}
+        )?
+        STBR1
         expression {$result = $expression.result;}
         STBR2
+        {
+            $result = new KrashExpressionData($result, toString);
+            if(negate) $result = new KrashExpressionOperatorNegation($result);
+        }
     ;
 
 expressionBody returns [KrashExpression result]
