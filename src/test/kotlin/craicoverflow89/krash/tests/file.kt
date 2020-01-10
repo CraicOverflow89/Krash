@@ -11,8 +11,21 @@ import java.io.File
 
 class KrashFileTest: KrashTest() {
 
+    // NOTE: need to be able to create a temporary directory (in user home?)
+    //       can create files and directories in here to copy, move, rename, etc...
+    //       delete the temporary directory once tests are complete
+
     @Test
-    fun create() = with(invokeLine("file(\"temp.txt\")")) {
+    fun castString() = with(invokeLine("file(\"readme.md\").toString()")) {
+        Assert.assertTrue(this is KrashValueString)
+        (this as KrashValueString).let {
+            Assert.assertEquals("readme.md", it.getValue())
+        }
+    }
+    // NOTE: need to update the echo logic (and elsewhere?) to use toString method instead of property
+
+    @Test
+    fun create() = with(invokeLine("file(\"readme.md\")")) {
         Assert.assertTrue(this is KrashValueObject)
     }
 
@@ -40,7 +53,7 @@ class KrashFileTest: KrashTest() {
         }
 
         // False
-        with(invokeLine("file(\"temp.txt\").isDirectory")) {
+        with(invokeLine("file(\"readme.md\").isDirectory")) {
             Assert.assertTrue(this is KrashValueBoolean)
             (this as KrashValueBoolean).let {
                 Assert.assertEquals(false, it.isTrue())
@@ -49,11 +62,12 @@ class KrashFileTest: KrashTest() {
     }
 
     @Test
-    fun path() = with(invokeLine("file(\"temp.txt\").path")) {
+    fun path() = with(invokeLine("file(\"readme.md\").path")) {
         Assert.assertTrue(this is KrashValueString)
         (this as KrashValueString).let {
-            Assert.assertEquals("temp.txt", it.getValue())
+            Assert.assertEquals("readme.md", it.getValue())
         }
     }
+    // NOTE: should path not provide absolute path instead of relative / supplied?
 
 }
