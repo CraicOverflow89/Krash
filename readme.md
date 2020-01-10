@@ -261,7 +261,6 @@ echo("Welcome $name!")
 
 ### Tasks
 
- - need to make it possible to wrap expressions in parens (so maths will be done in certain order)
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
  - commands for file/directory moving/copying (recursion flag)
    - create
@@ -293,6 +292,8 @@ echo("Welcome $name!")
 
 ### Issues
 
+ - shell indentation doesn't support multiple indents
+    - for example when trying to define function body inside class body
  - nested updates of arrays/maps are not working
     - setting value `ref[index][index] = value`
     - incrementing value `ref[index][index] ++`

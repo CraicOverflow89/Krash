@@ -97,14 +97,33 @@ commandFunction returns [KrashCommandFunction result]
 
 expression returns [KrashExpression result]
     :   (
-            e1 = expressionBody {$result = $e1.result;}
-        /*|
-            STBR1
-            e2 = expressionBody {$result = $e2.result;}
-            STBR2
-            // NOTE: this just gets confused with trying to invoke previous expression
-        */
+            expressionBody {$result = $expressionBody.result;}
+        |
+            expressionBlock {$result = $expressionBlock.result;}
         )
+        (
+            expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
+        |
+            expressionCoGreater {$result = new KrashExpressionConditionGreater($result, $expressionCoGreater.result);}
+        |
+            expressionCoInequal {$result = new KrashExpressionConditionInequality($result, $expressionCoInequal.result);}
+        |
+            expressionCoLesser {$result = new KrashExpressionConditionLesser($result, $expressionCoLesser.result);}
+        |
+            expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
+        |
+            expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
+        |
+            expressionOpMultiply {$result = new KrashExpressionOperatorMultiplication($result, $expressionOpMultiply.result);}
+        |
+            expressionOpSubtract {$result = new KrashExpressionOperatorSubtraction($result, $expressionOpSubtract.result);}
+        )*
+    ;
+
+expressionBlock returns [KrashExpression result]
+    :   STBR1
+        expression {$result = $expression.result;}
+        STBR2
     ;
 
 expressionBody returns [KrashExpression result]
@@ -131,23 +150,6 @@ expressionBody returns [KrashExpression result]
             $result = new KrashExpressionData($result, toString);
             if(negate) $result = new KrashExpressionOperatorNegation($result);
         }
-        (
-            expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
-        |
-            expressionCoGreater {$result = new KrashExpressionConditionGreater($result, $expressionCoGreater.result);}
-        |
-            expressionCoInequal {$result = new KrashExpressionConditionInequality($result, $expressionCoInequal.result);}
-        |
-            expressionCoLesser {$result = new KrashExpressionConditionLesser($result, $expressionCoLesser.result);}
-        |
-            expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
-        |
-            expressionOpDivide {$result = new KrashExpressionOperatorDivision($result, $expressionOpDivide.result);}
-        |
-            expressionOpMultiply {$result = new KrashExpressionOperatorMultiplication($result, $expressionOpMultiply.result);}
-        |
-            expressionOpSubtract {$result = new KrashExpressionOperatorSubtraction($result, $expressionOpSubtract.result);}
-        )*
     ;
 
 expressionCoEqual returns [KrashExpression result]
@@ -604,6 +606,7 @@ DIGIT: [0-9];
 EQUAL: '=';
 FULLS: '.';
 MINUS: '-';
+PIPE: '|';
 PLUS: '+';
 SLASH: '/';
 SQBR1: '[';
