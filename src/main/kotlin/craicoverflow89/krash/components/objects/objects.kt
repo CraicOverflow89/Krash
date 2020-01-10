@@ -2,18 +2,19 @@ package craicoverflow89.krash.components.objects
 
 import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.expressions.KrashExpression
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
+class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
 
     companion object {
 
         private val nativeObjects: HashMap<String, KrashValueClass> = hashMapOf(
 
             // File Object
-            Pair("file", KrashValueClass("file") {_: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("file", KrashValueClass("file", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Define Values
                 val path = argumentList.let {
@@ -52,7 +53,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             }),
 
             // Network Object
-            Pair("network", KrashValueClass("network") { _: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("network", KrashValueClass("network", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
                 if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
@@ -96,7 +97,7 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
             }),
 
             // Pair Object
-            Pair("pair", KrashValueClass("pair") {_: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("pair", KrashValueClass("pair", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
                 if(argumentList.size != 2) throw KrashRuntimeException("Must supply two arguments for pair!")
@@ -131,8 +132,48 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
 
     }
 
-    fun create(runtime: KrashRuntime, argumentList: List<KrashValue>) = KrashValueObject(this, init(runtime, argumentList))
+    fun create(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValueObject {
+
+        // Abstract Class
+        if(isAbstract()) throw KrashRuntimeException("Cannot instantiate abstract '$name' class!")
+
+        // Create Object
+        return KrashValueObject(this, init(runtime, argumentList).apply {
+
+            // Class Info
+            put("class", this@KrashValueClass)
+
+            // Inherit Methods
+            inheritedMethods(runtime).forEach {
+                put(it.key, it.value)
+            }
+        })
+    }
+
+    fun inheritedMethods(runtime: KrashRuntime) = HashMap<String, KrashValue>().apply {
+
+        // Class Runtime
+        classRuntime?.let {
+
+            // Add Methods
+            inheritClass?.init?.invoke(runtime, inheritArgs?.map {
+
+                // Resolve Argument
+                it.toValue(classRuntime)
+            } ?: listOf())?.forEach {
+                put(it.key, it.value)
+            }
+        }
+    }
+
+    fun isAbstract() = modifier == KrashValueClassModifier.ABSTRACT
+
+    fun isFinal() = !isAbstract() && modifier != KrashValueClassModifier.OPEN
 
     override fun toString() = "<class ${name}>"
 
+}
+
+enum class KrashValueClassModifier {
+    ABSTRACT, NONE, OPEN
 }

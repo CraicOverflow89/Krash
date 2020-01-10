@@ -25,62 +25,7 @@ class KrashExpressionLiteralBoolean(private val value: Boolean): KrashExpression
 
 class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime): KrashValueCallable {
-
-        // Create Heap
-        val callableRuntime = runtime.child()
-        val callableArgs = argumentList
-
-        // Create Callable
-        return KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
-
-            // Inject Arguments
-            callableArgs.forEachIndexed {pos, arg ->
-                callableRuntime.heapPut(arg.name, argumentList.let {
-
-                    // Argument Value
-                    if(pos < argumentList.size) argumentList[pos].let {
-
-                        // Cast String
-                        if(arg.modifier == KrashExpressionLiteralCallableArgumentModifier.STRING) it.toStringType()
-
-                        // Keep Value
-                        else it
-                    }
-
-                    // Default Value
-                    else arg.defaultValue(runtime)
-                })
-            }
-
-            // Implicit It
-            if(argumentList.size == 1) callableRuntime.heapPut("it", argumentList[0])
-
-            // Default Result
-            var returnValue: KrashValue = KrashValueNull()
-
-            // Iterate Expressions
-            var result: KrashValue
-            var pos = 0
-            while(pos < expressionList.size) {
-
-                // Invoke Expression
-                result = expressionList[pos].toValue(callableRuntime)
-
-                // Return Result
-                if(expressionList[pos].isReturn) {
-                    returnValue = result
-                    break
-                }
-
-                // Next Expression
-                pos ++
-            }
-
-            // Return Result
-            returnValue
-        }
-    }
+    override fun toValue(runtime: KrashRuntime) = KrashValueCallable.create(runtime, argumentList, expressionList)
 
 }
 
@@ -100,37 +45,45 @@ class KrashExpressionLiteralCallableExpression(private val command: KrashCommand
 
 }
 
-class KrashExpressionLiteralClass(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val inherit: KrashExpressionLiteralClassInherit?, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralClass(private val name: String, private val modifier: KrashValueClassModifier, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val inherit: KrashExpressionLiteralClassInherit?, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
         // Validate Inheritance
         inherit?.validate()
-        //       need to ensure that arguments supplied satisfy super constructor requirements
 
         // Create Heap
         val classRuntime = runtime.child()
         val classArgs = argumentList
 
-        // NOTE: need to process the expressionList using classRuntime to store created values
+        // Iterate Expressions
+        expressionList.forEach {
+            it.toValue(classRuntime)
+        }
+        // NOTE: this is assuming that all expressions are to be done when creating a class
+        //       and none are to be done when creating an object
 
         // Create Class
-        return KrashValueClass(name) {runtime, argumentList ->
+        return KrashValueClass(name, classRuntime, modifier, inherit?.parentClass(), inherit?.argumentTransfer()) {runtime, argumentList ->
 
-            // NOTE: Validate argumentList (provided) against classArgs (expected)
+            // Inject Arguments
+            classRuntime.heapInject(runtime, classArgs, argumentList)
 
             // Super Constructor
             // inherit?.something ??
             // NOTE: will need to merge members of parent with members being created here
             //       or maybe that logic should exist where this init callable is being invoked
 
+            // Custom Constructor
+            // NOTE: invoke if there has been a constructor method defined in the class
+            //       it will use classRuntime for heap access
+
             // Return Members
-            hashMapOf(
-                Pair("name", KrashValueString(name))
-            )
-            // NOTE: perhaps the above should live in an immutable member 'class'
-            //       class will return a KrashObject that represents the class structure
-            //       the values created with expressions need to be accessible as members
+            HashMap<String, KrashValue>().apply {
+                classRuntime.methodData().forEach {
+                    put(it.key, it.value)
+                }
+            }
         }.apply {
 
             // Register Class
@@ -148,16 +101,24 @@ class KrashExpressionLiteralClassExpression(private val command: KrashCommand): 
 
 class KrashExpressionLiteralClassInherit(private val name: String, private val args: List<KrashExpression>) {
 
-    fun validate() {
+    fun argumentTransfer() = args
+
+    fun parentClass(): KrashValueClass {
 
         // Invalid Name
         if(!KrashRuntime.classExists(name)) throw KrashRuntimeException("Could not find '$name' super class!")
 
-        // Super Class
-        KrashRuntime.classGet(name).let {
+        // Return Class
+        return KrashRuntime.classGet(name)
+    }
 
-            // Validate Arguments
-            // NOTE: compare args (supplied) with expected (it.?) arguments
+    fun validate() {
+
+        // Super Class
+        parentClass().let {
+
+            // Final Class
+            if(it.isFinal()) throw KrashRuntimeException("Cannot extend final '${it.name}' class!")
         }
     }
 

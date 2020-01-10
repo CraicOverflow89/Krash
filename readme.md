@@ -247,6 +247,8 @@ echo("Welcome $name!")
  - equality checks for `KrashValueClass` instances?
  - write tests to check equality comparison of `KrashValueObject` instances
  - ability to _include_ other scripts
+ - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
+    - should create a new exception type (they're not syntax issues or runtime issues)
 
 ### Issues
 

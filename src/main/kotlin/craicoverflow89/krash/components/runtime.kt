@@ -1,6 +1,8 @@
 package craicoverflow89.krash.components
 
 import craicoverflow89.krash.KrashException
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgumentModifier
 import craicoverflow89.krash.components.objects.*
 import kotlin.system.exitProcess
 
@@ -198,7 +200,8 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         if(cwd != null) cwdSet(cwd)
     }
 
-    // Define Heap
+    // Define Properties
+    private val methodData = HashMap<String, KrashValueCallable>()
     private val heap = KrashHeap(this, parentHeap)
 
     fun child() = KrashRuntime(null, heap)
@@ -211,7 +214,52 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
     fun heapGet(ref: String) = heap.get(ref)
 
+    fun heapInject(parentRuntime: KrashRuntime, namedArgs: List<KrashExpressionLiteralCallableArgument>, invokeArgs: List<KrashValue>) {
+        namedArgs.forEachIndexed {pos, arg ->
+            heapPut(arg.name, invokeArgs.let {
+
+                // Argument Value
+                if(pos < invokeArgs.size) invokeArgs[pos].let {
+
+                    // Cast String
+                    if(arg.modifier == KrashExpressionLiteralCallableArgumentModifier.STRING) it.toStringType()
+
+                    // Keep Value
+                    else it
+                }
+
+                // Default Value
+                else arg.defaultValue(parentRuntime)
+            })
+        }
+    }
+
     fun heapPut(ref: String, value: KrashValue) = heap.put(ref, value)
+
+    fun methodData() = methodData
+
+    fun methodExists(name: String) = methodData.contains(name)
+
+    fun methodGet(name: String): KrashValueCallable {
+
+        // Invalid Name
+        if(!methodExists(name)) throw KrashRuntimeException("Could not find '$name' method!")
+
+        // Return Method
+        return methodData[name]!!
+    }
+
+    fun methodRegister(name: String, value: KrashValueCallable) {
+
+        // Reserved Term
+        if(KrashReserved.contains(name)) throw KrashRuntimeException("Cannot use reserved term '$name' for method!")
+
+        // Existing Method
+        if(methodData.containsKey(name)) throw KrashRuntimeException("Cannot duplicate term '$name' for method!")
+
+        // Register Method
+        methodData[name] = value
+    }
 
 }
 

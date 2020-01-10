@@ -4,6 +4,8 @@ import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashMethod
 import craicoverflow89.krash.components.KrashReserved
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableExpression
 import kotlin.math.floor
 
 interface KrashValue {
@@ -220,6 +222,51 @@ class KrashValueBoolean(private val value: Boolean): KrashValueSimple() {
 }
 
 open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple() {
+
+    companion object {
+
+        fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, expressionList: List<KrashExpressionLiteralCallableExpression>): KrashValueCallable {
+
+            // Create Heap
+            val callableRuntime = runtime.child()
+            val callableArgs = argumentList
+
+            // Create Callable
+            return KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+
+                // Inject Arguments
+                callableRuntime.heapInject(runtime, callableArgs, argumentList)
+
+                // Implicit It
+                if(argumentList.size == 1) callableRuntime.heapPut("it", argumentList[0])
+
+                // Default Result
+                var returnValue: KrashValue = KrashValueNull()
+
+                // Iterate Expressions
+                var result: KrashValue
+                var pos = 0
+                while(pos < expressionList.size) {
+
+                    // Invoke Expression
+                    result = expressionList[pos].toValue(callableRuntime)
+
+                    // Return Result
+                    if(expressionList[pos].isReturn) {
+                        returnValue = result
+                        break
+                    }
+
+                    // Next Expression
+                    pos ++
+                }
+
+                // Return Result
+                returnValue
+            }
+        }
+
+    }
 
     fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>) = logic(runtime, argumentList)
 

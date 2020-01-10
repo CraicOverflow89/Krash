@@ -3,7 +3,7 @@ grammar Krash;
 @header {
     import craicoverflow89.krash.components.*;
     import craicoverflow89.krash.components.expressions.*;
-    import java.lang.StringBuffer;
+    import craicoverflow89.krash.components.objects.KrashValueClassModifier;
     import java.util.ArrayList;
 }
 
@@ -29,6 +29,8 @@ command returns [KrashCommand result]
             commandDeclare {$result = $commandDeclare.result;}
         |
             commandExpression {$result = $commandExpression.result;}
+        |
+            commandFunction {$result = $commandFunction.result;}
         )
     ;
 
@@ -83,6 +85,14 @@ commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
 commandExpression returns [KrashCommandExpression result]
     :   expression
         {$result = new KrashCommandExpression($expression.result);}
+    ;
+
+commandFunction returns [KrashCommandFunction result]
+    :   'fun'
+        name = expressionLitCallableNameChars
+        args = expressionLitCallableArgList
+        body = expressionLitCallableBody
+        {$result = new KrashCommandFunction($name.text, $args.result, $body.result);}
     ;
 
 expression returns [KrashExpression result]
@@ -288,25 +298,10 @@ expressionLitBoolean returns [KrashExpressionLiteralBoolean result]
     ;
 
 expressionLitCallable returns [KrashExpressionLiteralCallable result]
-    :   {ArrayList<KrashExpressionLiteralCallableExpression> body = new ArrayList();}
-        'fun'
+    :   'fun'
         args = expressionLitCallableArgList
-        (
-            CUBR1
-            (
-                {boolean isReturn = false;}
-                (
-                    'return' {isReturn = true;}
-                )?
-                c1 = command
-                {body.add(new KrashExpressionLiteralCallableExpression($c1.result, isReturn));}
-            )*
-            CUBR2
-        |
-            EQUAL c2 = command
-            {body.add(new KrashExpressionLiteralCallableExpression($c2.result, true));}
-        )
-        {$result = new KrashExpressionLiteralCallable($args.result, body);}
+        body = expressionLitCallableBody
+        {$result = new KrashExpressionLiteralCallable($args.result, $body.result);}
     ;
 
 expressionLitCallableArg returns [KrashExpressionLiteralCallableArgument result]
@@ -337,38 +332,77 @@ expressionLitCallableArgList returns [ArrayList<KrashExpressionLiteralCallableAr
                 arg2 = expressionLitCallableArg {args.add($arg2.result);}
             )*
         )?
+        STBR2
         {$result = args;}
     ;
 
+expressionLitCallableBody returns [ArrayList<KrashExpressionLiteralCallableExpression> result]
+    :   {ArrayList<KrashExpressionLiteralCallableExpression> body = new ArrayList();}
+        (
+            CUBR1
+            (
+                {boolean isReturn = false;}
+                (
+                    'return' {isReturn = true;}
+                )?
+                c1 = command
+                {body.add(new KrashExpressionLiteralCallableExpression($c1.result, isReturn));}
+            )*
+            CUBR2
+        |
+            EQUAL c2 = command
+            {body.add(new KrashExpressionLiteralCallableExpression($c2.result, true));}
+        )
+        {$result = body;}
+    ;
+
+expressionLitCallableNameChars
+    :   ALPHA (ALPHA | DIGIT | UNDER)*
+    ;
+
 expressionLitClass returns [KrashExpressionLiteralClass result]
-    :   {
-            ArrayList<KrashExpressionLiteralClassExpression> body = new ArrayList();
-            KrashExpressionLiteralClassInherit inherit = null;
-        }
+    :   {KrashExpressionLiteralClassInherit inherit = null;}
+        mod = expressionLitClassModifier
         'class'
         name = expressionLitClassNameChars
         args = expressionLitCallableArgList
-        STBR2
         (
             COLON
             inherit = exporessionLitClassInherit
             {inherit = $inherit.result;}
         )?
+        CUBR1
+        body = expressionLitClassBody
+        CUBR2
+        {$result = new KrashExpressionLiteralClass($name.text, $mod.result, $args.result, inherit, $body.result);}
+    ;
+
+expressionLitClassBody returns [ArrayList<KrashExpressionLiteralClassExpression> result]
+    :   {ArrayList<KrashExpressionLiteralClassExpression> body = new ArrayList();}
         (
-            CUBR1
-            (
-                command
-                {body.add(new KrashExpressionLiteralClassExpression($command.result));}
-            )*
-            CUBR2
-        )?
-        {$result = new KrashExpressionLiteralClass($name.text, $args.result, inherit, body);}
+            commandComment {body.add(new KrashExpressionLiteralClassExpression($commandComment.result));}
+        |
+            commandDeclare {body.add(new KrashExpressionLiteralClassExpression($commandDeclare.result));}
+        |
+            commandFunction {body.add(new KrashExpressionLiteralClassExpression($commandFunction.result));}
+        )*
+        {$result = body;}
     ;
 
 exporessionLitClassInherit returns [KrashExpressionLiteralClassInherit result]
     :   name = expressionLitClassNameChars
         args = expressionInvoke
         {$result = new KrashExpressionLiteralClassInherit($name.text, $args.result);}
+    ;
+
+expressionLitClassModifier returns [KrashValueClassModifier result]
+    :   {KrashValueClassModifier modifier = KrashValueClassModifier.NONE;}
+        (
+            'abstract' {modifier = KrashValueClassModifier.ABSTRACT;}
+        |
+            'open' {modifier = KrashValueClassModifier.OPEN;}
+        )?
+        {$result = modifier;}
     ;
 
 expressionLitClassNameChars
@@ -580,6 +614,6 @@ STRING: '"' (~[\\"] | '\\' .)* '"';
 UNDER: '_';
 WHITESPACE: [ \t\r\n]+ -> skip;
 CHAR: ~[ "];
-COMMENT_MULTI: '/*' .* '*/';
+COMMENT_MULTI: '/*' .*? '*/';
 COMMENT_SINGLE: '//' ~[\r\n]*;
 GLOBAL: '$' [A-Z]+;

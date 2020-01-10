@@ -1,13 +1,9 @@
 package craicoverflow89.krash.components
 
 import craicoverflow89.krash.components.expressions.KrashExpression
-import craicoverflow89.krash.components.objects.KrashValue
-import craicoverflow89.krash.components.objects.KrashValueArray
-import craicoverflow89.krash.components.objects.KrashValueInteger
-import craicoverflow89.krash.components.objects.KrashValueMap
-import craicoverflow89.krash.components.objects.KrashValueNull
-import craicoverflow89.krash.components.objects.KrashValueSimple
-import craicoverflow89.krash.components.objects.KrashValueString
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableExpression
+import craicoverflow89.krash.components.objects.*
 
 interface KrashCommand {
 
@@ -102,5 +98,18 @@ class KrashCommandDeclareReferenceSimple(val value: String): KrashCommandDeclare
 class KrashCommandExpression(private val value: KrashExpression): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue = value.toValue(runtime)
+
+}
+
+class KrashCommandFunction(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashCommand {
+
+    override fun invoke(runtime: KrashRuntime): KrashValue {
+
+        // Register Function
+        runtime.methodRegister(name, KrashValueCallable.create(runtime, argumentList, expressionList))
+
+        // Done
+        return KrashValueNull()
+    }
 
 }

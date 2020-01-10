@@ -1,15 +1,45 @@
-class Example(name = "James") {
+// Create Class
+open class Person(name) {
 
-    /*hello = fun() {
+    // Create Method
+    fun hello() {
         echo("Hello $name")
-    }*/
+    }
+
+    // Create Method
+    fun print() {
+        echo(name)
+    }
 
 }
 
-echo(Example)
-echo(Example())
+// Print Class
+//echo(Person)
 
-class ExampleChild(): Example()
+// Instantiate Class
+//person = Person("James")
+//echo(person)
 
-echo(ExampleChild)
-echo(ExampleChild())
+// Invoke Method
+//person.print()
+
+// Create Child
+class Developer(name, lang): Person(name) {
+
+    // Create Method
+    fun print() {
+        echo(name, lang)
+    }
+
+}
+
+// Print Child
+echo(Developer)
+
+// Instantiate Child
+developer = Developer("James", ["Kotlin", "Python"])
+echo(developer)
+
+// Invoke Method
+developer.print()
+developer.hello()
