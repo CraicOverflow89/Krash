@@ -295,12 +295,11 @@ echo("Welcome $name!")
  - write tests to check equality comparison of `KrashValueObject` instances
  - ability to _include_ other scripts
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
-    - should create a new exception type (they're not syntax issues or runtime issues)
+    - should create a new exception type (they're not syntax issues or runtime issues) 
 
 ### Issues
 
- - shell indentation doesn't support multiple indents
-    - for example when trying to define function body inside class body
+ - old style `fun name() {}` syntax not working outside of class
  - nested updates of arrays/maps are not working
     - setting value `ref[index][index] = value`
     - incrementing value `ref[index][index] ++`

@@ -9,7 +9,7 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main() {
+/*fun main() {
     loadScript("src/main/resources/class.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
@@ -18,14 +18,14 @@ fun main() {
     //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/structures.krash")
 
-    // NOTE: Reference persist issue
+    // Reference persist issue
     //loadScript("src/main/resources/issue1.krash")
 
-    // NOTE: Multiple indexes issue
+    // Multiple indexes issue
     //loadScript("src/main/resources/issue2.krash")
-}
+}*/
 
-/*fun main(args: Array<String>) = when {
+fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -44,7 +44,7 @@ fun main() {
         // No Arguments
         else listOf()
     })
-}*/
+}
 
 fun loadFlags(flags: String) {
 
@@ -103,6 +103,42 @@ fun loadShell() {
     // Create Runtime
     val runtime = KrashRuntime(cwd)
 
+    // Block Logic
+    fun block(input: String, indent: Int = 0): String {
+
+        // Indent Padding
+        val padding = " ".repeat(KrashRuntime.cwd().length - (indent + 1)) + ">".repeat(indent + 1)
+
+        // Create Buffer
+        val buffer = arrayListOf(input)
+
+        // Block Loop
+        while(true) {
+
+            // Print Line
+            print("$padding \$ ")
+
+            // Read Line
+            val input = readLine() ?: continue
+
+            // Empty Command
+            if(input.isEmpty()) continue
+
+            // Open Block
+            if(input.endsWith("{")) buffer.add(block(input, indent + 1))
+
+            // Append Command
+            else buffer.add(input)
+
+            // Close Block
+            if(input.startsWith("}")) break
+            // NOTE: need to make this far more intelligent
+        }
+
+        // Return Input
+        return buffer.joinToString("\n")
+    }
+
     // Shell Loop
     while(true) {
 
@@ -119,37 +155,7 @@ fun loadShell() {
         if(input.isEmpty()) continue
 
         // Open Block
-        if(input.endsWith("{")) {
-
-            // Indent Spacing
-            val indentSpace = " ".repeat(KrashRuntime.cwd().length)
-
-            // Create Buffer
-            val buffer = arrayListOf(input)
-
-            // Block Loop
-            while(true) {
-
-                // Print Line
-                print("$indentSpace \$ ")
-
-                // Read Line
-                val input = readLine() ?: continue
-
-                // Empty Command
-                if(input.isEmpty()) continue
-
-                // Append Command
-                buffer.add(input)
-
-                // Close Block
-                if(input.startsWith("}")) break
-                // NOTE: need to make this far more intelligent
-            }
-
-            // Update Input
-            input = buffer.joinToString("\n")
-        }
+        if(input.endsWith("{")) input = block(input)
 
         // Invoke Command
         try {KrashInterpreter.parseCommand(input).invoke(runtime)}
