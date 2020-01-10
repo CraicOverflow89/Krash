@@ -1,0 +1,10 @@
+class Example(name = "James") {
+
+    hello = fun() {
+        echo("Hello $name")
+    }
+
+}
+
+echo(Example)
+echo(Example())

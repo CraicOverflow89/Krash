@@ -83,7 +83,7 @@ class KrashReserved {
         private val reservedTerms = ArrayList<String>().apply {
 
             // Structural Keyword
-            addAll(listOf("else", "fun", "if", "return", "while"))
+            addAll(listOf("class", "else", "fun", "if", "return", "while"))
 
             // Literal Keywords
             addAll(listOf("false", "null", "true"))
@@ -111,9 +111,33 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         private var userDirectoryPath = System.getProperty("user.home").replace("\\", "/")
         private var scriptPath: KrashValueString? = null
         private var scriptArgs: KrashValueArray = KrashValueArray()
+        private val classData = HashMap<String, KrashValueClass>()
 
         fun channelSet(value: KrashChannel) {
             channel = value
+        }
+
+        fun classExists(name: String) = classData.contains(name)
+
+        fun classGet(name: String): KrashValueClass {
+
+            // Invalid Name
+            if(!classExists(name)) throw KrashRuntimeException("Could not find '$name' class!")
+
+            // Return Class
+            return classData[name]!!
+        }
+
+        fun classRegister(name: String, value: KrashValueClass) {
+
+            // Reserved Term
+            if(KrashReserved.contains(name)) throw KrashRuntimeException("Cannot use reserved term '$name' for class!")
+
+            // Existing Class
+            if(classData.containsKey(name)) throw KrashRuntimeException("Cannot duplicate term '$name' for class!")
+
+            // Register Class
+            classData[name] = value
         }
 
         fun createScript(cwd: String, file: KrashValueString, args: List<KrashValueString>): KrashRuntime {

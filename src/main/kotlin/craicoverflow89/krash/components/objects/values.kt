@@ -621,6 +621,9 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
         // Native Object
         if(KrashValueClass.nativeContains(value)) return KrashValueClass.nativeGet(value)
 
+        // Custom Class
+        if(KrashRuntime.classExists(value)) return KrashRuntime.classGet(value)
+
         // Custom Reference
         return runtime.heapGet(value)
     }

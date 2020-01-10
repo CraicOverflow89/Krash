@@ -8,7 +8,8 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-/*fun main() {
+fun main() {
+    loadScript("src/main/resources/class.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
@@ -25,10 +26,10 @@ val KRASH_VERSION = "ALPHA"
 
     // TEST
     //loadScript("src/main/resources/test3.krash")
-    loadScript("src/main/resources/test4.krash")
-}*/
+    //loadScript("src/main/resources/test4.krash")
+}
 
-fun main(args: Array<String>) = when {
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -47,7 +48,7 @@ fun main(args: Array<String>) = when {
         // No Arguments
         else listOf()
     })
-}
+}*/
 
 fun loadFlags(flags: String) {
 
@@ -60,6 +61,9 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""
     val scriptFile = File("$cwd/$scriptPath")
+
+    // NOTE: this method needs moving elsewhere
+    //       should configure runtime before using KrashRuntime.println due to channel setup
 
     // Missing File
     if(!scriptFile.exists()) {
@@ -74,7 +78,12 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
     }
 
     // Invoke Script
-    KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd, scriptFile.absolutePath, scriptArgs)
+    try {KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd, scriptFile.absolutePath, scriptArgs)}
+
+    // Error Handling
+    catch(ex: KrashException) {
+        KrashRuntime.error(ex.message())
+    }
 }
 
 fun loadShell() {

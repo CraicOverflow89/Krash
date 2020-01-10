@@ -99,6 +99,43 @@ class KrashExpressionLiteralCallableExpression(private val command: KrashCommand
 
 }
 
+class KrashExpressionLiteralClass(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
+
+    override fun toValue(runtime: KrashRuntime): KrashValueSimple {
+
+        // Create Heap
+        val classRuntime = runtime.child()
+        val classArgs = argumentList
+
+        // NOTE: need to process the expressionList using classRuntime to store created values
+
+        // Create Class
+        return KrashValueClass(name) {runtime, argumentList ->
+
+            // NOTE: Validate argumentList (provided) against classArgs (expected)
+
+            // Return Members
+            hashMapOf(
+                Pair("name", KrashValueString(name))
+            )
+            // NOTE: perhaps the above should live in an immutable member 'class'
+            //       class will return a KrashObject that represents the class structure
+            //       the values created with expressions need to be accessible as members
+        }.apply {
+
+            // Register Class
+            KrashRuntime.classRegister(name, this)
+        }
+    }
+
+}
+
+class KrashExpressionLiteralClassExpression(private val command: KrashCommand): KrashExpressionLiteral() {
+
+    override fun toValue(runtime: KrashRuntime) = command.invoke(runtime).toSimple(runtime)
+
+}
+
 class KrashExpressionLiteralDouble(private val value: Double): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime) = KrashValueDouble(value)
@@ -149,8 +186,8 @@ class KrashExpressionLiteralString(private val value: String): KrashExpressionLi
                         // Global Value
                         if(KrashRuntime.globalContains(it)) KrashRuntime.global(it).toString()
 
-                        // Check Heap
-                        else runtime.heapGet(ref).toString()
+                        // Lookup Reference
+                        else KrashValueReference(ref, false).resolve(runtime).toSimple(runtime).toString()
                     })
                 }
 

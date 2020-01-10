@@ -251,6 +251,8 @@ expressionLit returns [KrashExpressionLiteral result]
         |
             expressionLitCallable {$result = $expressionLitCallable.result;}
         |
+            expressionLitClass {$result = $expressionLitClass.result;}
+        |
             expressionLitDouble {$result = $expressionLitDouble.result;}
         |
             expressionLitInt {$result = $expressionLitInt.result;}
@@ -334,6 +336,35 @@ expressionLitCallableArg returns [KrashExpressionLiteralCallableArgument result]
             {defaultValue = $expression.result;}
         )?
         {$result = new KrashExpressionLiteralCallableArgument($expressionRefChars.text, defaultValue, modifier);}
+    ;
+
+expressionLitClass returns [KrashExpressionLiteralClass result]
+    :   {
+            ArrayList<KrashExpressionLiteralCallableArgument> args = new ArrayList();
+            ArrayList<KrashExpressionLiteralClassExpression> body = new ArrayList();
+        }
+        'class'
+        name = expressionLitClassNameChars
+        STBR1
+        (
+            arg1 = expressionLitCallableArg {args.add($arg1.result);}
+            (
+                COMMA
+                arg2 = expressionLitCallableArg {args.add($arg2.result);}
+            )*
+        )?
+        STBR2
+        CUBR1
+        (
+            command
+            {body.add(new KrashExpressionLiteralClassExpression($command.result));}
+        )*
+        CUBR2
+        {$result = new KrashExpressionLiteralClass($name.text, args, body);}
+    ;
+
+expressionLitClassNameChars
+    :   ALPHA (ALPHA | DIGIT | UNDER)*
     ;
 
 expressionLitDouble returns [KrashExpressionLiteralDouble result]

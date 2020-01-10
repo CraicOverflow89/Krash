@@ -246,6 +246,7 @@ echo("Welcome $name!")
  - combine the equality and inequality condition classes (not DRY atm)
  - equality checks for `KrashValueClass` instances?
  - write tests to check equality comparison of `KrashValueObject` instances
+ - ability to _include_ other scripts
 
 ### Issues
 

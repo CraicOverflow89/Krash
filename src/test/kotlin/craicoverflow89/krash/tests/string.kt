@@ -83,16 +83,29 @@ class KrashStringTest: KrashTest() {
             Assert.assertEquals("string\nliteral with \"quotes\"", (this as KrashValueString).getValue())
         }
 
+        // Custom Class Reference
+        /*with(invokeLines("\$Test\"")) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals("<class Test>", (this as KrashValueString).getValue())
+        }*/
+        // NOTE: need to create a Test class to check this
+
+        // Custom Value Reference
+        with(invokeLines("name = \"James\"", "\"\$name\"")) {
+            Assert.assertTrue(this is KrashValueString)
+            Assert.assertEquals("James", (this as KrashValueString).getValue())
+        }
+
         // Global Reference
         with(invokeLines("\"\$HOME\"")) {
             Assert.assertTrue(this is KrashValueString)
             Assert.assertEquals(System.getProperty("user.home").replace("\\", "/"), (this as KrashValueString).getValue())
         }
 
-        // Local Reference
-        with(invokeLines("name = \"James\"", "\"\$name\"")) {
+        // Native Class Reference
+        with(invokeLines("\"\$file\"")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("James", (this as KrashValueString).getValue())
+            Assert.assertEquals("<class file>", (this as KrashValueString).getValue())
         }
     }
 
