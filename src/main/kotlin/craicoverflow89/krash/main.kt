@@ -8,8 +8,8 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main() {
-    loadScript("src/main/resources/class.krash")
+/*fun main() {
+    //loadScript("src/main/resources/class.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
@@ -17,19 +17,14 @@ fun main() {
     //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/structures.krash")
 
-    // NOTE: multiline comment is currently taking all text
-    //       looks like single comments within multiline comments are causing errors
-    //loadScript("src/main/resources/test1.krash")
+    // NOTE: Reference persist issue
+    //loadScript("src/main/resources/issue1.krash")
 
-    // NOTE: multiple indexes for update and increment operations are not working
-    //loadScript("src/main/resources/test2.krash")
+    // NOTE: Multiple indexes issue
+    //loadScript("src/main/resources/issue2.krash")
+}*/
 
-    // TEST
-    //loadScript("src/main/resources/test3.krash")
-    //loadScript("src/main/resources/test4.krash")
-}
-
-/*fun main(args: Array<String>) = when {
+fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -48,7 +43,7 @@ fun main() {
         // No Arguments
         else listOf()
     })
-}*/
+}
 
 fun loadFlags(flags: String) {
 

@@ -1,0 +1,6 @@
+// Ref Persist
+list = [0, 1, 2]
+first_value = list[0]
+first_ref = &list[0]
+list = [3, 4, 5]
+echo(first_value, first_ref)
