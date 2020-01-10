@@ -2,6 +2,7 @@ package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashCommand
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.objects.*
 
 abstract class KrashExpressionLiteral: KrashExpression()
@@ -99,9 +100,13 @@ class KrashExpressionLiteralCallableExpression(private val command: KrashCommand
 
 }
 
-class KrashExpressionLiteralClass(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralClass(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val inherit: KrashExpressionLiteralClassInherit?, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
+
+        // Validate Inheritance
+        inherit?.validate()
+        //       need to ensure that arguments supplied satisfy super constructor requirements
 
         // Create Heap
         val classRuntime = runtime.child()
@@ -113,6 +118,11 @@ class KrashExpressionLiteralClass(private val name: String, private val argument
         return KrashValueClass(name) {runtime, argumentList ->
 
             // NOTE: Validate argumentList (provided) against classArgs (expected)
+
+            // Super Constructor
+            // inherit?.something ??
+            // NOTE: will need to merge members of parent with members being created here
+            //       or maybe that logic should exist where this init callable is being invoked
 
             // Return Members
             hashMapOf(
@@ -133,6 +143,23 @@ class KrashExpressionLiteralClass(private val name: String, private val argument
 class KrashExpressionLiteralClassExpression(private val command: KrashCommand): KrashExpressionLiteral() {
 
     override fun toValue(runtime: KrashRuntime) = command.invoke(runtime).toSimple(runtime)
+
+}
+
+class KrashExpressionLiteralClassInherit(private val name: String, private val args: List<KrashExpression>) {
+
+    fun validate() {
+
+        // Invalid Name
+        if(!KrashRuntime.classExists(name)) throw KrashRuntimeException("Could not find '$name' super class!")
+
+        // Super Class
+        KrashRuntime.classGet(name).let {
+
+            // Validate Arguments
+            // NOTE: compare args (supplied) with expected (it.?) arguments
+        }
+    }
 
 }
 

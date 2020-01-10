@@ -1,10 +1,15 @@
 class Example(name = "James") {
 
-    hello = fun() {
+    /*hello = fun() {
         echo("Hello $name")
-    }
+    }*/
 
 }
 
 echo(Example)
 echo(Example())
+
+class ExampleChild(): Example()
+
+echo(ExampleChild)
+echo(ExampleChild())
