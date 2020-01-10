@@ -9,9 +9,9 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-/*fun main() {
-    loadScript("src/main/resources/class.krash")
-    //loadScript("src/main/resources/functions.krash")
+fun main() {
+    //loadScript("src/main/resources/class.krash")
+    loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
@@ -23,9 +23,9 @@ val KRASH_VERSION = "ALPHA"
 
     // Multiple indexes issue
     //loadScript("src/main/resources/issue2.krash")
-}*/
+}
 
-fun main(args: Array<String>) = when {
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -44,7 +44,7 @@ fun main(args: Array<String>) = when {
         // No Arguments
         else listOf()
     })
-}
+}*/
 
 fun loadFlags(flags: String) {
 

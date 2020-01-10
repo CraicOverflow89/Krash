@@ -671,6 +671,9 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
         // Custom Class
         if(KrashRuntime.classExists(value)) return KrashRuntime.classGet(value)
 
+        // Custom Method
+        if(runtime.methodExists(value)) return runtime.methodGet(value)
+
         // Custom Reference
         return runtime.heapGet(value)
     }

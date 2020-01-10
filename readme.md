@@ -299,12 +299,10 @@ echo("Welcome $name!")
 
 ### Issues
 
- - old style `fun name() {}` syntax not working outside of class
  - nested updates of arrays/maps are not working
     - setting value `ref[index][index] = value`
     - incrementing value `ref[index][index] ++`
- - looks like single comments inside of multiline comments cause errors
- - references don't persist with `name = &data["name"]` since moving to experssions
+ - references don't persist with `name = &data["name"]` since moving to expressions
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled
 

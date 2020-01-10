@@ -19,3 +19,9 @@ single()
 fun() {
     echo("IIFE")
 }()
+
+// Old Style
+fun old() {
+    echo("old")
+}
+old()
