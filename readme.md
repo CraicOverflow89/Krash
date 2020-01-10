@@ -3,13 +3,13 @@ Krash Project
 
 [![Known Vulnerabilities](https://snyk.io//test/github/CraicOverflow89/Krash/badge.svg?targetFile=build.gradle)](https://snyk.io//test/github/CraicOverflow89/Krash?targetFile=build.gradle)
 
-Lightweight file manipulation DSL, built with Kotlin and ANTLR.
+Scripting language with a sleek syntax and focus on functional file system operations, built with Kotlin and ANTLR. Source code can be distributed to different operating systems, with no compilation required.
 
 ### Features
 
  - runs on any operating system with JVM
  - interpreted language
- - uses type inference
+ - dynamic with type inference
  - uses object-oriented paradigm
  - functions are first class (both BIFs and UDFs)
 
