@@ -26,7 +26,15 @@ nothing = null
 list = [0, "element"]
 map = {key: "value"}
 callable = fun(name = "James") {
-    echo("Hello " + name)
+    echo("Hello $name")
+}
+```
+
+Note that functions can also be defined in the older style (while `hello` is the same as above when used elsewhere);
+
+```
+fun hello(name = "James") {
+    echo("Hello $name")
 }
 ```
 
@@ -198,7 +206,40 @@ true_value = true
 false_value = !true_value
 ```
 
-#### Shell Scripts
+#### Classes
+
+You can define classes to instantiate elsewhere and inherit from other classes;
+
+```
+// Abstract classes cannot be instantiated themselves
+abstract class Object(id) {
+
+    fun printID() {
+        echo(id)
+    }
+
+}
+
+// Open classes can be extended by other classes
+open class Person(id, name): Object(id) {
+
+    fun hello() {
+        echo("Hello $name")
+    }
+
+}
+
+// Final classes cannot be extended
+class Developer(id, name, lang = []): Person(id, name) {
+
+    fun toMap() {
+        return {id: id, name: name, lang: lang}
+    }
+
+}
+```
+
+#### Script Features
 
 When calling a script, you can access the optional arguments passed along with the `$ARGS` global;
 

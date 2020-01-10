@@ -1,45 +1,28 @@
-// Create Class
-open class Person(name) {
+// Abstract classes cannot be instantiated themselves
+abstract class Object(id) {
 
-    // Create Method
+    fun printID() {
+        echo(id)
+    }
+
+}
+
+// Open classes can be extended by other classes
+open class Person(id, name): Object(id) {
+
     fun hello() {
         echo("Hello $name")
     }
 
-    // Create Method
-    fun print() {
-        echo(name)
+}
+
+// Final classes cannot be extended
+class Developer(id, name, lang): Person(id, name) {
+
+    fun toMap() {
+        return {id: id, name: name, lang: lang}
     }
 
 }
 
-// Print Class
-//echo(Person)
-
-// Instantiate Class
-//person = Person("James")
-//echo(person)
-
-// Invoke Method
-//person.print()
-
-// Create Child
-class Developer(name, lang): Person(name) {
-
-    // Create Method
-    fun print() {
-        echo(name, lang)
-    }
-
-}
-
-// Print Child
-echo(Developer)
-
-// Instantiate Child
-developer = Developer("James", ["Kotlin", "Python"])
-echo(developer)
-
-// Invoke Method
-developer.print()
-developer.hello()
+echo(Developer(0, "James", ["Kotlin", "Python"]).toMap())
