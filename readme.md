@@ -305,8 +305,6 @@ echo("Welcome $name!")
     - setting value `ref[index][index] = value`
     - incrementing value `ref[index][index] ++`
  - looks like single comments inside of multiline comments cause errors
- - loading script does not allow for absolute paths
-    - there should be a single `isAbsolutePath` method (already have this logic in file constructor)
  - references don't persist with `name = &data["name"]` since moving to experssions
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled

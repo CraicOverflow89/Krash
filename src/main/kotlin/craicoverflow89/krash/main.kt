@@ -2,14 +2,15 @@ package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.system.KrashFileSystem
 import java.io.File
 import kotlin.system.exitProcess
 
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-/*fun main() {
-    //loadScript("src/main/resources/class.krash")
+fun main() {
+    loadScript("src/main/resources/class.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
@@ -22,9 +23,9 @@ val KRASH_VERSION = "ALPHA"
 
     // NOTE: Multiple indexes issue
     //loadScript("src/main/resources/issue2.krash")
-}*/
+}
 
-fun main(args: Array<String>) = when {
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -43,7 +44,7 @@ fun main(args: Array<String>) = when {
         // No Arguments
         else listOf()
     })
-}
+}*/
 
 fun loadFlags(flags: String) {
 
@@ -55,7 +56,14 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
 
     // Define Paths
     val cwd = System.getProperty("user.dir") ?: ""
-    val scriptFile = File("$cwd/$scriptPath")
+    val scriptFile = File(scriptPath.let {
+
+        // Absolute Path
+        if(KrashFileSystem.isAbsolutePath(it)) it
+
+        // Relative Path
+        else "$cwd/$it"
+    })
 
     // NOTE: this method needs moving elsewhere
     //       should configure runtime before using KrashRuntime.println due to channel setup
