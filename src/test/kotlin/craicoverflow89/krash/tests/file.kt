@@ -16,7 +16,7 @@ class KrashFileTest: KrashTest() {
     //       delete the temporary directory once tests are complete
 
     @Test
-    fun castString() = with(invokeLine("file(\"readme.md\").toString()")) {
+    fun castString() = with(invokeLine("File(\"readme.md\").toString()")) {
         Assert.assertTrue(this is KrashValueString)
         (this as KrashValueString).let {
             Assert.assertEquals("readme.md", it.getValue())
@@ -24,13 +24,13 @@ class KrashFileTest: KrashTest() {
     }
 
     @Test
-    fun create() = with(invokeLine("file(\"readme.md\")")) {
+    fun create() = with(invokeLine("File(\"readme.md\")")) {
         Assert.assertTrue(this is KrashValueObject)
     }
 
     @Test
     fun files() = System.getProperty("user.dir").let {cwd ->
-        with(invokeLine("file(\"$cwd\").files()")) {
+        with(invokeLine("File(\"$cwd\").files()")) {
             Assert.assertTrue(this is KrashValueArray)
             (this as KrashValueArray).let {
                 File(cwd).listFiles().let {fileList ->
@@ -44,7 +44,7 @@ class KrashFileTest: KrashTest() {
     fun isDirectory() {
 
         // True
-        with(invokeLine("file(\"${System.getProperty("user.dir")}\").isDirectory")) {
+        with(invokeLine("File(\"${System.getProperty("user.dir")}\").isDirectory")) {
             Assert.assertTrue(this is KrashValueBoolean)
             (this as KrashValueBoolean).let {
                 Assert.assertEquals(true, it.isTrue())
@@ -52,7 +52,7 @@ class KrashFileTest: KrashTest() {
         }
 
         // False
-        with(invokeLine("file(\"readme.md\").isDirectory")) {
+        with(invokeLine("File(\"readme.md\").isDirectory")) {
             Assert.assertTrue(this is KrashValueBoolean)
             (this as KrashValueBoolean).let {
                 Assert.assertEquals(false, it.isTrue())
@@ -61,7 +61,7 @@ class KrashFileTest: KrashTest() {
     }
 
     @Test
-    fun path() = with(invokeLine("file(\"readme.md\").path")) {
+    fun path() = with(invokeLine("File(\"readme.md\").path")) {
         Assert.assertTrue(this is KrashValueString)
         (this as KrashValueString).let {
             Assert.assertEquals("readme.md", it.getValue())

@@ -11,7 +11,7 @@ class KrashNetworkTest: KrashTest() {
 
     @Test
     fun castString() = "https://www.google.co.uk/".let {path ->
-        with(invokeLine("network(\"$path\").toString()")) {
+        with(invokeLine("Network(\"$path\").toString()")) {
             Assert.assertTrue(this is KrashValueString)
             (this as KrashValueString).let {
                 Assert.assertEquals(path, it.getValue())
@@ -20,7 +20,7 @@ class KrashNetworkTest: KrashTest() {
     }
 
     @Test
-    fun get() = with(invokeLine("network(\"https://www.google.co.uk/\").send()")) {
+    fun get() = with(invokeLine("Network(\"https://www.google.co.uk/\").send()")) {
         Assert.assertTrue(this is KrashValueMap)
         (this as KrashValueMap).getData().let {
             Assert.assertTrue(it.containsKey("body"))

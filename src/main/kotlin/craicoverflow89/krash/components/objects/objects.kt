@@ -14,7 +14,7 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
         private val nativeObjects: HashMap<String, KrashValueClass> = hashMapOf(
 
             // File Object
-            Pair("file", KrashValueClass("file", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("File", KrashValueClass("File", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Define Values
                 val path = argumentList.let {
@@ -53,7 +53,7 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
             }),
 
             // Network Object
-            Pair("network", KrashValueClass("network", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("Network", KrashValueClass("Network", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
                 if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
@@ -67,14 +67,6 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
                     // Return Value
                     it.getValue()
                 }
-                /*val method = if(argumentList.size > 1) argumentList[1].let {
-
-                    // Invalid Type
-                    // NOTE: throw if not string
-
-                    // Invalid Valid
-                    // NOTE: throw if not GET or POST
-                } else "GET"*/
 
                 // Return Members
                 hashMapOf(
@@ -97,7 +89,7 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
             }),
 
             // Pair Object
-            Pair("pair", KrashValueClass("pair", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("Pair", KrashValueClass("Pair", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Validate Arguments
                 if(argumentList.size != 2) throw KrashRuntimeException("Must supply two arguments for pair!")
@@ -150,7 +142,7 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
         })
     }
 
-    fun inheritedMethods(runtime: KrashRuntime) = HashMap<String, KrashValue>().apply {
+    private fun inheritedMethods(runtime: KrashRuntime) = HashMap<String, KrashValue>().apply {
 
         // Class Runtime
         classRuntime?.let {
