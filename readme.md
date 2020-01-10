@@ -30,7 +30,7 @@ callable = fun(name = "James") {
 }
 ```
 
-Note that functions can also be defined in the older style (where `hello` is the same as 'callable' reference above, when used elsewhere);
+Note that functions can also be defined in the older style (where `hello` is the same as `callable` reference above, when used elsewhere);
 
 ```
 fun hello(name = "James") {
