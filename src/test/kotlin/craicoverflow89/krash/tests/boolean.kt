@@ -11,20 +11,20 @@ class KrashBooleanTest: KrashTest() {
     fun literal() {
 
         // True
-        with(invokeLines(listOf("bool = true", "bool"))) {
+        with(invokeLines("bool = true", "bool")) {
             Assert.assertTrue(this is KrashValueBoolean)
             Assert.assertEquals(true, (this as KrashValueBoolean).isTrue())
         }
 
         // False
-        with(invokeLines(listOf("bool = false", "bool"))) {
+        with(invokeLines("bool = false", "bool")) {
             Assert.assertTrue(this is KrashValueBoolean)
             Assert.assertEquals(false, (this as KrashValueBoolean).isTrue())
         }
     }
 
     @Test
-    fun negation() = with(invokeLines(listOf("bool = true", "!bool"))) {
+    fun negation() = with(invokeLines("bool = true", "!bool")) {
         Assert.assertTrue(this is KrashValueBoolean)
         Assert.assertEquals(false, (this as KrashValueBoolean).isTrue())
     }

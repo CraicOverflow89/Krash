@@ -36,12 +36,14 @@ class KrashValueClass(val name: String, private val init: (runtime: KrashRuntime
                 // Return Members
                 hashMapOf(
                     Pair("isDirectory", KrashValueBoolean(file.isDirectory)),
-                    Pair("files", KrashValueArray(ArrayList<KrashValue>().apply {
-                        file.list().forEach {
-                            add(KrashValueString(it))
-                            // NOTE: would be more useful to have these as file objects
-                        }
-                    })),
+                    Pair("files", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+                        KrashValueArray(ArrayList<KrashValue>().apply {
+                            file.list().forEach {
+                                add(KrashValueString(it))
+                                // NOTE: would be more useful to have these as file objects
+                            }
+                        })
+                    }),
                     Pair("path", KrashValueString(path)),
                     Pair("toString", KrashValueString(path))
                 )

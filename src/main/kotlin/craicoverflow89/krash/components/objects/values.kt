@@ -183,6 +183,8 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue> = arrayListOf
 
     fun getSize() = valueList.size
 
+    fun getValue() = valueList
+
     fun setElement(pos: Int, value: KrashValue) {
 
         // New Element

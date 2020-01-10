@@ -76,13 +76,13 @@ class KrashStringTest: KrashTest() {
         }
 
         // Global Reference
-        with(invokeLines(listOf("\"\$HOME\""))) {
+        with(invokeLines("\"\$HOME\"")) {
             Assert.assertTrue(this is KrashValueString)
             Assert.assertEquals(System.getProperty("user.home").replace("\\", "/"), (this as KrashValueString).getValue())
         }
 
         // Local Reference
-        with(invokeLines(listOf("name = \"James\"", "\"\$name\""))) {
+        with(invokeLines("name = \"James\"", "\"\$name\"")) {
             Assert.assertTrue(this is KrashValueString)
             Assert.assertEquals("James", (this as KrashValueString).getValue())
         }

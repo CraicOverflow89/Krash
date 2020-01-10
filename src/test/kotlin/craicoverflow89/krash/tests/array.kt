@@ -10,7 +10,7 @@ import org.junit.Test
 class KrashArrayTest: KrashTest() {
 
     @Test
-    fun add() = with(invokeLines(listOf("list = [0, 1, 2]", "list.add(3)", "list"))) {
+    fun add() = with(invokeLines("list = [0, 1, 2]", "list.add(3)", "list")) {
         Assert.assertTrue(this is KrashValueArray)
         (this as KrashValueArray).let {
             Assert.assertEquals("[0, 1, 2, 3]", it.toString())
@@ -109,7 +109,7 @@ class KrashArrayTest: KrashTest() {
     fun update() {
 
         // Flat
-        with(invokeLines(listOf("list = [0, 1]", "list[2] = 2", "list"))) {
+        with(invokeLines("list = [0, 1]", "list[2] = 2", "list")) {
             Assert.assertTrue(this is KrashValueArray)
             (this as KrashValueArray).let {
                 Assert.assertEquals(3, it.getSize())
@@ -118,7 +118,7 @@ class KrashArrayTest: KrashTest() {
         }
 
         // Nested
-        with(invokeLines(listOf("list = [[\"a\", \"b\"], [0, 1, 2]]", "list[0][2] = \"c\"", "list"))) {
+        with(invokeLines("list = [[\"a\", \"b\"], [0, 1, 2]]", "list[0][2] = \"c\"", "list")) {
             Assert.assertTrue(this is KrashValueArray)
             (this as KrashValueArray).getElement(0).let {
                 Assert.assertTrue(it is KrashValueArray)

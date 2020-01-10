@@ -9,7 +9,7 @@ import craicoverflow89.krash.components.objects.KrashValueNull
 open class KrashTest {
 
     protected val channel = KrashTestChannel()
-    private val runtime = KrashRuntime().apply {
+    protected val runtime = KrashRuntime().apply {
         KrashRuntime.channelSet(channel)
     }
 
@@ -18,7 +18,7 @@ open class KrashTest {
         return parseLine(value).invoke(runtime)
     }
 
-    fun invokeLines(value: List<String>): KrashValue {
+    fun invokeLines(vararg value: String): KrashValue {
         channel.clear()
         var result: KrashValue = KrashValueNull()
         value.forEach {
