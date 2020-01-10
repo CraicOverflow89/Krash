@@ -240,6 +240,12 @@ echo("Welcome $name!")
  - for all tests
     - also need to add `comparison` test that checks conditional operators
     - check all operators for type
+ - all `KrashValueObject` instances should be capable of equality checks
+    - if object type is same (eg: file and file) which will require id
+    - have a method that serialises properties to string to perform string check
+ - combine the equality and inequality condition classes (not DRY atm)
+ - equality checks for `KrashValueClass` instances?
+ - write tests to check equality comparison of `KrashValueObject` instances
 
 ### Issues
 
