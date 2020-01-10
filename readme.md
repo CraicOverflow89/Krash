@@ -78,6 +78,12 @@ map.filter(fun(k, @v) {
 })
 ```
 
+You can cast expression blocks, like so;
+
+```
+result = @(7 * 5)
+```
+
 #### Reference Modifier
 
 You can maintain references using the `&reference` modifier;
@@ -202,8 +208,9 @@ Conventional mathematical operators work with both `integer` and `double` values
 It is possible to flip between `true` and `false` for boolean values like this;
 
 ```
-true_value = true
-false_value = !true_value
+notTrue = !true
+notFalse = !false
+notEven = !(7 == 7)
 ```
 
 #### Classes
