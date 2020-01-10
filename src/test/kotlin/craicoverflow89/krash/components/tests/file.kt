@@ -14,12 +14,13 @@ class KrashFileTest: KrashComponentTest() {
     // NOTE: need to be able to create a temporary directory (in user home?)
     //       can create files and directories in here to copy, move, rename, etc...
     //       delete the temporary directory once tests are complete
+    private val cwd = System.getProperty("user.dir").replace("\\", "/")
 
     @Test
     fun castString() = with(invokeLine("File(\"readme.md\").toString()")) {
         Assert.assertTrue(this is KrashValueString)
         (this as KrashValueString).let {
-            Assert.assertEquals("readme.md", it.getValue())
+            Assert.assertEquals("$cwd/readme.md", it.getValue())
         }
     }
 
@@ -29,13 +30,11 @@ class KrashFileTest: KrashComponentTest() {
     }
 
     @Test
-    fun files() = System.getProperty("user.dir").let {cwd ->
-        with(invokeLine("File(\"$cwd\").files()")) {
-            Assert.assertTrue(this is KrashValueArray)
-            (this as KrashValueArray).let {
-                File(cwd).listFiles().let {fileList ->
-                    Assert.assertEquals(fileList.size, it.getSize())
-                }
+    fun files() = with(invokeLine("File(\"$cwd\").files()")) {
+        Assert.assertTrue(this is KrashValueArray)
+        (this as KrashValueArray).let {
+            File(cwd).listFiles().let {fileList ->
+                Assert.assertEquals(fileList.size, it.getSize())
             }
         }
     }
@@ -44,7 +43,7 @@ class KrashFileTest: KrashComponentTest() {
     fun isDirectory() {
 
         // True
-        with(invokeLine("File(\"${System.getProperty("user.dir")}\").isDirectory")) {
+        with(invokeLine("File(\"$cwd\").isDirectory")) {
             Assert.assertTrue(this is KrashValueBoolean)
             (this as KrashValueBoolean).let {
                 Assert.assertEquals(true, it.isTrue())
@@ -61,12 +60,23 @@ class KrashFileTest: KrashComponentTest() {
     }
 
     @Test
-    fun path() = with(invokeLine("File(\"readme.md\").path")) {
-        Assert.assertTrue(this is KrashValueString)
-        (this as KrashValueString).let {
-            Assert.assertEquals("readme.md", it.getValue())
+    fun path() {
+
+        // Absolute Path
+        with(invokeLine("File(\"/home/james/temp.txt\").path")) {
+            Assert.assertTrue(this is KrashValueString)
+            (this as KrashValueString).let {
+                Assert.assertEquals("/home/james/temp.txt", it.getValue())
+            }
+        }
+
+        // Relative Path
+        with(invokeLine("File(\"readme.md\").path")) {
+            Assert.assertTrue(this is KrashValueString)
+            (this as KrashValueString).let {
+                Assert.assertEquals("$cwd/readme.md", it.getValue())
+            }
         }
     }
-    // NOTE: should path not provide absolute path instead of relative / supplied?
 
 }

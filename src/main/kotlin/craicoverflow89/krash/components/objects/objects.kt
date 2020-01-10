@@ -3,6 +3,7 @@ package craicoverflow89.krash.components.objects
 import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.expressions.KrashExpression
+import craicoverflow89.krash.system.KrashFileSystem
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -26,7 +27,14 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
                         if(it !is KrashValueString) throw KrashRuntimeException("File path must be a string!")
 
                         // Return Value
-                        it.getValue()
+                        it.getValue().let {
+
+                            // Absolute Path
+                            if(KrashFileSystem.isAbsolutePath((it))) it
+
+                            // Relative Path
+                            else "${KrashRuntime.cwd()}/$it"
+                        }
                     }
 
                     // Default Path

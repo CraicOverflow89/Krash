@@ -6,7 +6,7 @@ import craicoverflow89.krash.components.objects.KrashValueNull
 open class KrashComponentTest {
 
     protected val channel = KrashTestChannel()
-    protected val runtime = KrashRuntime().apply {
+    protected val runtime = KrashRuntime(System.getProperty("user.dir")).apply {
         KrashRuntime.channelSet(channel)
     }
 

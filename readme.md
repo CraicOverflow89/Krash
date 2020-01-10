@@ -38,6 +38,12 @@ fun hello(name = "James") {
 }
 ```
 
+When the functions contains just one expression, it can be shortened to the following;
+
+```
+fun(name = "James") = echo("Hello $name")
+```
+
 #### String Concatenation
 
 Multiple `string` values can be combined using the `+` operator. Simple references can be included within (and cast to) a `string` using the `$` character;
@@ -295,7 +301,8 @@ echo("Welcome $name!")
  - write tests to check equality comparison of `KrashValueObject` instances
  - ability to _include_ other scripts
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
-    - should create a new exception type (they're not syntax issues or runtime issues) 
+    - should create a new exception type (they're not syntax issues or runtime issues)
+ - add `break` and `continue` keywords for while loops 
 
 ### Issues
 
@@ -308,4 +315,5 @@ echo("Welcome $name!")
 
 ### See Also
 
- - [Krash Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-Krash-Language)
+ - [Language Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-Krash-Language)
+ - [Run Script Extension for Visual Studio Code](https://github.com/CraicOverflow89/VSC-Krash-Run-Script)
