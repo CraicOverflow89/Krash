@@ -203,6 +203,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
     // Define Properties
     private val methodData = HashMap<String, KrashValueCallable>()
     private val heap = KrashHeap(this, parentHeap)
+    private var keywordListenerData = HashMap<KrashCommandKeywordType, () -> Unit>()
 
     fun child() = KrashRuntime(null, heap)
 
@@ -235,6 +236,23 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
     }
 
     fun heapPut(ref: String, value: KrashValue) = heap.put(ref, value)
+
+    fun keywordListenerAdd(type: KrashCommandKeywordType, logic: () -> Unit) {
+        keywordListenerData[type] = logic
+    }
+
+    fun keywordListenerClear() {
+        keywordListenerData.clear()
+    }
+
+    fun keywordListenerInvoke(type: KrashCommandKeywordType) = keywordListenerData[type]?.let {
+
+        // Invoke Logic
+        it.invoke()
+
+        // Return True
+        true
+    } ?: false
 
     fun methodData() = methodData
 

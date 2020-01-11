@@ -113,3 +113,21 @@ class KrashCommandFunction(private val name: String, private val argumentList: L
     }
 
 }
+
+class KrashCommandKeyword(private val type: KrashCommandKeywordType): KrashCommand {
+
+    override fun invoke(runtime: KrashRuntime): KrashValue {
+
+        // Invoke Listener
+        if(runtime.keywordListenerInvoke(type)) return KrashValueNull()
+
+        // Invalid Keyword
+        throw KrashRuntimeException("Invalid keyword '${type.name.toLowerCase()}' encountered!")
+        // NOTE: this should probably NOT be a runtime exception
+    }
+
+}
+
+enum class KrashCommandKeywordType {
+    BREAK, CONTINUE, RETURN
+}

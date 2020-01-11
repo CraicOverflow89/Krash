@@ -29,8 +29,24 @@ echo(if(true) "hello" else "goodbye")
 
 // While
 x = 0
-while(x < 5) {
-    echo("x is " + @x)
-    //x ++
+while(x < 10) {
+
+    // Increment Value
     x = x + 1
+
+    // Print Value
+    echo("x is $x")
+
+    // Break
+    if(x > 8) {
+        echo("x is greater than eight - break")
+        break
+    }
+
+    // Continue
+    if(x > 4) {
+        echo("x is greater than four - continue")
+        continue
+    }
+    echo("x is not greater than four")
 }

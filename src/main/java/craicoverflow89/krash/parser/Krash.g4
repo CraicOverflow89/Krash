@@ -31,6 +31,8 @@ command returns [KrashCommand result]
             commandExpression {$result = $commandExpression.result;}
         |
             commandFunction {$result = $commandFunction.result;}
+        |
+            commandKeyword {$result = $commandKeyword.result;}
         )
     ;
 
@@ -93,6 +95,14 @@ commandFunction returns [KrashCommandFunction result]
         args = expressionLitCallableArgList
         body = expressionLitCallableBody
         {$result = new KrashCommandFunction($name.text, $args.result, $body.result);}
+    ;
+
+commandKeyword returns [KrashCommandKeyword result]
+    :   (
+            'break' {$result = new KrashCommandKeyword(KrashCommandKeywordType.BREAK);}
+        |
+            'continue' {$result = new KrashCommandKeyword(KrashCommandKeywordType.CONTINUE);}
+        )
     ;
 
 expression returns [KrashExpression result]

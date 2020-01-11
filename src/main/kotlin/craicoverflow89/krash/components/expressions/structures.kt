@@ -1,8 +1,6 @@
 package craicoverflow89.krash.components.expressions
 
-import craicoverflow89.krash.components.KrashCommand
-import craicoverflow89.krash.components.KrashRuntimeException
-import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.*
 import craicoverflow89.krash.components.objects.KrashValue
 import craicoverflow89.krash.components.objects.KrashValueBoolean
 import craicoverflow89.krash.components.objects.KrashValueNull
@@ -44,11 +42,26 @@ class KrashExpressionStructureIf(private val condition: KrashExpression, private
 
 }
 
-class KrashExpressionStructureWhile(private val condition: KrashExpression, private val commandTrue: ArrayList<KrashCommand>): KrashExpressionStructure() {
+class KrashExpressionStructureWhile(private val condition: KrashExpression, private val commandList: ArrayList<KrashCommand>): KrashExpressionStructure() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
-        // Resolve Condition
+        // Define Position
+        var pos = 0
+
+        // Keyword Listeners
+        var isBreak = false
+        var isContinue = false
+        runtime.apply {
+            keywordListenerAdd(KrashCommandKeywordType.BREAK) {
+                isBreak = true
+            }
+            keywordListenerAdd(KrashCommandKeywordType.CONTINUE) {
+                isContinue = true
+            }
+        }
+
+        // Check Condition
         while(condition.toValue(runtime).let {
 
             // Return Result
@@ -58,11 +71,31 @@ class KrashExpressionStructureWhile(private val condition: KrashExpression, priv
             else throw KrashRuntimeException("Condition must be boolean!")
         }) {
 
-            // Execute Body
-            commandTrue.forEach {
-                it.invoke(runtime)
+            // Get Command
+            val command = commandList[pos]
+
+            // Invoke Command
+            command.invoke(runtime)
+
+            // Terminate Loop
+            if(isBreak) break
+
+            // Reset Position
+            if(isContinue) {
+                isContinue = false
+                pos = 0
+                continue
             }
+
+            // Next Command
+            pos ++
+
+            // Restart Loop
+            if(pos == commandList.size) pos = 0
         }
+
+        // Clear Listeners
+        runtime.keywordListenerClear()
 
         // Done
         return KrashValueNull()

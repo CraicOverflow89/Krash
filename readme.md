@@ -150,7 +150,15 @@ while(condition) logic()
 
 // Multiple Expressions
 while(condition) {
+
     // logic here
+    logic()
+
+    // jumps to next iteration
+    continue
+
+    // breaks out of loop
+    break
 }
 ```
 
@@ -301,7 +309,15 @@ echo("Welcome $name!")
  - ability to _include_ other scripts
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
     - should create a new exception type (they're not syntax issues or runtime issues)
- - add `break` and `continue` keywords for while loops 
+    - see also `KrashCommandKeyword.invoke` where `KrashRuntimeException` is being thrown when it's a structural thing
+ - add `break` and `continue` keywords for while loops
+ - ability to spawn processes (blocking and background possible)
+ - test `if` structure
+    - need to test `if(condition) return value` expression (probably throws exception from parser)
+    - need to test `else if` pattern
+ - create `when` structure
+ - create `enum` type
+ - anonymous classes (to drop directly into argument of function) ??
 
 ### Issues
 
