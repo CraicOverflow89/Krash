@@ -313,25 +313,36 @@ expressionIndex returns [KrashExpression result]
     ;
 
 expressionInvoke returns [ArrayList<KrashExpression> result]
-    :   {ArrayList<KrashExpression> args = new ArrayList();}
-        STBR1
+    :   {
+            ArrayList<KrashExpression> args = new ArrayList();
+            ArrayList<KrashCommand> exp = new ArrayList();
+        }
         (
-            a1 = expression {args.add($a1.result);}
+            STBR1
             (
-                COMMA
-                a2 = expression {args.add($a2.result);}
-            )*
-        )?
-        STBR2
-        (
-            {ArrayList<KrashCommand> exp = new ArrayList();}
+                a1 = expression {args.add($a1.result);}
+                (
+                    COMMA
+                    a2 = expression {args.add($a2.result);}
+                )*
+            )?
+            STBR2
+            (
+                CUBR1
+                    (
+                        c1 = command {exp.add($c1.result);}
+                    )+
+                CUBR2
+                {args.add(new KrashExpressionLiteralCallable(new ArrayList(), exp));}
+            )?
+        |
             CUBR1
                 (
-                    command {exp.add($command.result);}
+                    c2 = command {exp.add($c2.result);}
                 )+
             CUBR2
             {args.add(new KrashExpressionLiteralCallable(new ArrayList(), exp));}
-        )?
+        )
         {$result = args;}
     ;
 

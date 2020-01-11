@@ -17,7 +17,6 @@ val KRASH_VERSION = "ALPHA"
     //loadScript("src/main/resources/references.krash")
     //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/structures.krash")
-    loadScript("src/main/resources/value.krash")
 
     // Reference persist issue
     //loadScript("src/main/resources/issue1.krash")
