@@ -11,7 +11,7 @@ val KRASH_VERSION = "ALPHA"
 
 fun main() {
     //loadScript("src/main/resources/class.krash")
-    //loadScript("src/main/resources/functions.krash")
+    loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")

@@ -77,10 +77,10 @@ This can also be used in function arguments, like so;
 
 ```
 map = {name: "James", age: 30}
-map.filter(fun(k, @v) {
+map.filter {k, @v ->
     // map values are cast to string here
     return v.startsWith("J")
-})
+}
 ```
 
 You can cast expression blocks, like so;
@@ -210,14 +210,14 @@ There is no standard _for_ loop, as this exists in the form of member functions,
 array.each(echo)
 
 // For element in array with index
-array.eachIndexed(fun(i, v) {
+array.eachIndexed {i, v ->
     echo("value at position $i is $v")
-})
+}
 
 // For key and value in map
-map.each(fun(k, v) {
+map.each {k, v ->
     echo("$k = $v")
-})
+}
 ```
 
 The _when_ structure evaluates conditions and results against a value in place of an awkward _case/switch_ statement;
@@ -385,7 +385,6 @@ echo("Welcome $name!")
  - update class command / expressions
      - anonymous classes (to drop directly into argument of function)
      - old style class command (not an expression)
- - argument list for short style callables `map.each {k, v -> echo("$k: $v")}`
 
 ### Issues
 

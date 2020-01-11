@@ -36,3 +36,13 @@ echo("isSeven(7) = " + @isSeven(7))
 isSeven2 = fun(x) = x == 7
 echo(isSeven2(8))
 echo(fun(x) = (if(x == 7) "seven" else "not seven")(9))
+
+// Short Syntax
+test1 = fun(logic) = logic(7)
+test1 {
+    echo("it is $it")
+}
+test2 = fun(logic) = logic(7, "hello world")
+test2 {n, s ->
+    echo("n is $n and s is $s")
+}

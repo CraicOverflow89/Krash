@@ -313,10 +313,7 @@ expressionIndex returns [KrashExpression result]
     ;
 
 expressionInvoke returns [ArrayList<KrashExpression> result]
-    :   {
-            ArrayList<KrashExpression> args = new ArrayList();
-            ArrayList<KrashCommand> exp = new ArrayList();
-        }
+    :   {ArrayList<KrashExpression> args = new ArrayList();}
         (
             STBR1
             (
@@ -328,22 +325,35 @@ expressionInvoke returns [ArrayList<KrashExpression> result]
             )?
             STBR2
             (
-                CUBR1
-                    (
-                        c1 = command {exp.add($c1.result);}
-                    )+
-                CUBR2
-                {args.add(new KrashExpressionLiteralCallable(new ArrayList(), exp));}
+                s1 = expressionInvokeShort
+                {args.add($s1.result);}
             )?
         |
-            CUBR1
-                (
-                    c2 = command {exp.add($c2.result);}
-                )+
-            CUBR2
-            {args.add(new KrashExpressionLiteralCallable(new ArrayList(), exp));}
+            s2 = expressionInvokeShort
+            {args.add($s2.result);}
         )
         {$result = args;}
+    ;
+
+expressionInvokeShort returns [KrashExpressionLiteralCallable result]
+    :   {
+            ArrayList<KrashExpressionLiteralCallableArgument> args = new ArrayList();
+            ArrayList<KrashCommand> exp = new ArrayList();
+        }
+        CUBR1
+        (
+            arg1 = expressionLitCallableArg {args.add($arg1.result);}
+            (
+                COMMA
+                arg2 = expressionLitCallableArg {args.add($arg2.result);}
+            )*
+            '->'
+        )?
+        (
+            command {exp.add($command.result);}
+        )+
+        CUBR2
+        {$result = new KrashExpressionLiteralCallable(args, exp);}
     ;
 
 expressionLit returns [KrashExpressionLiteral result]
@@ -670,20 +680,13 @@ expressionStructWhen returns [KrashExpressionStructureWhen result]
             ArrayList<KrashExpressionStructureWhenCase> caseList = new ArrayList();
             KrashExpression expElse = null;
         }
-        'when'
-        STBR1
-        value = expression
-        STBR2
+        'when' STBR1 value = expression STBR2
         CUBR1
         (
-            expCondition = expression
-            MINUS '>'
-            expResult = expression
+            expCondition = expression '->' expResult = expression
             {caseList.add(new KrashExpressionStructureWhenCase($expCondition.result, $expResult.result));}
         |
-            'else'
-            MINUS '>'
-            expElse = expression
+            'else' '->' expElse = expression
             {expElse = $expElse.result;}
         )+
         CUBR2
