@@ -217,7 +217,7 @@ class KrashValueBoolean(private val value: Boolean): KrashValueSimple() {
 
 }
 
-open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple() {
+open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple(hashMapOf(), true) {
 
     companion object {
 
@@ -530,7 +530,45 @@ class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<Str
 
 }
 
-abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf()): KrashValue {
+abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf(), noDefaults: Boolean = false): KrashValue {
+
+    init {
+        if(!noDefaults) {
+            memberPut("apply", KrashValueCallable {runtime, argumentList ->
+
+                // Validate Arguments
+                if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
+
+                // Resolve Logic
+                argumentList[0].let {
+
+                    // Invoke Logic
+                    if(it is KrashValueCallable) it.invoke(runtime, listOf(this))
+
+                    // Invalid Type
+                    else throw KrashRuntimeException("Logic must be callable!")
+                }
+
+                // Return Value
+                this
+            })
+            memberPut("let", KrashValueCallable {runtime, argumentList ->
+
+                // Validate Arguments
+                if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
+
+                // Resolve Logic
+                argumentList[0].let {
+
+                    // Invoke Logic
+                    if(it is KrashValueCallable) it.invoke(runtime, listOf(this@KrashValueSimple))
+
+                    // Invalid Type
+                    else throw KrashRuntimeException("Logic must be callable!")
+                }
+            })
+        }
+    }
 
     fun memberContains(key: String) = memberList.containsKey(key)
 

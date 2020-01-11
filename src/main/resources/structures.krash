@@ -27,6 +27,12 @@ else {
 // If Else (using values)
 echo(if(true) "hello" else "goodbye")
 
+// If Else If
+result = if(false) 1
+else if(true) 2
+else 3
+echo(result)
+
 // While
 x = 0
 while(x < 10) {

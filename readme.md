@@ -320,12 +320,12 @@ echo("Welcome $name!")
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
     - should create a new exception type (they're not syntax issues or runtime issues)
     - see also `KrashCommandKeyword.invoke` where `KrashRuntimeException` is being thrown when it's a structural thing
- - add `break` and `continue` keywords for while loops
  - ability to spawn processes (blocking and background possible)
- - test `if` structure
-    - need to test `else if` pattern
  - use equality logic for `when` structure
- - anonymous classes (to drop directly into argument of function) ??
+ - default `enum` members like `valueOf`
+ - update class command / expressions
+     - anonymous classes (to drop directly into argument of function)
+     - old style class command (not an expression)
 
 ### Issues
 
