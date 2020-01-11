@@ -38,7 +38,7 @@ fun hello(name = "James") {
 }
 ```
 
-When the functions contains just one expression, it can be shortened to the following;
+When the function contains just one expression, it can be shortened to the following;
 
 ```
 fun(name = "James") = echo("Hello $name")
@@ -88,11 +88,12 @@ You can cast expression blocks, like so;
 
 ```
 result = @(7 * 5)
+// result is "35" (int cast to string)
 ```
 
 #### Reference Modifier
 
-You can maintain references using the `&reference` modifier;
+You can maintain references using the `&` modifier;
 
 ```
 // exmaple list
@@ -114,6 +115,7 @@ first_reference = &list[0]
 When there is only one value passed to a function, it is available as `it` implicitly;
 
 ```
+// making use of it
 list.each(fun() {
     echo(it)
 })
@@ -122,6 +124,43 @@ list.each(fun() {
 list.each(fun(value) {
     echo(value)
 })
+```
+
+#### Invoke Syntax
+
+There are a number of different ways to invoke a callable, to suit different situations. When the final argument is callable, it can be defined after the parens;
+
+```
+// Example callable
+fun execute(array, callable) {}
+
+// Passing logic callable argument after parens
+execute(["apple", "orange"]) {
+    echo(it)
+}
+
+// is the same as these
+execute(["apple", "orange"], fun() = echo(it))
+execute(["apple", "orange"], fun() {
+    echo(it)
+})
+```
+
+When the function being invoked only takes one argument of type callable, you don't need to include any parens;
+
+```
+// The let method takes one argument of type callable
+// value.let(callable)
+
+// Invoking the let method with the single callable argument
+"hello world".let {
+    echo(it)
+}
+
+// is the same as
+"hello world".let() {
+    echo(it)
+}
 ```
 
 #### Control Structures
