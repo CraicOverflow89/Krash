@@ -239,8 +239,6 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
                 // Keyword Listener
                 var returnValue: KrashValueSimple? = null
                 callableRuntime.returnListenerAdd {value ->
-                    println("FOUND RETURN")
-                    println(value)
                     returnValue = value
                 }
 

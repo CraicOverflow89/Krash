@@ -31,12 +31,5 @@ data = fun() {
     return "string literal"
 }
 echo("result = " + @data())
-isSeven = fun(x) {
-    if(x == 7) {
-        return "seven"
-    }
-    else {
-        return "not seven"
-    }
-}
+isSeven = fun(x) = if(x == 7) "seven" else "not seven"
 echo("isSeven(7) = " + @isSeven(7))

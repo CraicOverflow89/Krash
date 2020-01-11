@@ -85,7 +85,7 @@ commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
     ;
 
 commandExpression returns [KrashCommandExpression result]
-    :   {Boolean isReturn = true;}
+    :   {Boolean isReturn = false;}
         (
             'return' {isReturn = true;}
         )?

@@ -313,7 +313,6 @@ echo("Welcome $name!")
  - add `break` and `continue` keywords for while loops
  - ability to spawn processes (blocking and background possible)
  - test `if` structure
-    - need to test `if(condition) return value` expression (probably throws exception from parser)
     - need to test `else if` pattern
  - create `when` structure
  - create `enum` type
