@@ -322,7 +322,6 @@ echo("Welcome $name!")
     - see also `KrashCommandKeyword.invoke` where `KrashRuntimeException` is being thrown when it's a structural thing
  - ability to spawn processes (blocking and background possible)
  - use equality logic for `when` structure
- - default `enum` members like `valueOf`
  - update class command / expressions
      - anonymous classes (to drop directly into argument of function)
      - old style class command (not an expression)

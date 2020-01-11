@@ -286,6 +286,31 @@ class KrashValueEnum(private val name: String, private val valueList: List<Strin
     }
 }) {
 
+    init {
+        memberPut("valueOf", KrashValueCallable {runtime, argumentList ->
+
+            // Validate Arguments
+            if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for name!")
+
+            // Resolve Name
+            argumentList[0].toSimple(runtime).let {
+
+                // Return Result
+                if(it is KrashValueString) valueList.indexOf(it.getValue()).let {
+                    if(it > -1) KrashValueInteger(it) else KrashValueNull()
+                }
+
+                // Invalid Type
+                else throw KrashRuntimeException("Name must be a string!")
+            }
+        })
+        memberPut("values", KrashValueArray(ArrayList<KrashValue>().apply {
+            valueList.forEach {
+                add(KrashValueString(it))
+            }
+        }))
+    }
+
     override fun toString() = "<enum $name>"
 
 }
