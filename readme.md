@@ -137,6 +137,9 @@ result = if(condition) "yes" else "no"
 if(condition) {
     // logic here
 }
+else if(condition) {
+    // logic here
+}
 else {
     // logic here
 }
@@ -268,6 +271,22 @@ class Developer(id, name, lang = []): Person(id, name) {
     }
 
 }
+```
+
+#### Enums
+
+A set of constants can be assigned to an _enum_ with the conventional syntax;
+
+```
+enum Direction {
+    EAST, NORTH, SOUTH, WEST
+}
+
+// Accessing values
+Direction.NORTH
+
+// Using string
+Direction.valueOf("NORTH")
 ```
 
 #### Script Features
