@@ -25,12 +25,12 @@ bool = true
 nothing = null
 list = [0, "element"]
 map = {key: "value"}
-callable = fun(name = "James") {
+callable = fun(name) {
     echo("Hello $name")
 }
 ```
 
-Note that functions can also be defined in the older style (where `hello` is the same as `callable` reference above, when used elsewhere);
+Default values for arguments can be set using the `=` character. Note that functions can also be defined in the older style (where `hello` is the same as `callable` reference above, when used elsewhere);
 
 ```
 fun hello(name = "James") {
@@ -253,7 +253,7 @@ Conventional equality operators return `boolean` (can be used anywhere).
 
 #### Mathematical Operators
 
-Conventional mathematical operators work with both `integer` and `double` values. The result of the operation will result in an `integer` where possible, otherwise a `double` will be returned.
+Conventional mathematical operators work with both `integer` and `double` values. The operation will result in an `integer` where possible, otherwise a `double` will be returned.
 
 ```
 // Addition
@@ -281,7 +281,7 @@ notEven = !(7 == 7)
 
 #### Classes
 
-You can define classes to instantiate elsewhere and inherit from other classes;
+Krash supports typical _classes_ and single _inheritance_.
 
 ```
 // Abstract classes cannot be instantiated themselves
@@ -310,6 +310,9 @@ class Developer(id, name, lang = []): Person(id, name) {
     }
 
 }
+
+// Instantiate the class
+author = Developer(0, "James", ["Kotlin", "ANTLR"])
 ```
 
 #### Enums
@@ -383,7 +386,7 @@ echo("Welcome $name!")
  - update class command / expressions
      - anonymous classes (to drop directly into argument of function)
      - old style class command (not an expression)
- - final invoke argument to go after when literal callable like `value.apply {}` ??
+ - argument list for short style callables `map.each {k, v -> echo("$k: $v")}`
 
 ### Issues
 
