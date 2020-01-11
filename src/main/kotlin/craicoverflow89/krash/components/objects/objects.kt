@@ -8,11 +8,11 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
+open class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
 
     companion object {
 
-        private val nativeObjects: HashMap<String, KrashValueClass> = hashMapOf(
+        private val nativeObjects: HashMap<String, KrashValue> = hashMapOf(
 
             // File Object
             Pair("File", KrashValueClass("File", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
@@ -95,65 +95,85 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
             }),
 
             // Network Object
-            Pair("Network", KrashValueClass("Network", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("Network", KrashValueClassStatic("Network", hashMapOf(
 
-                // Validate Arguments
-                if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
+                // Request Object
+                Pair("request", KrashValueClass("Request", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
-                // Define Values
-                val url = argumentList[0].let {
+                    // Validate Arguments
+                    if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
 
-                    // Invalid Type
-                    if(it !is KrashValueString) throw KrashRuntimeException("Network url must be a string!")
+                    // Define Values
+                    val url = argumentList[0].let {
 
-                    // Return Value
-                    it.getValue()
-                }
+                        // Invalid Type
+                        if(it !is KrashValueString) throw KrashRuntimeException("Request url must be a string!")
 
-                // Return Members
-                hashMapOf(
-                    Pair("send", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+                        // Return Value
+                        it.getValue()
+                    }
 
-                        // Send Request
-                        with(URL(url).openConnection() as HttpURLConnection) {
+                    // Return Members
+                    hashMapOf(
+                        Pair("send", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
 
-                            // Return Result
-                            KrashValueMap(listOf(
-                                KrashValueMapPair("body", KrashValueString(inputStream.bufferedReader().readText())),
-                                KrashValueMapPair("status", KrashValueInteger(responseCode))
-                            ))
-                        }
-                    }),
-                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
-                        KrashValueString(url)
-                    })
-                )
-            }),
+                            // Send Request
+                            with(URL(url).openConnection() as HttpURLConnection) {
 
-            // Pair Object
-            Pair("Pair", KrashValueClass("Pair", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
+                                // Return Result
+                                KrashValueMap(listOf(
+                                    KrashValueMapPair("body", KrashValueString(inputStream.bufferedReader().readText())),
+                                    KrashValueMapPair("status", KrashValueInteger(responseCode))
+                                ))
+                            }
+                        }),
+                        Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                            KrashValueString(url)
+                        })
+                    )
+                }),
 
-                // Validate Arguments
-                if(argumentList.size != 2) throw KrashRuntimeException("Must supply two arguments for pair!")
+                // Server Object
+                Pair("createServer", KrashValueClass("Server", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
-                // Define Values
-                val first = argumentList[0]
-                val second = argumentList[1]
+                    // Validate Arguments
+                    if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for port!")
+                    if(argumentList.size < 2) throw KrashRuntimeException("No value provided for logic!")
 
-                // Return Members
-                hashMapOf(
-                    Pair("first", first),
-                    Pair("second", second),
-                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
-                        KrashValueString("<$first, $second>")
-                    })
-                )
-            })
+                    // Define Values
+                    val port = argumentList[0].let {
+
+                        // Invalid Type
+                        if(it !is KrashValueInteger) throw KrashRuntimeException("Server port must be an integer!")
+
+                        // Return Value
+                        it.value
+                    }
+                    val logic: KrashValueCallable = argumentList[1].let {
+
+                        // Invalid Type
+                        if(it !is KrashValueCallable) throw KrashRuntimeException("Server logic must be callable!")
+
+                        // Return Value
+                        it
+                    }
+
+                    // Create Server
+                    // NOTE: so this doesn't want to be blocking but if it's going to be threaded then a huge amount of care is required
+                    //       any background threads must have a reference in runtime, regardless of if the script does
+                    //       all exit operations (including thrown exceptions) need to terminate all threads (and close server, in this case) on exit
+
+                    // Return Members
+                    hashMapOf(
+                        Pair("port", KrashValueInteger(port))
+                    )
+                })
+            )))
         )
 
         fun nativeContains(name: String) = nativeObjects.containsKey(name)
 
-        fun nativeGet(name: String): KrashValueClass {
+        fun nativeGet(name: String): KrashValue {
 
             // Return Object
             if(nativeObjects.containsKey(name)) return nativeObjects[name]!!
@@ -166,7 +186,7 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
 
     }
 
-    fun create(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValueObject {
+    open fun create(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValueObject {
 
         // Abstract Class
         if(isAbstract()) throw KrashRuntimeException("Cannot instantiate abstract '$name' class!")
@@ -204,10 +224,22 @@ class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?,
 
     fun isFinal() = !isAbstract() && modifier != KrashValueClassModifier.OPEN
 
-    override fun toString() = "<class ${name}>"
+    override fun toString() = "<class $name>"
 
 }
 
 enum class KrashValueClassModifier {
     ABSTRACT, NONE, OPEN
+}
+
+class KrashValueClassStatic(private val name: String, memberData: HashMap<String, KrashValue>): KrashValueSimple() {
+
+    init {
+        memberData.forEach {k, v ->
+            memberPut(k, v)
+        }
+    }
+
+    override fun toString() = "<class $name>"
+
 }
