@@ -12,15 +12,15 @@ import craicoverflow89.krash.components.objects.KrashValueString
 
 abstract class KrashExpressionCondition(private val first: KrashExpression, private val second: KrashExpression): KrashExpression() {
 
-    abstract fun invoke(first: KrashValueSimple, second: KrashValueSimple): Boolean
+    abstract fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple): Boolean
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueBoolean(invoke(first.toValue(runtime), second.toValue(runtime)))
+    override fun toValue(runtime: KrashRuntime) = KrashValueBoolean(invoke(runtime, first.toValue(runtime), second.toValue(runtime)))
 
 }
 
 class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
 
-    override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
         // Compare Array
         /*is KrashValueArray -> when(second) {
@@ -79,9 +79,25 @@ class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpr
 
 }
 
-class KrashExpressionConditionGreater(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
+class KrashExpressionConditionGreaterEqual(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
 
-    override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+
+        // Compare Numbers
+        is KrashValueSimpleNumeric -> when(second) {
+            is KrashValueSimpleNumeric -> first.toDouble() >= second.toDouble()
+            else -> throw KrashRuntimeException("Invalid type for greater than or equal to comparison with number!")
+        }
+
+        // Invalid Type
+        else -> throw KrashRuntimeException("Invalid type for greater than comparison!")
+    }
+
+}
+
+class KrashExpressionConditionGreaterThan(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
+
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {
@@ -101,7 +117,7 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
     //       and just flip the result to determine outcome of the condition
     //       exception message will also be partially determined by equal / not equal value
 
-    override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
         // Compare Boolean
         is KrashValueBoolean -> when(second) {
@@ -145,9 +161,25 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
 
 }
 
-class KrashExpressionConditionLesser(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
+class KrashExpressionConditionLesserEqual(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
 
-    override fun invoke(first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+
+        // Compare Numbers
+        is KrashValueSimpleNumeric -> when(second) {
+            is KrashValueSimpleNumeric -> first.toDouble() <= second.toDouble()
+            else -> throw KrashRuntimeException("Invalid type for lesser than or equal tp comparison with number!")
+        }
+
+        // Invalid Type
+        else -> throw KrashRuntimeException("Invalid type for lesser than comparison!")
+    }
+
+}
+
+class KrashExpressionConditionLesserThan(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
+
+    override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
 
         // Compare Numbers
         is KrashValueSimpleNumeric -> when(second) {

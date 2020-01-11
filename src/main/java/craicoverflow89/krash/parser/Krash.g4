@@ -145,13 +145,17 @@ expression returns [KrashExpression result]
             expressionBlock {$result = $expressionBlock.result;}
         )
         (
-            expressionCoEqual {$result = new KrashExpressionConditionEquality($result, $expressionCoEqual.result);}
+            expressionCoE {$result = new KrashExpressionConditionEquality($result, $expressionCoE.result);}
         |
-            expressionCoGreater {$result = new KrashExpressionConditionGreater($result, $expressionCoGreater.result);}
+            expressionCoGT {$result = new KrashExpressionConditionGreaterThan($result, $expressionCoGT.result);}
         |
-            expressionCoInequal {$result = new KrashExpressionConditionInequality($result, $expressionCoInequal.result);}
+            expressionCoGTE {$result = new KrashExpressionConditionGreaterEqual($result, $expressionCoGTE.result);}
         |
-            expressionCoLesser {$result = new KrashExpressionConditionLesser($result, $expressionCoLesser.result);}
+            expressionCoLT {$result = new KrashExpressionConditionLesserThan($result, $expressionCoLT.result);}
+        |
+            expressionCoLTE {$result = new KrashExpressionConditionLesserEqual($result, $expressionCoLTE.result);}
+        |
+            expressionCoNE {$result = new KrashExpressionConditionInequality($result, $expressionCoNE.result);}
         |
             expressionOpAdd {$result = new KrashExpressionOperatorAddition($result, $expressionOpAdd.result);}
         |
@@ -209,23 +213,33 @@ expressionBody returns [KrashExpression result]
         }
     ;
 
-expressionCoEqual returns [KrashExpression result]
+expressionCoE returns [KrashExpression result]
     :   EQUAL EQUAL expression
         {$result = $expression.result;}
     ;
 
-expressionCoGreater returns [KrashExpression result]
+expressionCoGT returns [KrashExpression result]
     :   '>' expression
         {$result = $expression.result;}
     ;
 
-expressionCoInequal returns [KrashExpression result]
-    :   BANG EQUAL expression
+expressionCoGTE returns [KrashExpression result]
+    :   '>=' expression
         {$result = $expression.result;}
     ;
 
-expressionCoLesser returns [KrashExpression result]
+expressionCoLT returns [KrashExpression result]
     :   '<' expression
+        {$result = $expression.result;}
+    ;
+
+expressionCoLTE returns [KrashExpression result]
+    :   '<=' expression
+        {$result = $expression.result;}
+    ;
+
+expressionCoNE returns [KrashExpression result]
+    :   BANG EQUAL expression
         {$result = $expression.result;}
     ;
 
