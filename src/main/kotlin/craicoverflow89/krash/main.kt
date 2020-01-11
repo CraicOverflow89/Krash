@@ -2,6 +2,7 @@ package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.objects.KrashValueString
 import craicoverflow89.krash.system.KrashFileSystem
 import java.io.File
 import kotlin.system.exitProcess
@@ -9,7 +10,7 @@ import kotlin.system.exitProcess
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-fun main() {
+/*fun main() {
     //loadScript("src/main/resources/class.krash")
     loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
@@ -23,9 +24,9 @@ fun main() {
 
     // Multiple indexes issue
     //loadScript("src/main/resources/issue2.krash")
-}
+}*/
 
-/*fun main(args: Array<String>) = when {
+fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -44,7 +45,7 @@ fun main() {
         // No Arguments
         else listOf()
     })
-}*/
+}
 
 fun loadFlags(flags: String) {
 
@@ -65,8 +66,10 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
         else "$cwd/$it"
     })
 
-    // NOTE: this method needs moving elsewhere
-    //       should configure runtime before using KrashRuntime.println due to channel setup
+    // Create Runtime
+    val runtime = KrashRuntime.createScript(cwd, KrashValueString(scriptFile.absolutePath), scriptArgs.map {
+        KrashValueString(it)
+    })
 
     // Missing File
     if(!scriptFile.exists()) {
@@ -81,7 +84,7 @@ fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
     }
 
     // Invoke Script
-    try {KrashInterpreter.parseScript(scriptFile.readText()).invoke(cwd, scriptFile.absolutePath, scriptArgs)}
+    try {KrashInterpreter.parseScript(scriptFile.readText()).invoke(runtime)}
 
     // Error Handling
     catch(ex: KrashException) {

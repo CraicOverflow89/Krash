@@ -36,21 +36,17 @@ class KrashInterpreter {
 
 }
 
-class KrashInterpreterException(posLine: Int, posChar: Int, token: Token?): KrashException(StringBuffer().apply {
+class KrashInterpreterException(posLine: Int, posChar: Int, message: String?): KrashException(StringBuffer().apply {
     append("Syntax error at $posLine:$posChar")
-    token?.let {
-        append(": ${it.text}")
+    message?.let {
+        append(": $it")
     }
 }.toString())
 
 class KrashInterpreterListener: BaseErrorListener() {
 
     override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int, charPositionInLine: Int, msg: String?, e: RecognitionException?) {
-
-        // TEMP
-        System.err.println(msg)
-
-        throw KrashInterpreterException(line, charPositionInLine, e?.offendingToken)
+        throw KrashInterpreterException(line, charPositionInLine, msg)
     }
 
 }

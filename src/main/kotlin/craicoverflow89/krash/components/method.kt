@@ -12,6 +12,7 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
         private val nativeMethods = mapOf(
             Pair("echo", KrashMethodEcho()),
             Pair("exit", KrashMethodExit()),
+            Pair("include", KrashMethodInclude()),
             Pair("read", KrashMethodRead())
         )
 
@@ -51,6 +52,26 @@ class KrashMethodExit: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
     // Done
     return KrashValueNull()
 
+})
+
+class KrashMethodInclude: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+
+    // Validate Arguments
+    if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for path!")
+
+    // Resolve Path
+    argumentList[0].toSimple(runtime).let {
+
+        // Include Script
+        if(it is KrashValueString) runtime.includeScript(it.getValue())
+
+        // Invalid Type
+        else throw KrashRuntimeException("Path must be a string!")
+
+    }
+
+    // Done
+    return KrashValueNull()
 })
 
 class KrashMethodRead: KrashMethod(fun(_: KrashRuntime, _: List<KrashValue>) = KrashValueString(KrashRuntime.read()))

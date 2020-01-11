@@ -376,9 +376,8 @@ echo("Welcome $name!")
  - combine the equality and inequality condition classes (not DRY atm)
  - equality checks for `KrashValueClass` instances?
  - write tests to check equality comparison of `KrashValueObject` instances
- - ability to _include_ other scripts
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
-    - should create a new exception type (they're not syntax issues or runtime issues)
+    - should create `KrashExpressionException` (they're not syntax issues or runtime issues)
     - see also `KrashCommandKeyword.invoke` where `KrashRuntimeException` is being thrown when it's a structural thing
  - ability to spawn processes (blocking and background possible)
  - use equality logic for `when` structure

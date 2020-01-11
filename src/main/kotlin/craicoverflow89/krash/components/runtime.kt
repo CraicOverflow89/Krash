@@ -4,6 +4,8 @@ import craicoverflow89.krash.KrashException
 import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
 import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgumentModifier
 import craicoverflow89.krash.components.objects.*
+import craicoverflow89.krash.system.KrashFileSystem
+import java.io.File
 import kotlin.system.exitProcess
 
 abstract class KrashChannel {
@@ -166,10 +168,14 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
         fun cwd() = cwdPath
 
-        fun cwdJoin(value: String) = "$cwdPath/$value"
+        fun cwdJoin(value: String) = listOf(cwdPath, value.replace("\\", "/").let {
+            if(it.startsWith("/")) it.substring(1, it.length) else it
+        }).joinToString("/")
 
         fun cwdSet(path: String) {
-            cwdPath = path.replace("\\", "/")
+            cwdPath = path.replace("\\", "/").let {
+                if(it.endsWith("/")) it.substring(0, it.length - 1) else it
+            }
         }
 
         fun cwdString() = KrashValueString(cwdPath)
@@ -286,7 +292,39 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         }
     }
 
-    fun heapPut(ref: String, value: KrashValue) = heap.put(ref, value)
+    fun heapPut(ref: String, value: KrashValue) {
+        heap.put(ref, value)
+    }
+
+    fun includeScript(path: String) {
+
+        // Load File
+        File(path.let {
+
+            // Contains Extension
+            if(it.endsWith(".krash")) it
+
+            // Append Extension
+            else "$it.krash"
+        }.let {
+
+            // Absolute Path
+            if(KrashFileSystem.isAbsolutePath(it)) it
+
+            // Relative Path
+            else cwdJoin(it)
+        }).let {
+
+            // Missing File
+            if(!it.exists()) throw KrashRuntimeException("Could not find script!")
+
+            // Invalid File
+            if(it.extension != "krash") throw KrashRuntimeException("Must be a krash script!")
+
+            // Invoke Script
+            KrashInterpreter.parseScript(it.readText()).invoke(this)
+        }
+    }
 
     fun keywordListenerAdd(type: KrashCommandKeywordType, logic: () -> Unit) {
         keywordListenerData[type] = logic
@@ -353,12 +391,7 @@ class KrashRuntimeException(message: String): KrashException(message)
 
 class KrashScript(private val commandList: List<KrashCommand>) {
 
-    fun invoke(cwd: String, file: String, args: List<String>) {
-
-        // Create Runtime
-        val runtime = KrashRuntime.createScript(cwd, KrashValueString(file), args.map {
-            KrashValueString(it)
-        })
+    fun invoke(runtime: KrashRuntime) {
 
         // Iterate Commands
         commandList.forEach {
