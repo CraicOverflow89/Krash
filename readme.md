@@ -179,6 +179,16 @@ map.each(fun(k, @v) {
 })
 ```
 
+The _when_ structure evaluates conditions and results against a value in place of an awkward _case/switch_ statement;
+
+```
+when(value) {
+    condition1 -> result1
+    condition2 -> result2
+    else -> result3
+}
+``` 
+
 #### Equality Operators
 
 Conventional equality operators return `boolean` (can be used anywhere).
