@@ -50,3 +50,12 @@ while(x < 10) {
     }
     echo("x is not greater than four")
 }
+
+// When
+x = 9
+result = when(x) {
+    7 -> "seven"
+    8 -> "eight"
+    else -> "something else"
+}
+echo(result)

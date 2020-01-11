@@ -569,6 +569,8 @@ expressionStruct returns [KrashExpressionStructure result]
     :   (
             expressionStructIf {$result = $expressionStructIf.result;}
         |
+            expressionStructWhen {$result = $expressionStructWhen.result;}
+        |
             expressionStructWhile {$result = $expressionStructWhile.result;}
         )
     ;
@@ -601,6 +603,31 @@ expressionStructIf returns [KrashExpressionStructureIf result]
             )
         )?
         {$result = new KrashExpressionStructureIf($condition.result, bodyTrue, bodyElse);}
+    ;
+
+expressionStructWhen returns [KrashExpressionStructureWhen result]
+    :   {
+            ArrayList<KrashExpressionStructureWhenCase> caseList = new ArrayList();
+            KrashExpression expElse = null;
+        }
+        'when'
+        STBR1
+        value = expression
+        STBR2
+        CUBR1
+        (
+            expCondition = expression
+            MINUS '>'
+            expResult = expression
+            {caseList.add(new KrashExpressionStructureWhenCase($expCondition.result, $expResult.result));}
+        |
+            'else'
+            MINUS '>'
+            expElse = expression
+            {expElse = $expElse.result;}
+        )+
+        CUBR2
+        {$result = new KrashExpressionStructureWhen($value.result, caseList, expElse);}
     ;
 
 expressionStructWhile returns [KrashExpressionStructureWhile result]

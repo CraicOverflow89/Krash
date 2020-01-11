@@ -314,7 +314,7 @@ echo("Welcome $name!")
  - ability to spawn processes (blocking and background possible)
  - test `if` structure
     - need to test `else if` pattern
- - create `when` structure
+ - use equality logic for `when` structure
  - create `enum` type
  - anonymous classes (to drop directly into argument of function) ??
 

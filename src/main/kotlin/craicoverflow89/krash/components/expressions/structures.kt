@@ -23,6 +23,7 @@ class KrashExpressionStructureIf(private val condition: KrashExpression, private
 
             // Invalid Type
             else throw KrashRuntimeException("Condition must be boolean!")
+            // NOTE: this could be KrashExpressionException ??
         }) {
 
             // Execute Body
@@ -42,7 +43,45 @@ class KrashExpressionStructureIf(private val condition: KrashExpression, private
 
 }
 
-class KrashExpressionStructureWhile(private val condition: KrashExpression, private val commandList: ArrayList<KrashCommand>): KrashExpressionStructure() {
+class KrashExpressionStructureWhen(private val value: KrashExpression, private val caseList: List<KrashExpressionStructureWhenCase>, private val caseElse: KrashExpression?): KrashExpressionStructure() {
+
+    override fun toValue(runtime: KrashRuntime) = value.toValue(runtime).let {
+
+        // Iterate Cases
+        var pos = 0
+        while(pos < caseList.size) {
+
+            // Check Condition
+            if(caseList[pos].isTrue(runtime, it)) {
+
+                // Return Result
+                return caseList[pos].getResult(runtime)
+            }
+
+            // Next Case
+            pos ++
+        }
+
+        // Return Else
+        caseElse?.toValue(runtime) ?: KrashValueNull()
+    }
+
+}
+
+class KrashExpressionStructureWhenCase(private val condition: KrashExpression, private val result: KrashExpression) {
+
+    fun getResult(runtime: KrashRuntime) = result.toValue(runtime)
+
+    fun isTrue(runtime: KrashRuntime, value: KrashValueSimple) = condition.toValue(runtime).let {
+
+        // Check Equality
+        value.toString() == it.toString()
+        // NOTE: need to abstract-out the logic from equality expression check
+    }
+
+}
+
+class KrashExpressionStructureWhile(private val condition: KrashExpression, private val commandList: List<KrashCommand>): KrashExpressionStructure() {
 
     override fun toValue(runtime: KrashRuntime): KrashValueSimple {
 
@@ -69,6 +108,7 @@ class KrashExpressionStructureWhile(private val condition: KrashExpression, priv
 
             // Invalid Type
             else throw KrashRuntimeException("Condition must be boolean!")
+            // NOTE: this could be KrashExpressionException ??
         }) {
 
             // Get Command
