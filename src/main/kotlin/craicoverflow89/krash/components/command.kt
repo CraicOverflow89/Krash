@@ -94,6 +94,19 @@ class KrashCommandDeclareReferenceIndexResult(val value: KrashValueSimple, val i
 
 class KrashCommandDeclareReferenceSimple(val value: String): KrashCommandDeclareReference()
 
+class KrashCommandEnum(private val name: String, private val valueList: List<String>): KrashCommand {
+
+    override fun invoke(runtime: KrashRuntime): KrashValue {
+
+        // Register Enum
+        KrashRuntime.enumRegister(name, KrashValueEnum(name, valueList))
+
+        // Done
+        return KrashValueNull()
+    }
+
+}
+
 class KrashCommandExpression(private val value: KrashExpression): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue = value.toValue(runtime)

@@ -280,6 +280,12 @@ class KrashValueDouble(private val value: Double): KrashValueSimpleNumeric() {
 
 }
 
+class KrashValueEnum(private val name: String, private val valueList: List<String>): KrashValueSimple() {
+
+    override fun toString() = "<enum $name>"
+
+}
+
 class KrashValueInteger(val value: Int): KrashValueSimpleNumeric() {
 
     override fun toDouble() = value.toDouble()
@@ -668,6 +674,9 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
 
         // Custom Class
         if(KrashRuntime.classExists(value)) return KrashRuntime.classGet(value)
+
+        // Custom Enum
+        if(KrashRuntime.enumExists(value)) return KrashRuntime.enumGet(value)
 
         // Custom Method
         if(runtime.methodExists(value)) return runtime.methodGet(value)

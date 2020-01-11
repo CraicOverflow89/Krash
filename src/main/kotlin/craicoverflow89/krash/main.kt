@@ -11,12 +11,13 @@ val KRASH_VERSION = "ALPHA"
 
 fun main() {
     //loadScript("src/main/resources/class.krash")
+    loadScript("src/main/resources/enum.krash")
     //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
     //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
-    loadScript("src/main/resources/structures.krash")
+    //loadScript("src/main/resources/structures.krash")
 
     // Reference persist issue
     //loadScript("src/main/resources/issue1.krash")

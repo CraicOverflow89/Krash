@@ -114,6 +114,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         private var scriptPath: KrashValueString? = null
         private var scriptArgs: KrashValueArray = KrashValueArray()
         private val classData = HashMap<String, KrashValueClass>()
+        private val enumData = HashMap<String, KrashValueEnum>()
 
         fun channelSet(value: KrashChannel) {
             channel = value
@@ -165,6 +166,29 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         }
 
         fun cwdString() = KrashValueString(cwdPath)
+
+        fun enumExists(name: String) = enumData.contains(name)
+
+        fun enumGet(name: String): KrashValueEnum {
+
+            // Invalid Name
+            if(!enumExists(name)) throw KrashRuntimeException("Could not find '$name' enum!")
+
+            // Return Enum
+            return enumData[name]!!
+        }
+
+        fun enumRegister(name: String, value: KrashValueEnum) {
+
+            // Reserved Term
+            if(KrashReserved.contains(name)) throw KrashRuntimeException("Cannot use reserved term '$name' for enum!")
+
+            // Existing Enum
+            if(enumData.containsKey(name)) throw KrashRuntimeException("Cannot duplicate term '$name' for enum!")
+
+            // Register Class
+            enumData[name] = value
+        }
 
         fun error(value: Any) = channel.err(value.toString())
 

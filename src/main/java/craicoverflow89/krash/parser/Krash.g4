@@ -28,6 +28,8 @@ command returns [KrashCommand result]
         |
             commandDeclare {$result = $commandDeclare.result;}
         |
+            commandEnum {$result = $commandEnum.result;}
+        |
             commandExpression {$result = $commandExpression.result;}
         |
             commandFunction {$result = $commandFunction.result;}
@@ -82,6 +84,30 @@ commandDeclareRefIndex returns [KrashCommandDeclareReferenceIndex result]
 commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
     :   expressionRefChars
         {$result = new KrashCommandDeclareReferenceSimple($expressionRefChars.text);}
+    ;
+
+commandEnum returns [KrashCommandEnum result]
+    :   {ArrayList<String> valueList = new ArrayList();}
+        'enum'
+        name = commandEnumNameChars
+        CUBR1
+        (
+            v1 = commandEnumValueChars {valueList.add($v1.text);}
+            (
+                COMMA
+                v2 = commandEnumValueChars {valueList.add($v2.text);}
+            )*
+        )
+        CUBR2
+        {$result = new KrashCommandEnum($name.text, valueList);}
+    ;
+
+commandEnumNameChars
+    :   ALPHA (ALPHA | DIGIT | UNDER)*
+    ;
+
+commandEnumValueChars
+    :   ALPHA+
     ;
 
 commandExpression returns [KrashCommandExpression result]

@@ -1,0 +1,16 @@
+// Create Enum
+enum Direction {
+    EAST, NORTH, SOUTH, WEST
+}
+
+// Print Enum
+echo(Direction)
+
+// Enum Value
+/*n = Direction.NORTH
+echo(n)8/
+
+// Equality Comparisons
+/*echo(n == n)
+echo(n == Direction.NORTH)
+echo(n == Direction.SOUTH)*/
