@@ -1,4 +1,0 @@
-result = "hello world".apply(fun() {
-    echo("it is $it")
-})
-echo("result is $result")

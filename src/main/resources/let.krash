@@ -1,5 +1,0 @@
-result = "hello world".let(fun() {
-    echo("it is $it")
-    return "result"
-})
-echo("result is $result")
