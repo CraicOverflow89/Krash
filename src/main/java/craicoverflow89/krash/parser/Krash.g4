@@ -85,8 +85,15 @@ commandDeclareRefSimple returns [KrashCommandDeclareReferenceSimple result]
     ;
 
 commandExpression returns [KrashCommandExpression result]
-    :   expression
-        {$result = new KrashCommandExpression($expression.result);}
+    :   {Boolean isReturn = true;}
+        (
+            'return' {isReturn = true;}
+        )?
+        expression
+        {
+            if(isReturn) $result = new KrashCommandExpression(new KrashExpressionReturn($expression.result));
+            else $result = new KrashCommandExpression($expression.result);
+        }
     ;
 
 commandFunction returns [KrashCommandFunction result]
@@ -102,8 +109,6 @@ commandKeyword returns [KrashCommandKeyword result]
             'break' {$result = new KrashCommandKeyword(KrashCommandKeywordType.BREAK);}
         |
             'continue' {$result = new KrashCommandKeyword(KrashCommandKeywordType.CONTINUE);}
-        |
-            'return' {$result = new KrashCommandKeyword(KrashCommandKeywordType.RETURN);}
         )
     ;
 

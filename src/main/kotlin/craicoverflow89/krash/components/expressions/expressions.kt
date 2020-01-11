@@ -126,3 +126,18 @@ class KrashExpressionReference(private val value: String, private val byRef: Boo
     override fun toValueRef(runtime: KrashRuntime) = KrashValueReference(value, byRef)
 
 }
+
+class KrashExpressionReturn(private val value: KrashExpression): KrashExpression() {
+
+    override fun toValue(runtime: KrashRuntime) = value.toValue(runtime).apply {
+
+        // Invoke Listener
+        if(!runtime.returnListenerInvoke(this)) {
+
+            // Invalid Keyword
+            throw KrashRuntimeException("Invalid keyword 'return' encountered!")
+            // NOTE: this should probably NOT be a runtime exception
+        }
+    }
+
+}

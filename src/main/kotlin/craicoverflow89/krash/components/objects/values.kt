@@ -237,34 +237,32 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
                 if(argumentList.size == 1) callableRuntime.heapPut("it", argumentList[0])
 
                 // Keyword Listener
-                var isReturn = false
-                callableRuntime.keywordListenerAdd(KrashCommandKeywordType.RETURN) {
-                    isReturn = true
+                var returnValue: KrashValueSimple? = null
+                callableRuntime.returnListenerAdd {value ->
+                    println("FOUND RETURN")
+                    println(value)
+                    returnValue = value
                 }
 
                 // Iterate Expressions
-                var returnValue: KrashValue = KrashValueNull()
                 var pos = 0
                 while(pos < commandList.size) {
 
                     // Invoke Expression
-                    returnValue = commandList[pos].invoke(callableRuntime)
-
-                    // TEMP DEBUG
-                    println("--> $returnValue")
+                    commandList[pos].invoke(callableRuntime)
 
                     // Return Result
-                    if(isReturn) break
+                    if(returnValue != null) break
 
                     // Next Expression
                     pos ++
                 }
 
-                // Clear Listeners
-                callableRuntime.keywordListenerClear()
+                // Clear Listener
+                callableRuntime.returnListenerClear()
 
                 // Return Result
-                returnValue
+                returnValue ?: KrashValueNull()
             }
         }
 

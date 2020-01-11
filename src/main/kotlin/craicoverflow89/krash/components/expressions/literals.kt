@@ -63,11 +63,6 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
             // Inject Arguments
             classRuntime.heapInject(runtime, classArgs, argumentList)
 
-            // Super Constructor
-            // inherit?.something ??
-            // NOTE: will need to merge members of parent with members being created here
-            //       or maybe that logic should exist where this init callable is being invoked
-
             // Custom Constructor
             // NOTE: invoke if there has been a constructor method defined in the class
             //       it will use classRuntime for heap access

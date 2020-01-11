@@ -77,7 +77,7 @@ class KrashCommandDeclare(private val ref: KrashCommandDeclareReference, private
         }
 
         // Done
-        return KrashValueNull()
+        return valueSimple
     }
 
 }
@@ -128,5 +128,5 @@ class KrashCommandKeyword(private val type: KrashCommandKeywordType): KrashComma
 }
 
 enum class KrashCommandKeywordType {
-    BREAK, CONTINUE, RETURN
+    BREAK, CONTINUE
 }
