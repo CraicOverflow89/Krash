@@ -350,6 +350,14 @@ name = read()
 echo("Welcome $name!")
 ```
 
+You can include additional scripts using the `include` method (supports absolute and relative paths). You do not need to include the file extension.
+
+```
+include("lib/main")
+// is the same as
+include("/home/james/krash/lib/main.krash")
+```
+
 ### Tasks
 
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
