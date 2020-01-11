@@ -379,8 +379,8 @@ expressionLitCallableBody returns [ArrayList<KrashCommand> result]
             )*
             CUBR2
         |
-            EQUAL c2 = command
-            {body.add($c2.result);}
+            EQUAL c2 = expression
+            {body.add(new KrashCommandExpression(new KrashExpressionReturn($c2.result)));}
         )
         {$result = body;}
     ;

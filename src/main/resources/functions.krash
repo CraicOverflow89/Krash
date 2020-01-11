@@ -33,3 +33,6 @@ data = fun() {
 echo("result = " + @data())
 isSeven = fun(x) = if(x == 7) "seven" else "not seven"
 echo("isSeven(7) = " + @isSeven(7))
+isSeven2 = fun(x) = x == 7
+echo(isSeven2(8))
+echo(fun(x) = (if(x == 7) "seven" else "not seven")(9))
