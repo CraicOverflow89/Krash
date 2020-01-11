@@ -103,9 +103,9 @@ class KrashStringTest: KrashComponentTest() {
         }
 
         // Native Class Reference
-        with(invokeLines("\"\$file\"")) {
+        with(invokeLines("\"\$File\"")) {
             Assert.assertTrue(this is KrashValueString)
-            Assert.assertEquals("<class file>", (this as KrashValueString).getValue())
+            Assert.assertEquals("<class File>", (this as KrashValueString).getValue())
         }
     }
 

@@ -12,7 +12,7 @@ class KrashBooleanTest: KrashComponentTest() {
     fun castString() {
 
         // True
-        with(invokeLine("true")) {
+        with(invokeLine("true.toString()")) {
             Assert.assertTrue(this is KrashValueString)
             (this as KrashValueString).let {
                 Assert.assertEquals("true", it.getValue())
@@ -20,10 +20,10 @@ class KrashBooleanTest: KrashComponentTest() {
         }
 
         // False
-        with(invokeLine("true")) {
+        with(invokeLine("false.toString()")) {
             Assert.assertTrue(this is KrashValueString)
             (this as KrashValueString).let {
-                Assert.assertEquals("true", it.getValue())
+                Assert.assertEquals("false", it.getValue())
             }
         }
     }

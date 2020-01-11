@@ -596,7 +596,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
             })
             memberPut("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
                 KrashValueString(this.toString())
-            })
+            }, false)
         }
     }
 
@@ -611,8 +611,8 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
         else -> throw KrashRuntimeException("No member '$key' exists on value!")
     }
 
-    fun memberPut(key: String, value: KrashValue) {
-        memberList[key] = value
+    fun memberPut(key: String, value: KrashValue, overwrite: Boolean = true) {
+        if(overwrite || !memberList.containsKey(key)) memberList[key] = value
     }
 
     fun memberPut(key: String, value: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) {

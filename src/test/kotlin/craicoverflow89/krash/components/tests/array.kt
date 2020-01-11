@@ -20,7 +20,7 @@ class KrashArrayTest: KrashComponentTest() {
     }
 
     @Test
-    fun castString() = with(invokeLine("[0, 1, 2]")) {
+    fun castString() = with(invokeLine("[0, 1, 2].toString()")) {
         Assert.assertTrue(this is KrashValueString)
         (this as KrashValueString).let {
             Assert.assertEquals("[0, 1, 2]", it.getValue())

@@ -89,10 +89,13 @@ class KrashReserved {
         private val reservedTerms = ArrayList<String>().apply {
 
             // Structural Keyword
-            addAll(listOf("class", "else", "fun", "if", "return", "while"))
+            addAll(listOf("break", "class", "continue", "else", "fun", "if", "return", "when", "while"))
 
             // Literal Keywords
             addAll(listOf("false", "null", "true"))
+
+            // Default Methods
+            addAll(listOf("apply", "let"))
 
             // Native Methods
             addAll(KrashMethod.nativeReserved())
