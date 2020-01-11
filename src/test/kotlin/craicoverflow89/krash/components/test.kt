@@ -6,21 +6,24 @@ import craicoverflow89.krash.components.objects.KrashValueNull
 open class KrashComponentTest {
 
     protected val channel = KrashTestChannel()
-    protected val runtime = KrashRuntime(System.getProperty("user.dir")).apply {
+    private val runtime = KrashRuntime(System.getProperty("user.dir")).apply {
         KrashRuntime.channelSet(channel)
     }
 
-    fun invokeLine(value: String): KrashValue {
+    fun invokeLine(value: String, runtimePersist: Boolean = true): KrashValue {
         channel.clear()
-        return parseLine(value).invoke(runtime)
+        return parseLine(value).invoke(runtime).apply {
+            if(!runtimePersist) runtime.empty()
+        }
     }
 
     fun invokeLines(vararg value: String): KrashValue {
         channel.clear()
         var result: KrashValue = KrashValueNull()
         value.forEach {
-            result = invokeLine(it)
+            result = invokeLine(it, true)
         }
+        runtime.empty()
         return result
     }
 

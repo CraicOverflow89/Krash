@@ -1,0 +1,18 @@
+// Create Value
+data = "hello world"
+
+// Value apply
+result = data.apply(fun() {
+    echo("it is $it")
+})
+echo("result is $result")
+
+// Value let
+result = data.let(fun() {
+    echo("it is $it")
+    return "result"
+})
+echo("result is $result")
+
+// Value toString
+echo("data is " + data.toString())

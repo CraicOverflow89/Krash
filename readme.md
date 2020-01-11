@@ -325,6 +325,7 @@ echo("Welcome $name!")
  - update class command / expressions
      - anonymous classes (to drop directly into argument of function)
      - old style class command (not an expression)
+ - final invoke argument to go after when literal callable like `value.apply {}` ??
 
 ### Issues
 

@@ -41,6 +41,10 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
     // Define Heap
     private val heap = HashMap<String, KrashValue>()
 
+    fun clear() {
+        heap.clear()
+    }
+
     fun contains(ref: String): Boolean {
 
         // Key Exists
@@ -231,6 +235,25 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
     private var returnListenerData: ((KrashValueSimple) -> Unit)? = null
 
     fun child() = KrashRuntime(null, heap)
+
+    fun empty() {
+
+        // Empty Classes
+        classData.clear()
+
+        // Empty Enums
+        enumData.clear()
+
+        // Empty Methods
+        methodData.clear()
+
+        // Empty Heap
+        heap.clear()
+
+        // Empty Listeners
+        keywordListenerClear()
+        returnListenerClear()
+    }
 
     fun exit(code: Int) {
         exitProcess(code)

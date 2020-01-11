@@ -313,6 +313,8 @@ class KrashValueEnum(private val name: String, private val valueList: List<Strin
 
     override fun toString() = "<enum $name>"
 
+    fun getValues() = valueList
+
 }
 
 class KrashValueInteger(val value: Int): KrashValueSimpleNumeric() {
@@ -592,6 +594,9 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
                     else throw KrashRuntimeException("Logic must be callable!")
                 }
             })
+            memberPut("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                KrashValueString(this.toString())
+            })
         }
     }
 
@@ -601,11 +606,6 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 
         // Get Member
         memberList.containsKey(key) -> memberList[key]!!
-
-        // Default Method
-        key == "toString" -> KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
-            KrashValueString("this.toString()")
-        }
 
         // Invalid Key
         else -> throw KrashRuntimeException("No member '$key' exists on value!")
