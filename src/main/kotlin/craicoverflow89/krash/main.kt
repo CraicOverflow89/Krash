@@ -2,10 +2,7 @@ package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime
-import craicoverflow89.krash.components.objects.KrashValueString
 import craicoverflow89.krash.system.KrashFileSystem
-import java.io.File
-import kotlin.system.exitProcess
 
 // Define Version
 val KRASH_VERSION = "ALPHA"
@@ -55,46 +52,30 @@ fun loadFlags(flags: String) {
 
 fun loadScript(scriptPath: String, scriptArgs: List<String> = listOf()) {
 
-    // Define Paths
+    // Define Path
     val cwd = System.getProperty("user.dir") ?: ""
-    val scriptFile = File(scriptPath.let {
+
+    // Resolve Path
+    scriptPath.let {
 
         // Absolute Path
         if(KrashFileSystem.isAbsolutePath(it)) it
 
         // Relative Path
         else "$cwd/$it"
-    })
+    }.let {
 
-    // Create Runtime
-    val runtime = KrashRuntime.createScript(cwd, KrashValueString(scriptFile.absolutePath), scriptArgs.map {
-        KrashValueString(it)
-    })
+        // Create Runtime
+        val runtime = KrashRuntime.create(cwd, scriptArgs)
 
-    // Missing File
-    if(!scriptFile.exists()) {
-        KrashRuntime.println("Could not find script!")
-        exitProcess(-1)
-    }
-
-    // Invalid File
-    if(scriptFile.extension != "krash") {
-        KrashRuntime.println("Must be a krash script!")
-        exitProcess(-1)
-    }
-
-    // Invoke Script
-    try {KrashInterpreter.parseScript(scriptFile.readText()).invoke(runtime)}
-
-    // Error Handling
-    catch(ex: KrashException) {
-        KrashRuntime.error(ex.message())
+        // Include Script
+        runtime.includeScript(it)
     }
 }
 
 fun loadShell() {
 
-    // Define Paths
+    // Define Path
     val cwd = System.getProperty("user.dir") ?: ""
 
     // Shell Info

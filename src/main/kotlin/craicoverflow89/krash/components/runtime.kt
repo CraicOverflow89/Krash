@@ -152,13 +152,12 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
             classData[name] = value
         }
 
-        fun createScript(cwd: String, file: KrashValueString, args: List<KrashValueString>): KrashRuntime {
+        fun create(cwd: String, args: List<String>): KrashRuntime {
 
-            // Set Values
-            scriptPath = file
+            // Inject Arguments
             scriptArgs = KrashValueArray(ArrayList<KrashValue>().apply {
                 args.forEach {
-                    add(it)
+                    add(KrashValueString(it))
                 }
             })
 
@@ -320,6 +319,9 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
 
             // Invalid File
             if(it.extension != "krash") throw KrashRuntimeException("Must be a krash script!")
+
+            // Update Path
+            scriptPath = KrashValueString(it.absolutePath)
 
             // Invoke Script
             KrashInterpreter.parseScript(it.readText()).invoke(this)
