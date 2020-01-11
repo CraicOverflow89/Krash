@@ -49,7 +49,7 @@ fun(name = "James") = echo("Hello $name")
 Multiple `string` values can be combined using the `+` operator. Simple references can be included within (and cast to) a `string` using the `$` character;
 
 ```
-message = "Hello $name"
+message = "Hello $name!"
 // is the same as
 message = "Hello " + name + "!"
 ```
@@ -61,17 +61,16 @@ In addition to the `value.toString()` method, you can use the `@value` modifier 
 ```
 echo("list contents = " + @list)
 // is the same as
-echo("list contents = $list)
+echo("list contents = $list")
 // is the same as
 echo("list contents = " list.toString())
 
 @list.size()
-// size of list, as a string
 // the modifier casts the entire expression
+// so this would result in the list size (int) being cast to string
 
-list.toString().size
-// list as string; get size property
-// this is NOT the same as the above
+list.toString()
+// here we are just casting the list (array) to a string
 ```
 
 This can also be used in function arguments, like so;
@@ -128,7 +127,7 @@ list.each(fun(value) {
 
 #### Invoke Syntax
 
-There are a number of different ways to invoke a callable, to suit different situations. When the final argument is callable, it can be defined after the parens;
+There are a number of different ways to invoke a function, to suit different situations. When the final argument is a `callable` then it can be defined after the parens;
 
 ```
 // Example callable
@@ -146,7 +145,7 @@ execute(["apple", "orange"], fun() {
 })
 ```
 
-When the function being invoked only takes one argument of type callable, you don't need to include any parens;
+When the function being invoked only takes **one argument of type callable**, you don't need to include any parens;
 
 ```
 // The let method takes one argument of type callable
@@ -212,12 +211,12 @@ array.each(echo)
 
 // For element in array with index
 array.eachIndexed(fun(i, v) {
-    echo("value at position " @i + " is " + @v)
+    echo("value at position $i is $v")
 })
 
 // For key and value in map
-map.each(fun(k, @v) {
-    echo(k + " = " + v)
+map.each(fun(k, v) {
+    echo("$k = $v")
 })
 ```
 
@@ -281,7 +280,7 @@ notEven = !(7 == 7)
 
 #### Classes
 
-Krash supports typical _classes_ and single _inheritance_.
+Krash supports typical _classes_ and _single inheritance_. There is no _interface_ due to the dynamic nature of the language.
 
 ```
 // Abstract classes cannot be instantiated themselves
@@ -333,11 +332,11 @@ Direction.valueOf("NORTH")
 
 #### Script Features
 
-When calling a script, you can access the optional arguments passed along with the `$ARGS` global;
+When calling a script, you can access the command line arguments with the `$ARGS` global;
 
 ```
 echo(
-    "arguments: $ARGS",
+    "arguments: " + @$ARGS,
     "count:     " + @$ARGS.size(),
     "first arg: " + $ARGS[0]
 )
@@ -349,7 +348,7 @@ Provided that the runtime _channel_ supports it (the default does), you can read
 echo("Please enter your name;")
 name = read()
 echo("Welcome $name!")
-``` 
+```
 
 ### Tasks
 
