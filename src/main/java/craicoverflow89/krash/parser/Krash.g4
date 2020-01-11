@@ -103,11 +103,11 @@ commandEnum returns [KrashCommandEnum result]
     ;
 
 commandEnumNameChars
-    :   ALPHA (ALPHA | DIGIT | UNDER)*
+    :   ALPHA_U (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
 commandEnumValueChars
-    :   ALPHA+
+    :   ALPHA_U+
     ;
 
 commandExpression returns [KrashCommandExpression result]
@@ -412,7 +412,7 @@ expressionLitCallableBody returns [ArrayList<KrashCommand> result]
     ;
 
 expressionLitCallableNameChars
-    :   ALPHA (ALPHA | DIGIT | UNDER)*
+    :   ALPHA_L (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
 expressionLitClass returns [KrashExpressionLiteralClass result]
@@ -461,7 +461,7 @@ expressionLitClassModifier returns [KrashValueClassModifier result]
     ;
 
 expressionLitClassNameChars
-    :   ALPHA (ALPHA | DIGIT | UNDER)*
+    :   ALPHA_U (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
 expressionLitDouble returns [KrashExpressionLiteralDouble result]
@@ -518,7 +518,7 @@ expressionLitMapPair returns [KrashExpressionLiteralMapPair result]
     ;
 
 expressionLitMapPairKey
-    :   (ALPHA | DIGIT | UNDER)+
+    :   (ALPHA_L | ALPHA_U | DIGIT | UNDER)+
     ;
 
 expressionLitNull returns [KrashExpressionLiteralNull result]
@@ -543,7 +543,7 @@ expressionMember returns [String result]
     ;
 
 expressionMemberChars
-    :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
+    :   (ALPHA_L | ALPHA_U | UNDER) (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
 expressionOpAdd returns [KrashExpression result]
@@ -588,7 +588,7 @@ expressionRef returns [KrashExpressionReference result]
     ;
 
 expressionRefChars
-    :   (ALPHA | UNDER) (ALPHA | DIGIT | UNDER)*
+    :   (ALPHA_L | ALPHA_U | UNDER) (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
 expressionStruct returns [KrashExpressionStructure result]
@@ -672,7 +672,8 @@ expressionStructWhile returns [KrashExpressionStructureWhile result]
     ;
 
 // Lexer Rules
-ALPHA: [A-Za-z];
+ALPHA_L: [a-z];
+ALPHA_U: [A-Z];
 AMPER: '&';
 APOST: '\'';
 ASTER: '*';

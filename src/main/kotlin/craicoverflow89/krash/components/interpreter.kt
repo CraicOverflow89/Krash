@@ -46,6 +46,10 @@ class KrashInterpreterException(posLine: Int, posChar: Int, token: Token?): Kras
 class KrashInterpreterListener: BaseErrorListener() {
 
     override fun syntaxError(recognizer: Recognizer<*, *>?, offendingSymbol: Any?, line: Int, charPositionInLine: Int, msg: String?, e: RecognitionException?) {
+
+        // TEMP
+        System.err.println(msg)
+
         throw KrashInterpreterException(line, charPositionInLine, e?.offendingToken)
     }
 

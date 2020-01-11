@@ -325,7 +325,6 @@ echo("Welcome $name!")
  - test `if` structure
     - need to test `else if` pattern
  - use equality logic for `when` structure
- - create `enum` type
  - anonymous classes (to drop directly into argument of function) ??
 
 ### Issues
@@ -336,6 +335,8 @@ echo("Welcome $name!")
  - references don't persist with `name = &data["name"]` since moving to expressions
  - need to configure callable arguments to work with byRef
  - trying to use `true` as reference throws parser exception instead of being handled
+ - greedy member behaviour takes chars from next expression
+    - eg: `n = Direction.NORTH` then `echo(n)` fails with `NORTHecho`
 
 ### See Also
 

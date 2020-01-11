@@ -280,7 +280,11 @@ class KrashValueDouble(private val value: Double): KrashValueSimpleNumeric() {
 
 }
 
-class KrashValueEnum(private val name: String, private val valueList: List<String>): KrashValueSimple() {
+class KrashValueEnum(private val name: String, private val valueList: List<String>): KrashValueSimple(HashMap<String, KrashValue>().apply {
+    valueList.forEachIndexed {id, name ->
+        put(name, KrashValueInteger(id))
+    }
+}) {
 
     override fun toString() = "<enum $name>"
 

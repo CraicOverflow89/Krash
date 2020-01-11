@@ -7,10 +7,10 @@ enum Direction {
 echo(Direction)
 
 // Enum Value
-/*n = Direction.NORTH
-echo(n)8/
+n = (Direction.NORTH)
+echo(n)
 
 // Equality Comparisons
-/*echo(n == n)
+echo(n == n)
 echo(n == Direction.NORTH)
-echo(n == Direction.SOUTH)*/
+echo(n == Direction.SOUTH)
