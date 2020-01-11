@@ -1,11 +1,7 @@
 package craicoverflow89.krash.components.objects
 
-import craicoverflow89.krash.components.KrashRuntimeException
-import craicoverflow89.krash.components.KrashMethod
-import craicoverflow89.krash.components.KrashReserved
-import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.*
 import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
-import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableExpression
 import kotlin.math.floor
 
 interface KrashValue {
@@ -225,7 +221,7 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
     companion object {
 
-        fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, expressionList: List<KrashExpressionLiteralCallableExpression>): KrashValueCallable {
+        fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, commandList: List<KrashCommand>): KrashValueCallable {
 
             // Create Heap
             val callableRuntime = runtime.child()
@@ -240,26 +236,32 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
                 // Implicit It
                 if(argumentList.size == 1) callableRuntime.heapPut("it", argumentList[0])
 
-                // Default Result
-                var returnValue: KrashValue = KrashValueNull()
+                // Keyword Listener
+                var isReturn = false
+                callableRuntime.keywordListenerAdd(KrashCommandKeywordType.RETURN) {
+                    isReturn = true
+                }
 
                 // Iterate Expressions
-                var result: KrashValue
+                var returnValue: KrashValue = KrashValueNull()
                 var pos = 0
-                while(pos < expressionList.size) {
+                while(pos < commandList.size) {
 
                     // Invoke Expression
-                    result = expressionList[pos].toValue(callableRuntime)
+                    returnValue = commandList[pos].invoke(callableRuntime)
+
+                    // TEMP DEBUG
+                    println("--> $returnValue")
 
                     // Return Result
-                    if(expressionList[pos].isReturn) {
-                        returnValue = result
-                        break
-                    }
+                    if(isReturn) break
 
                     // Next Expression
                     pos ++
                 }
+
+                // Clear Listeners
+                callableRuntime.keywordListenerClear()
 
                 // Return Result
                 returnValue

@@ -2,7 +2,6 @@ package craicoverflow89.krash.components
 
 import craicoverflow89.krash.components.expressions.KrashExpression
 import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
-import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableExpression
 import craicoverflow89.krash.components.objects.*
 
 interface KrashCommand {
@@ -101,12 +100,12 @@ class KrashCommandExpression(private val value: KrashExpression): KrashCommand {
 
 }
 
-class KrashCommandFunction(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashCommand {
+class KrashCommandFunction(private val name: String, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val commandList: List<KrashCommand>): KrashCommand {
 
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
         // Register Function
-        runtime.methodRegister(name, KrashValueCallable.create(runtime, argumentList, expressionList))
+        runtime.methodRegister(name, KrashValueCallable.create(runtime, argumentList, commandList))
 
         // Done
         return KrashValueNull()

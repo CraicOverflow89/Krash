@@ -102,6 +102,8 @@ commandKeyword returns [KrashCommandKeyword result]
             'break' {$result = new KrashCommandKeyword(KrashCommandKeywordType.BREAK);}
         |
             'continue' {$result = new KrashCommandKeyword(KrashCommandKeywordType.CONTINUE);}
+        |
+            'return' {$result = new KrashCommandKeyword(KrashCommandKeywordType.RETURN);}
         )
     ;
 
@@ -362,22 +364,18 @@ expressionLitCallableArgList returns [ArrayList<KrashExpressionLiteralCallableAr
         {$result = args;}
     ;
 
-expressionLitCallableBody returns [ArrayList<KrashExpressionLiteralCallableExpression> result]
-    :   {ArrayList<KrashExpressionLiteralCallableExpression> body = new ArrayList();}
+expressionLitCallableBody returns [ArrayList<KrashCommand> result]
+    :   {ArrayList<KrashCommand> body = new ArrayList();}
         (
             CUBR1
             (
-                {boolean isReturn = false;}
-                (
-                    'return' {isReturn = true;}
-                )?
                 c1 = command
-                {body.add(new KrashExpressionLiteralCallableExpression($c1.result, isReturn));}
+                {body.add($c1.result);}
             )*
             CUBR2
         |
             EQUAL c2 = command
-            {body.add(new KrashExpressionLiteralCallableExpression($c2.result, true));}
+            {body.add($c2.result);}
         )
         {$result = body;}
     ;

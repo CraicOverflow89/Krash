@@ -23,9 +23,9 @@ class KrashExpressionLiteralBoolean(private val value: Boolean): KrashExpression
 
 }
 
-class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val expressionList: List<KrashExpressionLiteralCallableExpression>): KrashExpressionLiteral() {
+class KrashExpressionLiteralCallable(private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val commandList: List<KrashCommand>): KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime) = KrashValueCallable.create(runtime, argumentList, expressionList)
+    override fun toValue(runtime: KrashRuntime) = KrashValueCallable.create(runtime, argumentList, commandList)
 
 }
 
@@ -37,12 +37,6 @@ class KrashExpressionLiteralCallableArgument(val name: String, private val defau
 
 enum class KrashExpressionLiteralCallableArgumentModifier {
     NONE, REF, STRING
-}
-
-class KrashExpressionLiteralCallableExpression(private val command: KrashCommand, val isReturn: Boolean): KrashExpressionLiteral() {
-
-    override fun toValue(runtime: KrashRuntime) = command.invoke(runtime).toSimple(runtime)
-
 }
 
 class KrashExpressionLiteralClass(private val name: String, private val modifier: KrashValueClassModifier, private val argumentList: List<KrashExpressionLiteralCallableArgument>, private val inherit: KrashExpressionLiteralClassInherit?, private val expressionList: List<KrashExpressionLiteralClassExpression>): KrashExpressionLiteral() {
