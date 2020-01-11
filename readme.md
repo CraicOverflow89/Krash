@@ -385,6 +385,20 @@ echo("Welcome $name!")
  - update class command / expressions
      - anonymous classes (to drop directly into argument of function)
      - old style class command (not an expression)
+ - create unit tests
+     - expressions
+        - globals
+        - indexes
+        - invoke
+        - members
+        - ref modifier
+        - string lit with ref
+        - string modifier
+     - values
+        - double
+        - integer
+        - map
+        - pair
 
 ### Issues
 
