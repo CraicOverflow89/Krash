@@ -7,13 +7,14 @@ import craicoverflow89.krash.system.KrashFileSystem
 // Define Version
 val KRASH_VERSION = "ALPHA"
 
-/*fun main() {
+fun main() {
     //loadScript("src/main/resources/class.krash")
-    loadScript("src/main/resources/functions.krash")
+    //loadScript("src/main/resources/functions.krash")
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
-    //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
+    //loadScript("src/main/resources/script.krash", listOf("-user", "James"))#
+    loadScript("src/main/resources/server.krash")
     //loadScript("src/main/resources/structures.krash")
 
     // Reference persist issue
@@ -21,9 +22,9 @@ val KRASH_VERSION = "ALPHA"
 
     // Multiple indexes issue
     //loadScript("src/main/resources/issue2.krash")
-}*/
+}
 
-fun main(args: Array<String>) = when {
+/*fun main(args: Array<String>) = when {
 
     // Shell Mode
     args.isEmpty() -> loadShell()
@@ -42,7 +43,7 @@ fun main(args: Array<String>) = when {
         // No Arguments
         else listOf()
     })
-}
+}*/
 
 fun loadFlags(flags: String) {
 

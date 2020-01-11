@@ -4,6 +4,8 @@ import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.expressions.KrashExpression
 import craicoverflow89.krash.system.KrashFileSystem
+import craicoverflow89.krash.system.KrashServer
+import craicoverflow89.krash.system.KrashServerRequest
 import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
@@ -97,6 +99,56 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
             // Network Object
             Pair("Network", KrashValueClassStatic("Network", hashMapOf(
 
+                // Server Object
+                Pair("createServer", KrashValueClass("Server", null, KrashValueClassModifier.NONE, null, null) {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+
+                    // Validate Arguments
+                    if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for port!")
+                    if(argumentList.size < 2) throw KrashRuntimeException("No value provided for logic!")
+
+                    // Define Values
+                    val port = argumentList[0].toSimple(runtime).let {
+
+                        // Invalid Type
+                        if(it !is KrashValueInteger) throw KrashRuntimeException("Server port must be an integer!")
+
+                        // Return Value
+                        it.value
+                    }
+                    val logic: KrashValueCallable = argumentList[1].toSimple(runtime).let {
+
+                        // Invalid Type
+                        if(it !is KrashValueCallable) throw KrashRuntimeException("Server logic must be callable!")
+
+                        // Return Value
+                        it
+                    }
+
+                    // Create Server
+                    KrashServer(port) {request: KrashServerRequest, response: (response: String) -> Unit ->
+
+                        // Invoke Logic
+                        val responseBody: String = logic.invoke(runtime, listOf(KrashValueString(request.path), KrashValueString(request.method), KrashValueMap(ArrayList<KrashValueMapPair>().apply {
+                            request.parameter.forEach {k, v ->
+                                add(KrashValueMapPair(k, KrashValueString(v.toString())))
+                            }
+                        }))).toSimple(runtime).let {
+
+                            // Invalid Type
+                            if(it !is KrashValueString) throw KrashRuntimeException("Response body must be a string!")
+
+                            // Return Value
+                            it.getValue()
+                        }
+
+                        // Invoke Response
+                        response(responseBody)
+                    }
+
+                    // Return Members
+                    hashMapOf()
+                }),
+
                 // Request Object
                 Pair("request", KrashValueClass("Request", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
@@ -130,42 +182,6 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
                         Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
                             KrashValueString(url)
                         })
-                    )
-                }),
-
-                // Server Object
-                Pair("createServer", KrashValueClass("Server", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
-
-                    // Validate Arguments
-                    if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for port!")
-                    if(argumentList.size < 2) throw KrashRuntimeException("No value provided for logic!")
-
-                    // Define Values
-                    val port = argumentList[0].let {
-
-                        // Invalid Type
-                        if(it !is KrashValueInteger) throw KrashRuntimeException("Server port must be an integer!")
-
-                        // Return Value
-                        it.value
-                    }
-                    val logic: KrashValueCallable = argumentList[1].let {
-
-                        // Invalid Type
-                        if(it !is KrashValueCallable) throw KrashRuntimeException("Server logic must be callable!")
-
-                        // Return Value
-                        it
-                    }
-
-                    // Create Server
-                    // NOTE: so this doesn't want to be blocking but if it's going to be threaded then a huge amount of care is required
-                    //       any background threads must have a reference in runtime, regardless of if the script does
-                    //       all exit operations (including thrown exceptions) need to terminate all threads (and close server, in this case) on exit
-
-                    // Return Members
-                    hashMapOf(
-                        Pair("port", KrashValueInteger(port))
                     )
                 })
             )))
