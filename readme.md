@@ -358,6 +358,25 @@ include("lib/main")
 include("/home/james/krash/lib/main.krash")
 ```
 
+#### Network Features
+
+It's easy to make a simple GET request;
+
+```
+Network.request("https://www.google.com/")
+```
+
+Krash makes it very easy to create an HTTP server that listens on a particular port and provides responses to requests;
+
+```
+Network.createServer(7777) {path, method, params ->
+    echo("path:   $path")
+    echo("method: $method")
+    echo("params: $params")
+    return "Hello World"
+}
+```
+
 ### Tasks
 
  - returned pair/list can be split into multiple variables like `(x, z) = getCoords()`
