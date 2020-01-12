@@ -11,11 +11,11 @@ class KrashValueTest: KrashComponentTest() {
     fun apply() {
 
         // Short Syntax
-        invokeLines("value = 7.apply {return it + 1}", "value").let {
+        invokeLines("value = 7.apply {it + 1}", "value").let {
             Assert.assertEquals(true, it is KrashValueInteger)
             Assert.assertEquals(7, (it as KrashValueInteger).value)
         }
-        invokeLines("value = 8.apply() {return it + 1}", "value").let {
+        invokeLines("value = 8.apply() {it + 1}", "value").let {
             Assert.assertEquals(true, it is KrashValueInteger)
             Assert.assertEquals(8, (it as KrashValueInteger).value)
         }
@@ -35,11 +35,11 @@ class KrashValueTest: KrashComponentTest() {
     fun let() {
 
         // Short Syntax
-        invokeLines("value = 7.let {return it + 1}", "value").let {
+        invokeLines("value = 7.let {it + 1}", "value").let {
             Assert.assertEquals(true, it is KrashValueInteger)
             Assert.assertEquals(8, (it as KrashValueInteger).value)
         }
-        invokeLines("value = 8.let() {return it + 1}", "value").let {
+        invokeLines("value = 8.let() {it + 1}", "value").let {
             Assert.assertEquals(true, it is KrashValueInteger)
             Assert.assertEquals(9, (it as KrashValueInteger).value)
         }

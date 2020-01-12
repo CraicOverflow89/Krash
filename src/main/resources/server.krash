@@ -2,5 +2,5 @@ Network.createServer(7777) {path, method, params ->
     echo("path:   $path")
     echo("method: $method")
     echo("params: $params")
-    return "Hello World"
+    "Hello World"
 }

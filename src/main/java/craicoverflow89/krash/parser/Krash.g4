@@ -350,8 +350,10 @@ expressionInvokeShort returns [KrashExpressionLiteralCallable result]
             '->'
         )?
         (
-            command {exp.add($command.result);}
-        )+
+            c1 = command {exp.add($c1.result);}
+        )*?
+        c2 = expression
+        {exp.add(new KrashCommandExpression(new KrashExpressionReturn($c2.result)));}
         CUBR2
         {$result = new KrashExpressionLiteralCallable(args, exp);}
     ;

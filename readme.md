@@ -79,7 +79,7 @@ This can also be used in function arguments, like so;
 map = {name: "James", age: 30}
 map.filter {k, @v ->
     // map values are cast to string here
-    return v.startsWith("J")
+    v.startsWith("J")
 }
 ```
 
@@ -373,7 +373,7 @@ Network.createServer(7777) {path, method, params ->
     echo("path:   $path")
     echo("method: $method")
     echo("params: $params")
-    return "Hello World"
+    "Hello World"
 }
 ```
 
@@ -425,6 +425,8 @@ Network.createServer(7777) {path, method, params ->
         - integer
         - map
         - pair
+ - consider if `include` should be relative to first script or current one
+ - sort out the implicit return of final expression in all callables with short syntax
 
 ### Issues
 
