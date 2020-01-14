@@ -26,8 +26,20 @@ class Developer(id_developer, name_developer, lang_developer): Person(id_develop
 }
 
 // Create Instance
+//person = Person(0, "James")
+//echo(person)
+//person.hello()
+//person.printID()
+// NOTE: this super method doesn't work
+
+// Create Instance
 dev = Developer(0, "James", ["Kotlin", "Python"])
-//echo(dev)
-//dev.printID()
+// WARN: this call DOES work if the previous block has been executed (id_person exists)
+echo(dev)
+echo(dev.toMap())
 //dev.hello()
-//echo(dev.toMap())
+// WARN: this call DOES work if the previous block has been executed... this would suggest that values are leaking through scopes :(
+//dev.printID()
+
+// NOTE: with regards to warnings above, it is necessary to check ALL values assigned inside the KrashValueClass logic
+//       there are likely to be things that should exist only in the KrsahValueObject logic (else leaking will occur!)
