@@ -118,7 +118,7 @@ class KrashCommandFunction(private val name: String, private val argumentList: L
     override fun invoke(runtime: KrashRuntime): KrashValue {
 
         // Register Function
-        runtime.methodRegister(name, KrashValueCallable.create(runtime, argumentList, commandList))
+        KrashRuntime.methodRegister(name, KrashValueCallable.create(runtime, argumentList, commandList))
 
         // Done
         return KrashValueNull()

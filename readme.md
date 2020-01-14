@@ -400,17 +400,18 @@ Network.createServer(7777) {path, method, params ->
  - all `KrashValueObject` instances should be capable of equality checks
     - if object type is same (eg: file and file) which will require id
     - have a method that serialises properties to string to perform string check
- - combine the equality and inequality condition classes (not DRY atm)
- - equality checks for `KrashValueClass` instances?
- - write tests to check equality comparison of `KrashValueObject` instances
+ - equality logic
+    - maybe add `isEqual(KrashValueSimple) -> Boolean` method to `KrashValueSimple`
+    - combine the equality and inequality condition classes (not DRY atm)
+    - equality checks for `KrashValueClass` instances?
+    - write tests to check equality comparison of `KrashValueObject` instances
  - exceptions in the expression classes (eg: extending a final class) are not strictly runtime
     - should create `KrashExpressionException` (they're not syntax issues or runtime issues)
     - see also `KrashCommandKeyword.invoke` where `KrashRuntimeException` is being thrown when it's a structural thing
  - ability to spawn processes (blocking and background possible)
- - use equality logic for `when` structure
- - update class command / expressions
-     - anonymous classes (to drop directly into argument of function)
-     - old style class command (not an expression)
+ - update `when` structure
+    - use new equality logic (the abstracted logic from conditions)
+    - test conditions of different types (inequality and members?)
  - create unit tests
      - expressions
         - globals
@@ -427,6 +428,17 @@ Network.createServer(7777) {path, method, params ->
         - pair
  - consider if `include` should be relative to first script or current one
  - sort out the implicit return of final expression in all callables with short syntax
+ - script parsing should always be aware of script file path for exceptions and debugging
+ - finish classes
+    - anonymous classes (to drop directly into argument of function)
+    - old style class command (not an expression)
+    - init (constructor)
+    - properties (other than declared through constructor)
+    - check names of new properties and methods against reserved method (uses map keys from defaults)
+    - method exists check
+    - add `open` modifier for methods (otherwise final) and maybe abstract?
+ - add the `ref is type` syntax for runtime type checks (returns boolean like equality operator)
+ - test how `methodData` being a property of runtime instance works when calling outer method from inner method
 
 ### Issues
 

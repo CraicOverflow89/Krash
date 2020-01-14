@@ -19,11 +19,11 @@ interface KrashValue {
 }
 
 class KrashValueArray(private val valueList: ArrayList<KrashValue> = arrayListOf()): KrashValueSimple(hashMapOf(
-    Pair("add", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+    Pair("add", KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
         valueList.add(argumentList[0])
         KrashValueNull()
     }),
-    Pair("join", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+    Pair("join", KrashValueCallable.anon {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
         // Parse Arguments
         val separator = if(argumentList.isNotEmpty()) argumentList[0].toSimple(runtime).let {
@@ -42,7 +42,7 @@ class KrashValueArray(private val valueList: ArrayList<KrashValue> = arrayListOf
         // Return Result
         KrashValueString(valueList.joinToString(separator, prefix, postfix))
     }),
-    Pair("size", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+    Pair("size", KrashValueCallable.anon {_: KrashRuntime, _: List<KrashValue> ->
         KrashValueInteger(valueList.size)
     })
 )) {
@@ -217,9 +217,11 @@ class KrashValueBoolean(private val value: Boolean): KrashValueSimple() {
 
 }
 
-open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple(hashMapOf(), true) {
+open class KrashValueCallable(private val name: String, private val logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueSimple(hashMapOf(), true) {
 
     companion object {
+
+        fun anon(logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) = KrashValueCallable("", logic)
 
         fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, commandList: List<KrashCommand>): KrashValueCallable {
 
@@ -228,7 +230,7 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
             val callableArgs = argumentList
 
             // Create Callable
-            return KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+            return KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Inject Arguments
                 callableRuntime.heapInject(runtime, callableArgs, argumentList)
@@ -266,6 +268,8 @@ open class KrashValueCallable(private val logic: (runtime: KrashRuntime, argumen
 
     }
 
+    fun getName() = name
+
     fun invoke(runtime: KrashRuntime, argumentList: List<KrashValue>) = logic(runtime, argumentList)
 
     override fun toString() = "<callable>"
@@ -287,7 +291,7 @@ class KrashValueEnum(private val name: String, private val valueList: List<Strin
 }) {
 
     init {
-        memberPut("valueOf", KrashValueCallable {runtime, argumentList ->
+        memberPut("valueOf", KrashValueCallable.anon {runtime, argumentList ->
 
             // Validate Arguments
             if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for name!")
@@ -312,6 +316,8 @@ class KrashValueEnum(private val name: String, private val valueList: List<Strin
     }
 
     override fun toString() = "<enum $name>"
+
+    fun getName() = name
 
     fun getValues() = valueList
 
@@ -519,10 +525,12 @@ class KrashValueNull: KrashValueSimple() {
 
 class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<String, KrashValue>): KrashValueSimple(memberList) {
 
+    fun getClass() = obj
+
     fun isEqual(value: KrashValueObject): Boolean {
 
         // Compare Class
-        if(obj.name != value.obj.name) return false
+        if(obj.getName() != value.obj.getName()) return false
 
         // Compare Content
         return serialiseExists() && serialiseData() == value.serialiseData()
@@ -552,7 +560,7 @@ class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<Str
         }
 
         // Default Value
-        return "<object ${obj.name}>"
+        return "<object ${obj.getName()}>"
     }
 
 }
@@ -561,7 +569,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
 
     init {
         if(!noDefaults) {
-            memberPut("apply", KrashValueCallable {runtime, argumentList ->
+            memberPut("apply", KrashValueCallable.anon {runtime, argumentList ->
 
                 // Validate Arguments
                 if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
@@ -579,7 +587,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
                 // Return Value
                 this
             })
-            memberPut("let", KrashValueCallable {runtime, argumentList ->
+            memberPut("let", KrashValueCallable.anon {runtime, argumentList ->
 
                 // Validate Arguments
                 if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for logic!")
@@ -594,7 +602,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
                     else throw KrashRuntimeException("Logic must be callable!")
                 }
             })
-            memberPut("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+            memberPut("toString", KrashValueCallable.anon { _: KrashRuntime, _: List<KrashValue> ->
                 KrashValueString(this.toString())
             }, false)
         }
@@ -616,7 +624,7 @@ abstract class KrashValueSimple(private val memberList: HashMap<String, KrashVal
     }
 
     fun memberPut(key: String, value: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) {
-        memberList[key] = KrashValueCallable(value)
+        memberList[key] = KrashValueCallable.anon(value)
     }
 
     override fun resolve(runtime: KrashRuntime) = this
@@ -648,7 +656,7 @@ class KrashValueString(private val value: String): KrashValueSimple() {
         // NOTE: convert "$ref" pieces if valueInitial contains '$'
 
         // Append Members
-        memberPut("endsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("endsWith", KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Characters
             if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for characters!")
@@ -663,7 +671,7 @@ class KrashValueString(private val value: String): KrashValueSimple() {
                 value.endsWith(it.value)
             })
         })
-        memberPut("toList", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("toList", KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
             KrashValueArray(ArrayList<KrashValue>().apply {
 
                 // Use Delimiter
@@ -689,7 +697,7 @@ class KrashValueString(private val value: String): KrashValueSimple() {
             })
         })
         memberPut("size", KrashValueInteger(value.length))
-        memberPut("startsWith", KrashValueCallable {_: KrashRuntime, argumentList: List<KrashValue> ->
+        memberPut("startsWith", KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
 
             // Validate Characters
             if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for characters!")
@@ -737,7 +745,7 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
         if(KrashMethod.nativeContains(value)) return KrashMethod.nativeGet(value)
 
         // Native Object
-        if(KrashValueClass.nativeContains(value)) return KrashValueClass.nativeGet(value)
+        if(KrashValueClass.nativeContains(value)) return KrashValueClass.nativeGet(value) as KrashValue
 
         // Custom Class
         if(KrashRuntime.classExists(value)) return KrashRuntime.classGet(value)
@@ -746,7 +754,7 @@ class KrashValueReference(val value: String, val byRef: Boolean): KrashValue {
         if(KrashRuntime.enumExists(value)) return KrashRuntime.enumGet(value)
 
         // Custom Method
-        if(runtime.methodExists(value)) return runtime.methodGet(value)
+        if(KrashRuntime.methodExists(value)) return KrashRuntime.methodGet(value)
 
         // Custom Reference
         return runtime.heapGet(value)

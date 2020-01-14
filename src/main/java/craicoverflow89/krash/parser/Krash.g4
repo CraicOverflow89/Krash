@@ -151,6 +151,8 @@ expression returns [KrashExpression result]
         |
             expressionCoGTE {$result = new KrashExpressionConditionGreaterEqual($result, $expressionCoGTE.result);}
         |
+            expressionCoIs {$result = new KrashExpressionConditionIs($result, $expressionCoIs.result);}
+        |
             expressionCoLT {$result = new KrashExpressionConditionLesserThan($result, $expressionCoLT.result);}
         |
             expressionCoLTE {$result = new KrashExpressionConditionLesserEqual($result, $expressionCoLTE.result);}
@@ -226,6 +228,11 @@ expressionCoGT returns [KrashExpression result]
 expressionCoGTE returns [KrashExpression result]
     :   '>=' expression
         {$result = $expression.result;}
+    ;
+
+expressionCoIs returns [String result]
+    :   'is' expressionRefChars
+        {$result = $expressionRefChars.text;}
     ;
 
 expressionCoLT returns [KrashExpression result]
@@ -481,13 +488,26 @@ expressionLitClass returns [KrashExpressionLiteralClass result]
 expressionLitClassBody returns [ArrayList<KrashExpressionLiteralClassExpression> result]
     :   {ArrayList<KrashExpressionLiteralClassExpression> body = new ArrayList();}
         (
-            commandComment {body.add(new KrashExpressionLiteralClassExpression($commandComment.result));}
+            commandComment {body.add(new KrashExpressionLiteralClassExpressionComment($commandComment.result));}
         |
-            commandDeclare {body.add(new KrashExpressionLiteralClassExpression($commandDeclare.result));}
+            method = expressionLitClassBodyMethod {body.add($method.result);}
         |
-            commandFunction {body.add(new KrashExpressionLiteralClassExpression($commandFunction.result));}
+            property = expressionLitClassBodyProperty {body.add($property.result);}
         )*
         {$result = body;}
+    ;
+
+expressionLitClassBodyMethod returns [KrashExpressionLiteralClassExpressionMethod result]
+    :   'fun'
+        name = expressionLitCallableNameChars
+        args = expressionLitCallableArgList
+        body = expressionLitCallableBody
+        {$result = new KrashExpressionLiteralClassExpressionMethod($name.text, new KrashExpressionLiteralCallable($args.result, $body.result));}
+    ;
+
+expressionLitClassBodyProperty returns [KrashExpressionLiteralClassExpressionProperty result]
+    :   expressionRefChars EQUAL expression
+        {$result = new KrashExpressionLiteralClassExpressionProperty($expressionRefChars.text, $expression.result);}
     ;
 
 exporessionLitClassInherit returns [KrashExpressionLiteralClassInherit result]

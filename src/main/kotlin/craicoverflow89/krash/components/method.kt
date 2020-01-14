@@ -5,7 +5,7 @@ import craicoverflow89.krash.components.objects.KrashValueCallable
 import craicoverflow89.krash.components.objects.KrashValueNull
 import craicoverflow89.krash.components.objects.KrashValueString
 
-open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueCallable(logic) {
+open class KrashMethod(name: String, logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue): KrashValueCallable(name, logic) {
 
     companion object {
 
@@ -26,7 +26,7 @@ open class KrashMethod(logic: (runtime: KrashRuntime, argumentList: List<KrashVa
 
 }
 
-class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+class KrashMethodEcho: KrashMethod("echo", fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
     // Print Values
     argumentList.forEach {
@@ -37,7 +37,7 @@ class KrashMethodEcho: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
     return KrashValueNull()
 })
 
-class KrashMethodExit: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+class KrashMethodExit: KrashMethod("exit", fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
     // Runtime Exit
     runtime.exit(argumentList.let {
@@ -54,7 +54,7 @@ class KrashMethodExit: KrashMethod(fun(runtime: KrashRuntime, argumentList: List
 
 })
 
-class KrashMethodInclude: KrashMethod(fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
+class KrashMethodInclude: KrashMethod("include", fun(runtime: KrashRuntime, argumentList: List<KrashValue>): KrashValue {
 
     // Validate Arguments
     if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for path!")
@@ -74,4 +74,4 @@ class KrashMethodInclude: KrashMethod(fun(runtime: KrashRuntime, argumentList: L
     return KrashValueNull()
 })
 
-class KrashMethodRead: KrashMethod(fun(_: KrashRuntime, _: List<KrashValue>) = KrashValueString(KrashRuntime.read()))
+class KrashMethodRead: KrashMethod("read", fun(_: KrashRuntime, _: List<KrashValue>) = KrashValueString(KrashRuntime.read()))

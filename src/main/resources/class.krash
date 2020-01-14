@@ -25,4 +25,5 @@ class Developer(id, name, lang): Person(id, name) {
 
 }
 
-echo(Developer(0, "James", ["Kotlin", "Python"]).toMap())
+echo(Developer(0, "James", ["Kotlin", "Python"]))
+//echo(Developer(0, "James", ["Kotlin", "Python"]).toMap())

@@ -1,6 +1,9 @@
 package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashCommand
+import craicoverflow89.krash.components.KrashCommandComment
+import craicoverflow89.krash.components.KrashCommandDeclareReferenceSimple
+import craicoverflow89.krash.components.KrashCommandFunction
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.objects.*
@@ -51,9 +54,10 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
         val classArgs = argumentList
 
         // Iterate Expressions
-        expressionList.forEach {
-            it.toValue(classRuntime)
+        val classMembers = expressionList.map {
+            it.resolve(runtime)
         }
+        // NOTE: this needs to be a map (or something that returns) so properties and methods can be added as members
         // NOTE: this is assuming that all expressions are to be done when creating a class
         //       and none are to be done when creating an object
 
@@ -69,8 +73,8 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
 
             // Return Members
             HashMap<String, KrashValue>().apply {
-                classRuntime.methodData().forEach {
-                    put(it.key, it.value)
+                classMembers.forEach {
+                    if(!it.isAnon()) put(it.getName(), it.getValue())
                 }
             }
         }.apply {
@@ -82,9 +86,29 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
 
 }
 
-class KrashExpressionLiteralClassExpression(private val command: KrashCommand): KrashExpressionLiteral() {
+abstract class KrashExpressionLiteralClassExpression: KrashExpressionLiteral() {
 
-    override fun toValue(runtime: KrashRuntime) = command.invoke(runtime).toSimple(runtime)
+    abstract fun resolve(runtime: KrashRuntime): KrashValueClassMember
+
+    override fun toValue(runtime: KrashRuntime) = resolve(runtime)
+
+}
+
+class KrashExpressionLiteralClassExpressionComment(private val command: KrashCommandComment): KrashExpressionLiteralClassExpression() {
+
+    override fun resolve(runtime: KrashRuntime) = KrashValueClassMember.anon(KrashValueNull())
+
+}
+
+class KrashExpressionLiteralClassExpressionMethod(private val name: String, private val value: KrashExpression): KrashExpressionLiteralClassExpression() {
+
+    override fun resolve(runtime: KrashRuntime) = KrashValueClassMember(name, value.toValue(runtime))
+
+}
+
+class KrashExpressionLiteralClassExpressionProperty(private val name: String, private val value: KrashExpression): KrashExpressionLiteralClassExpression() {
+
+    override fun resolve(runtime: KrashRuntime) = KrashValueClassMember(name, value.toValue(runtime))
 
 }
 
@@ -107,7 +131,7 @@ class KrashExpressionLiteralClassInherit(private val name: String, private val a
         parentClass().let {
 
             // Final Class
-            if(it.isFinal()) throw KrashRuntimeException("Cannot extend final '${it.name}' class!")
+            if(it.isFinal()) throw KrashRuntimeException("Cannot extend final '${it.getName()}' class!")
         }
     }
 

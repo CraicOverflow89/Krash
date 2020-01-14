@@ -91,7 +91,7 @@ class KrashReserved {
         private val reservedTerms = ArrayList<String>().apply {
 
             // Structural Keyword
-            addAll(listOf("break", "class", "continue", "else", "fun", "if", "return", "when", "while"))
+            addAll(listOf("break", "class", "continue", "else", "fun", "if", "is", "return", "when", "while"))
 
             // Literal Keywords
             addAll(listOf("false", "null", "true"))
@@ -124,6 +124,7 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         private var scriptArgs: KrashValueArray = KrashValueArray()
         private val classData = HashMap<String, KrashValueClass>()
         private val enumData = HashMap<String, KrashValueEnum>()
+        private val methodData = HashMap<String, KrashValueCallable>()
 
         fun channelSet(value: KrashChannel) {
             channel = value
@@ -222,6 +223,31 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         fun globalContains(value: String) = listOf("ARGS", "CWD", "HOME").contains(value)
         // NOTE: this needs to be merged with the above (single map of data)
 
+        fun methodData() = methodData
+
+        fun methodExists(name: String) = methodData.contains(name)
+
+        fun methodGet(name: String): KrashValueCallable {
+
+            // Invalid Name
+            if(!methodExists(name)) throw KrashRuntimeException("Could not find '$name' method!")
+
+            // Return Method
+            return methodData[name]!!
+        }
+
+        fun methodRegister(name: String, value: KrashValueCallable) {
+
+            // Reserved Term
+            if(KrashReserved.contains(name)) throw KrashRuntimeException("Cannot use reserved term '$name' for method!")
+
+            // Existing Method
+            if(methodData.containsKey(name)) throw KrashRuntimeException("Cannot duplicate term '$name' for method!")
+
+            // Register Method
+            methodData[name] = value
+        }
+
         fun println(value: Any) = channel.out(value.toString())
 
         fun read() = channel.read()
@@ -237,7 +263,6 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
     }
 
     // Define Properties
-    private val methodData = HashMap<String, KrashValueCallable>()
     private val heap = KrashHeap(this, parentHeap)
     private var keywordListenerData = HashMap<KrashCommandKeywordType, () -> Unit>()
     private var returnListenerData: ((KrashValueSimple) -> Unit)? = null
@@ -344,31 +369,6 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
         // Return True
         true
     } ?: false
-
-    fun methodData() = methodData
-
-    fun methodExists(name: String) = methodData.contains(name)
-
-    fun methodGet(name: String): KrashValueCallable {
-
-        // Invalid Name
-        if(!methodExists(name)) throw KrashRuntimeException("Could not find '$name' method!")
-
-        // Return Method
-        return methodData[name]!!
-    }
-
-    fun methodRegister(name: String, value: KrashValueCallable) {
-
-        // Reserved Term
-        if(KrashReserved.contains(name)) throw KrashRuntimeException("Cannot use reserved term '$name' for method!")
-
-        // Existing Method
-        if(methodData.containsKey(name)) throw KrashRuntimeException("Cannot duplicate term '$name' for method!")
-
-        // Register Method
-        methodData[name] = value
-    }
 
     fun returnListenerAdd(logic: (KrashValueSimple) -> Unit) {
         returnListenerData = logic

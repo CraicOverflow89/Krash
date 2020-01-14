@@ -2,8 +2,14 @@ package craicoverflow89.krash.components.expressions
 
 import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
+import craicoverflow89.krash.components.objects.KrashValueArray
 import craicoverflow89.krash.components.objects.KrashValueBoolean
+import craicoverflow89.krash.components.objects.KrashValueCallable
 import craicoverflow89.krash.components.objects.KrashValueClass
+import craicoverflow89.krash.components.objects.KrashValueDouble
+import craicoverflow89.krash.components.objects.KrashValueEnum
+import craicoverflow89.krash.components.objects.KrashValueInteger
+import craicoverflow89.krash.components.objects.KrashValueMap
 import craicoverflow89.krash.components.objects.KrashValueNull
 import craicoverflow89.krash.components.objects.KrashValueObject
 import craicoverflow89.krash.components.objects.KrashValueSimple
@@ -21,6 +27,8 @@ abstract class KrashExpressionCondition(private val first: KrashExpression, priv
 class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpression): KrashExpressionCondition(first, second) {
 
     override fun invoke(runtime: KrashRuntime, first: KrashValueSimple, second: KrashValueSimple) = when(first) {
+
+        // NOTE: all KrashValueSimple classes will have an isEqual method to invoke here
 
         // Compare Array
         /*is KrashValueArray -> when(second) {
@@ -45,7 +53,7 @@ class KrashExpressionConditionEquality(first: KrashExpression, second: KrashExpr
 
         // Compare Class
         is KrashValueClass -> when(second) {
-            is KrashValueClass -> first.name == second.name
+            is KrashValueClass -> first.getName() == second.getName()
             else -> throw KrashRuntimeException("Invalid type for equality comparison with class!")
         }
 
@@ -127,7 +135,7 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
 
         // Compare Class
         is KrashValueClass -> when(second) {
-            is KrashValueClass -> first.name != second.name
+            is KrashValueClass -> first.getName() != second.getName()
             else -> throw KrashRuntimeException("Invalid type for equality comparison with class!")
         }
 
@@ -158,6 +166,46 @@ class KrashExpressionConditionInequality(first: KrashExpression, second: KrashEx
         // Invalid Type
         else -> throw KrashRuntimeException("Invalid type for inequality comparison!")
     }
+
+}
+
+class KrashExpressionConditionIs(private val first: KrashExpression, private val second: String): KrashExpression() {
+
+    override fun toValue(runtime: KrashRuntime) = KrashValueBoolean(first.toValue(runtime).let {value ->
+
+        // Resolve Type
+        second.let {type -> when {
+
+            // Native Class
+            KrashValueClass.nativeContains(type) -> value is KrashValueObject && value.getClass().getName() == type
+
+            // Defined Class
+            KrashRuntime.classExists(type) -> value is KrashValueObject && value.getClass().getName() == type
+
+            // Defined Enum
+            KrashRuntime.enumExists(type) -> value is KrashValueEnum && value.getName() == type
+
+            // Defined Method
+            KrashRuntime.methodExists(type) -> value is KrashValueCallable && value.getName() == type
+
+            // Simple Type
+            else -> when(type) {
+                "array" -> value is KrashValueArray
+                "boolean" -> value is KrashValueBoolean
+                "callable" -> value is KrashValueCallable
+                //"class" -> value is KrashValueClass
+                "double" -> value is KrashValueDouble
+                //"enum" -> value is KrashValueEnum
+                "integer" -> value is KrashValueInteger
+                "map" -> value is KrashValueMap
+                "null" -> value is KrashValueNull
+                "object" -> value is KrashValueObject
+                "string" -> value is KrashValueString
+                else -> throw KrashRuntimeException("Invalid type '$type' for is operator!")
+            }
+            // NOTE: omitting class and enum due to parser issues
+        }}
+    })
 
 }
 

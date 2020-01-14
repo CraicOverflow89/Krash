@@ -10,11 +10,11 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-open class KrashValueClass(val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple() {
+open class KrashValueClass(private val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> HashMap<String, KrashValue>): KrashValueSimple(), KrashValueClassType {
 
     companion object {
 
-        private val nativeObjects: HashMap<String, KrashValue> = hashMapOf(
+        private val nativeObjects: HashMap<String, KrashValueClassType> = hashMapOf(
 
             // File Object
             Pair("File", KrashValueClass("File", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
@@ -46,7 +46,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
 
                 // Return Members
                 hashMapOf(
-                    Pair("copy", KrashValueCallable {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+                    Pair("copy", KrashValueCallable.anon {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
                         // Validate Arguments
                         if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply destination!")
@@ -81,7 +81,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
                         KrashValueNull()
                     }),
                     Pair("isDirectory", KrashValueBoolean(file.isDirectory)),
-                    Pair("files", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+                    Pair("files", KrashValueCallable.anon {_: KrashRuntime, _: List<KrashValue> ->
                         KrashValueArray(ArrayList<KrashValue>().apply {
                             file.list().forEach {
                                 add(KrashValueString(it))
@@ -90,7 +90,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
                         })
                     }),
                     Pair("path", KrashValueString(path)),
-                    Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                    Pair("toString", KrashValueCallable.anon { _: KrashRuntime, _: List<KrashValue> ->
                         KrashValueString(path)
                     })
                 )
@@ -167,7 +167,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
 
                     // Return Members
                     hashMapOf(
-                        Pair("send", KrashValueCallable {_: KrashRuntime, _: List<KrashValue> ->
+                        Pair("send", KrashValueCallable.anon {_: KrashRuntime, _: List<KrashValue> ->
 
                             // Send Request
                             with(URL(url).openConnection() as HttpURLConnection) {
@@ -179,7 +179,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
                                 ))
                             }
                         }),
-                        Pair("toString", KrashValueCallable { _: KrashRuntime, _: List<KrashValue> ->
+                        Pair("toString", KrashValueCallable.anon { _: KrashRuntime, _: List<KrashValue> ->
                             KrashValueString(url)
                         })
                     )
@@ -189,7 +189,7 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
 
         fun nativeContains(name: String) = nativeObjects.containsKey(name)
 
-        fun nativeGet(name: String): KrashValue {
+        fun nativeGet(name: String): KrashValueClassType {
 
             // Return Object
             if(nativeObjects.containsKey(name)) return nativeObjects[name]!!
@@ -220,6 +220,8 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
         })
     }
 
+    override fun getName() = name
+
     private fun inheritedMethods(runtime: KrashRuntime) = HashMap<String, KrashValue>().apply {
 
         // Class Runtime
@@ -244,11 +246,27 @@ open class KrashValueClass(val name: String, private val classRuntime: KrashRunt
 
 }
 
+class KrashValueClassMember(private val name: String, private val value: KrashValueSimple, private val anon: Boolean = false): KrashValueSimple() {
+
+    companion object {
+
+        fun anon(value: KrashValueSimple) = KrashValueClassMember("", value, true)
+
+    }
+
+    fun getName() = name
+
+    fun getValue() = value
+
+    fun isAnon() = anon
+
+}
+
 enum class KrashValueClassModifier {
     ABSTRACT, NONE, OPEN
 }
 
-class KrashValueClassStatic(private val name: String, memberData: HashMap<String, KrashValue>): KrashValueSimple() {
+class KrashValueClassStatic(private val name: String, memberData: HashMap<String, KrashValue>): KrashValueSimple(), KrashValueClassType {
 
     init {
         memberData.forEach {k, v ->
@@ -256,6 +274,14 @@ class KrashValueClassStatic(private val name: String, memberData: HashMap<String
         }
     }
 
+    override fun getName() = name
+
     override fun toString() = "<class $name>"
+
+}
+
+interface KrashValueClassType {
+
+    fun getName(): String
 
 }
