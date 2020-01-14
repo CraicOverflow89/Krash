@@ -523,48 +523,6 @@ class KrashValueNull: KrashValueSimple() {
 
 }
 
-class KrashValueObject(private val obj: KrashValueClass, memberList: HashMap<String, KrashValue>): KrashValueSimple(memberList) {
-
-    fun getClass() = obj
-
-    fun isEqual(value: KrashValueObject): Boolean {
-
-        // Compare Class
-        if(obj.getName() != value.obj.getName()) return false
-
-        // Compare Content
-        return serialiseExists() && serialiseData() == value.serialiseData()
-    }
-
-    private fun serialiseData() = memberGet("serialise").let {
-
-        // Custom String
-        if(it is KrashValueString) it.getValue()
-
-        // Cast String
-        else it.toString()
-    }
-
-    private fun serialiseExists() = memberContains("serialise")
-
-    override fun toString(): String {
-
-        // Invoke Member
-        if(memberContains("toString")) memberGet("toString").let {
-
-            // Custom String
-            if(it is KrashValueString) it.getValue()
-
-            // Cast String
-            else it.toString()
-        }
-
-        // Default Value
-        return "<object ${obj.getName()}>"
-    }
-
-}
-
 abstract class KrashValueSimple(private val memberList: HashMap<String, KrashValue> = hashMapOf(), noDefaults: Boolean = false): KrashValue {
 
     init {

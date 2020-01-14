@@ -53,14 +53,6 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
         val classRuntime = runtime.child()
         val classArgs = argumentList
 
-        // Iterate Expressions
-        val classMembers = expressionList.map {
-            it.resolve(runtime)
-        }
-        // NOTE: this needs to be a map (or something that returns) so properties and methods can be added as members
-        // NOTE: this is assuming that all expressions are to be done when creating a class
-        //       and none are to be done when creating an object
-
         // Create Class
         return KrashValueClass(name, classRuntime, modifier, inherit?.parentClass(), inherit?.argumentTransfer()) {runtime, argumentList ->
 
@@ -72,10 +64,10 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
             //       it will use classRuntime for heap access
 
             // Return Members
-            HashMap<String, KrashValue>().apply {
-                classMembers.forEach {
-                    if(!it.isAnon()) put(it.getName(), it.getValue())
-                }
+            expressionList.map {
+                it.resolve(runtime)
+            }.filter {
+                !it.isAnon()
             }
         }.apply {
 
