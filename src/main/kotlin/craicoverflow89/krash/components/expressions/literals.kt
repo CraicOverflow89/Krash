@@ -54,10 +54,10 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
         val classArgs = argumentList
 
         // Create Class
-        return KrashValueClass(name, classRuntime, modifier, inherit?.parentClass(), inherit?.argumentTransfer()) {runtime, argumentList ->
+        return KrashValueClass(name, classRuntime, modifier, argumentList, inherit?.parentClass(), inherit?.argumentTransfer()) {runtime, argumentList ->
 
-            // Inject Arguments
-            classRuntime.heapInject(runtime, classArgs, argumentList)
+            // NOTE: why is argumentList not being used?
+            //       have moved classRuntime population elsewhere but still need to use these
 
             // Custom Constructor
             // NOTE: invoke if there has been a constructor method defined in the class
@@ -65,7 +65,7 @@ class KrashExpressionLiteralClass(private val name: String, private val modifier
 
             // Return Members
             expressionList.map {
-                it.resolve(runtime)
+                it.resolve(classRuntime)
             }.filter {
                 !it.isAnon()
             }
@@ -92,7 +92,7 @@ class KrashExpressionLiteralClassExpressionComment(private val command: KrashCom
 
 }
 
-class KrashExpressionLiteralClassExpressionMethod(private val name: String, private val value: KrashExpression): KrashExpressionLiteralClassExpression() {
+class KrashExpressionLiteralClassExpressionMethod(private val name: String, private val value: KrashExpressionLiteralCallable): KrashExpressionLiteralClassExpression() {
 
     override fun resolve(runtime: KrashRuntime) = KrashValueClassMember(name, value.toValue(runtime))
 

@@ -1,4 +1,4 @@
-package craicoverflow89.krash
+ package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime

@@ -3,6 +3,8 @@ package craicoverflow89.krash.components.objects
 import craicoverflow89.krash.components.KrashRuntimeException
 import craicoverflow89.krash.components.KrashRuntime
 import craicoverflow89.krash.components.expressions.KrashExpression
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgument
+import craicoverflow89.krash.components.expressions.KrashExpressionLiteralCallableArgumentModifier
 import craicoverflow89.krash.system.KrashFileSystem
 import craicoverflow89.krash.system.KrashServer
 import craicoverflow89.krash.system.KrashServerRequest
@@ -10,14 +12,14 @@ import java.io.File
 import java.net.HttpURLConnection
 import java.net.URL
 
-open class KrashValueClass(private val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> List<KrashValueClassMember>): KrashValueSimple(), KrashValueClassType {
+open class KrashValueClass(private val name: String, private val classRuntime: KrashRuntime?, private val modifier: KrashValueClassModifier, private val constructorList: List<KrashExpressionLiteralCallableArgument>, private val inheritClass: KrashValueClass?, private val inheritArgs: List<KrashExpression>?, private val init: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> List<KrashValueClassMember>): KrashValueSimple(), KrashValueClassType {
 
     companion object {
 
         private val nativeObjects: HashMap<String, KrashValueClassType> = hashMapOf(
 
             // File Object
-            Pair("File", KrashValueClass("File", null, KrashValueClassModifier.NONE, null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
+            Pair("File", KrashValueClass("File", null, KrashValueClassModifier.NONE, listOf(), null, null) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Define Values
                 val path = argumentList.let {
@@ -100,7 +102,7 @@ open class KrashValueClass(private val name: String, private val classRuntime: K
             Pair("Network", KrashValueClassStatic("Network", listOf(
 
                 // Server Object
-                KrashValueClassMember("createServer", KrashValueClass("Server", null, KrashValueClassModifier.NONE, null, null) {runtime: KrashRuntime, argumentList: List<KrashValue> ->
+                KrashValueClassMember("createServer", KrashValueClass("Server", null, KrashValueClassModifier.NONE, listOf(), null, null) {runtime: KrashRuntime, argumentList: List<KrashValue> ->
 
                     // Validate Arguments
                     if(argumentList.isEmpty()) throw KrashRuntimeException("No value provided for port!")
@@ -150,7 +152,7 @@ open class KrashValueClass(private val name: String, private val classRuntime: K
                 }),
 
                 // Request Object
-                KrashValueClassMember("request", KrashValueClass("Request", null, KrashValueClassModifier.NONE, null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
+                KrashValueClassMember("request", KrashValueClass("Request", null, KrashValueClassModifier.NONE, listOf(), null, null) { _: KrashRuntime, argumentList: List<KrashValue> ->
 
                     // Validate Arguments
                     if(argumentList.isEmpty()) throw KrashRuntimeException("Must supply url!")
@@ -207,24 +209,55 @@ open class KrashValueClass(private val name: String, private val classRuntime: K
         // Abstract Class
         if(isAbstract()) throw KrashRuntimeException("Cannot instantiate abstract '$name' class!")
 
+        // Heap Inject
+        constructorList.forEachIndexed {pos, arg ->
+            classRuntime?.heapPut(arg.name, argumentList[pos].let {
+
+                // Argument Value
+                if(pos < argumentList.size) it.let {
+
+                    // Cast String
+                    if(arg.modifier == KrashExpressionLiteralCallableArgumentModifier.STRING) it.toStringType()
+
+                    // Keep Value
+                    it.toSimple(runtime)
+                }
+
+                // Default Value
+                else arg.defaultValue(runtime)
+            })
+        }
+
+        // NOTE: this is correctly injecting the values passed into the constructor into the runtime
+        //       when we try and invoke a method from an extending class, the (potentially different) references don't lookup the correct runtime
+        //       a separate collection needs to exist, containing the values that passed into the extended class with correct names
+
+        // TEMP DEBUG
+        println("")
+        println("CLASS INIT")
+        println(" class  : ${this.name}")
+        println(" extends: ${inheritClass?.name}")
+        println(" args   : $argumentList")
+        println(" heap   : ${classRuntime?.heapData()}")
+
         // Create Object
         return KrashValueObject(this, ArrayList<KrashValueClassMember>().apply {
-            init(runtime, argumentList).apply {
 
-                // Class Info
-                add(KrashValueClassMember("class", this@KrashValueClass))
+            // Class Info
+            add(KrashValueClassMember("class", this@KrashValueClass))
 
-                // Inherit Methods
-                inheritedMethods(runtime).forEach {
-                    add(KrashValueClassMember(it.getName(), it.getValue()))
-                }
-            }
+            // Super Members
+            addAll(inheritedMembers(runtime))
+
+            // Class Members
+            addAll(init(runtime, argumentList))
+            // NOTE: need to check if possible when overriding methods (and properties?)
         })
     }
 
     override fun getName() = name
 
-    private fun inheritedMethods(runtime: KrashRuntime): List<KrashValueClassMember> {
+    private fun inheritedMembers(runtime: KrashRuntime): List<KrashValueClassMember> {
 
         // Class Runtime
         return classRuntime?.let {

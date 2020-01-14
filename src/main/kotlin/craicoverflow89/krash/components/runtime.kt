@@ -62,6 +62,8 @@ class KrashHeap(private val runtime: KrashRuntime, private val parent: KrashHeap
         return heap[ref] ?: parent?.get(ref) ?: throw KrashRuntimeException("Reference '$ref' does not exist!")
     }
 
+    fun keys() = heap.keys
+
     fun put(ref: String, value: KrashValue) {
 
         // Persist Reference
@@ -293,6 +295,8 @@ class KrashRuntime(cwd: String? = null, parentHeap: KrashHeap? = null) {
     }
 
     fun heapContains(ref: String) = heap.contains(ref)
+
+    fun heapData() = heap.keys()
 
     fun heapGet(ref: String) = heap.get(ref)
 

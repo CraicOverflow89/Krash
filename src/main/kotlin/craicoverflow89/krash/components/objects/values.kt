@@ -223,14 +223,16 @@ open class KrashValueCallable(private val name: String, private val logic: (runt
 
         fun anon(logic: (runtime: KrashRuntime, argumentList: List<KrashValue>) -> KrashValue) = KrashValueCallable("", logic)
 
-        fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, commandList: List<KrashCommand>): KrashValueCallable {
+        fun create(runtime: KrashRuntime, argumentList: List<KrashExpressionLiteralCallableArgument>, commandList: List<KrashCommand>) = create(runtime, "", argumentList, commandList)
+
+        fun create(runtime: KrashRuntime, name: String, argumentList: List<KrashExpressionLiteralCallableArgument>, commandList: List<KrashCommand>): KrashValueCallable {
 
             // Create Heap
             val callableRuntime = runtime.child()
             val callableArgs = argumentList
 
             // Create Callable
-            return KrashValueCallable.anon {_: KrashRuntime, argumentList: List<KrashValue> ->
+            return KrashValueCallable(name) {_: KrashRuntime, argumentList: List<KrashValue> ->
 
                 // Inject Arguments
                 callableRuntime.heapInject(runtime, callableArgs, argumentList)

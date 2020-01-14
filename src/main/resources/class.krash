@@ -1,29 +1,32 @@
 // Abstract classes cannot be instantiated themselves
-abstract class Object(id) {
+abstract class Object(id_object) {
 
     fun printID() {
-        echo(id)
+        echo(id_object)
     }
 
 }
 
 // Open classes can be extended by other classes
-open class Person(id, name): Object(id) {
+open class Person(id_person, name_person): Object(id_person) {
 
     fun hello() {
-        echo("Hello $name")
+        echo("Hello $name_person")
     }
 
 }
 
 // Final classes cannot be extended
-class Developer(id, name, lang): Person(id, name) {
+class Developer(id_developer, name_developer, lang_developer): Person(id_developer, name_developer) {
 
     fun toMap() {
-        return {id: id, name: name, lang: lang}
+        return {id: id_developer, name: name_developer, lang: lang_developer}
     }
 
 }
 
-echo(Developer(0, "James", ["Kotlin", "Python"]))
-echo(Developer(0, "James", ["Kotlin", "Python"]).toMap())
+// Create Instance
+dev = Developer(0, "James", ["Kotlin", "Python"])
+dev.printID()
+dev.hello()
+echo(dev.toMap())
