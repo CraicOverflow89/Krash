@@ -243,31 +243,49 @@ open class KrashValueClass(private val name: String, private val classRuntime: K
         // Create Object
         return KrashValueObject(this, ArrayList<KrashValueClassMember>().apply {
 
+            // NOTE: might want to simply init the super class as if it was separate
+            //       then defer method calls to super (which has separate heap)
+
             // Class Info
             add(KrashValueClassMember("class", this@KrashValueClass))
 
             // Super Members
-            addAll(inheritedMembers(runtime))
+            addAll(inheritedMembers())
 
             // Class Members
-            addAll(init(runtime, argumentList))
-            // NOTE: need to check if possible when overriding methods (and properties?)
+            addAll(init(runtime, argumentList).apply {
+
+                // Iterate Methods
+                this.filterIsInstance<KrashValueClassMemberMethod>().forEach {
+                    // NOTE: need to check overriding methods
+                    //       come back to this when abstract and open method modifiers have been sorted
+                }
+            })
         })
     }
 
     override fun getName() = name
 
-    private fun inheritedMembers(runtime: KrashRuntime): List<KrashValueClassMember> {
+    private fun inheritedMembers(): List<KrashValueClassMember> {
 
         // Class Runtime
         return classRuntime?.let {
 
-            // Super Methods
-            inheritClass?.init?.invoke(runtime, inheritArgs?.map {
+            // Super Class
+            inheritClass?.let {classSuper ->
+                ArrayList<KrashValueClassMember>().apply {
 
-                // Resolve Argument
-                it.toValue(classRuntime)
-            } ?: listOf())
+                    // Super Constructor
+                    addAll(classSuper.init.invoke(classRuntime, inheritArgs?.map {
+
+                        // Resolve Argument
+                        it.toValue(classRuntime)
+                    } ?: listOf()))
+
+                    // Super Inherited
+                    addAll(classSuper.inheritedMembers())
+                }
+            }
         } ?: listOf()
     }
 
@@ -279,7 +297,7 @@ open class KrashValueClass(private val name: String, private val classRuntime: K
 
 }
 
-class KrashValueClassMember(private val name: String, private val value: KrashValueSimple, private val anon: Boolean = false): KrashValueSimple() {
+open class KrashValueClassMember(private val name: String, private val value: KrashValueSimple, private val anon: Boolean = false): KrashValueSimple() {
 
     companion object {
 
@@ -292,6 +310,12 @@ class KrashValueClassMember(private val name: String, private val value: KrashVa
     fun getValue() = value
 
     fun isAnon() = anon
+
+}
+
+class KrashValueClassMemberMethod(name: String, value: KrashValueCallable): KrashValueClassMember(name, value) {
+
+    // NOTE: this is where additional logic to handle the heap specific to the class that the method resides in can be accessed for invoke
 
 }
 

@@ -27,6 +27,7 @@ class Developer(id_developer, name_developer, lang_developer): Person(id_develop
 
 // Create Instance
 dev = Developer(0, "James", ["Kotlin", "Python"])
-dev.printID()
-dev.hello()
-echo(dev.toMap())
+//echo(dev)
+//dev.printID()
+//dev.hello()
+//echo(dev.toMap())
