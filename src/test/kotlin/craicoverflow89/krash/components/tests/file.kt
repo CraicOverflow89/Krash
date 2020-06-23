@@ -42,6 +42,8 @@ class KrashFileTest: KrashComponentTest() {
     @Test
     fun isDirectory() {
 
+        // NOTE: might be that keyword is takes priority in lexer and prevents methods where name contains 'is' from working
+
         // True
         with(invokeLine("File(\"$cwd\").isDirectory")) {
             Assert.assertTrue(this is KrashValueBoolean)
