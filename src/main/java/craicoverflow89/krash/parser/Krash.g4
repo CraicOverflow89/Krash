@@ -373,8 +373,8 @@ expressionLit returns [KrashExpressionLiteral result]
         |
             expressionLitCallable {$result = $expressionLitCallable.result;}
         |
-            expressionLitClass {$result = $expressionLitClass.result;}
-        |
+            /*expressionLitClass {$result = $expressionLitClass.result;}
+        |*/
             expressionLitDouble {$result = $expressionLitDouble.result;}
         |
             expressionLitInt {$result = $expressionLitInt.result;}
@@ -468,7 +468,7 @@ expressionLitCallableNameChars
     :   ALPHA_L (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
     ;
 
-expressionLitClass returns [KrashExpressionLiteralClass result]
+/*expressionLitClass returns [KrashExpressionLiteralClass result]
     :   {KrashExpressionLiteralClassInherit inherit = null;}
         mod = expressionLitClassModifier
         'class'
@@ -528,7 +528,7 @@ expressionLitClassModifier returns [KrashValueClassModifier result]
 
 expressionLitClassNameChars
     :   ALPHA_U (ALPHA_L | ALPHA_U | DIGIT | UNDER)*
-    ;
+    ;*/
 
 expressionLitDouble returns [KrashExpressionLiteralDouble result]
     :   {boolean minus = false;}

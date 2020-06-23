@@ -5,7 +5,7 @@ Krash Project
 
 Scripting language with a sleek syntax and focus on functional file system operations, built with Kotlin and ANTLR. Source code can be distributed to different operating systems, with no compilation required.
 
-There is **no stable release** yet. 
+There is **no stable release** yet.
 
 ### Features
 
@@ -280,42 +280,6 @@ notFalse = !false
 notEven = !(7 == 7)
 ```
 
-#### Classes
-
-Krash supports typical _classes_ and _single inheritance_. There is no _interface_ due to the dynamic nature of the language.
-
-```
-// Abstract classes cannot be instantiated themselves
-abstract class Object(id) {
-
-    fun printID() {
-        echo(id)
-    }
-
-}
-
-// Open classes can be extended by other classes
-open class Person(id, name): Object(id) {
-
-    fun hello() {
-        echo("Hello $name")
-    }
-
-}
-
-// Final classes cannot be extended
-class Developer(id, name, lang = []): Person(id, name) {
-
-    fun toMap() {
-        return {id: id, name: name, lang: lang}
-    }
-
-}
-
-// Instantiate the class
-author = Developer(0, "James", ["Kotlin", "ANTLR"])
-```
-
 #### Enums
 
 A set of constants can be assigned to an _enum_ with the conventional syntax;
@@ -431,14 +395,6 @@ Network.createServer(7777) {path, method, params ->
  - consider if `include` should be relative to first script or current one
  - sort out the implicit return of final expression in all callables with short syntax
  - script parsing should always be aware of script file path for exceptions and debugging
- - finish classes
-    - anonymous classes (to drop directly into argument of function)
-    - old style class command (not an expression)
-    - init (constructor)
-    - properties (other than declared through constructor)
-    - check names of new properties and methods against reserved method (uses map keys from defaults)
-    - method exists check
-    - add `open` modifier for methods (otherwise final) and maybe abstract?
  - add the `ref is type` syntax for runtime type checks (returns boolean like equality operator)
  - test how `methodData` being a property of runtime instance works when calling outer method from inner method
 
