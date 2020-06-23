@@ -5,7 +5,7 @@ Krash Project
 
 Scripting language with a sleek syntax and focus on functional file system operations, built with Kotlin and ANTLR. Source code can be distributed to different operating systems, with no compilation required.
 
-There is **no stable release** yet. 
+There is **no stable release** yet. Use of classes exists on unstable branch.
 
 ### Features
 
