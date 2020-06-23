@@ -1,4 +1,4 @@
- package craicoverflow89.krash
+package craicoverflow89.krash
 
 import craicoverflow89.krash.components.KrashInterpreter
 import craicoverflow89.krash.components.KrashRuntime
@@ -13,7 +13,7 @@ val KRASH_VERSION = "ALPHA"
     //loadScript("src/main/resources/maps.krash")
     //loadScript("src/main/resources/numbers.krash")
     //loadScript("src/main/resources/references.krash")
-    //loadScript("src/main/resources/script.krash", listOf("-user", "James"))#
+    //loadScript("src/main/resources/script.krash", listOf("-user", "James"))
     //loadScript("src/main/resources/server.krash")
     //loadScript("src/main/resources/structures.krash")
 
